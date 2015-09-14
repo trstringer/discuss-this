@@ -3,6 +3,9 @@ var assert = require('assert');
 var objectId = require('mongodb').ObjectID;
 var url = 'mongodb://localhost:27017/letsdiscuss';
 
+// ********************************************************
+//                  current question
+// ********************************************************
 function queryCurrentQuestion(db, callback) {
     var cursor = 
         db.collection('questions').find({"isCurrent": true});
@@ -23,4 +26,23 @@ exports.getCurrentQuestion = function (callback) {
             callback(topQuestion);
         });
     });
+}
+
+// ********************************************************
+//                  next question
+// ********************************************************
+function insertNextQuestionCandidate(db, question, callback) {
+    db.collection('questions').insertOne(question, function (err, result) {
+        assert.equal(err, null);
+        callback(result);
+    });
+}
+exports.addNextQuestionCandidate = function (question, callback) {
+    mongoClient.connect(url, function(err, db) {
+        assert.equal(err, null);
+        insertNextQuestionCandidate(db, question, function () {
+            db.close();
+            callback();
+        });
+    })
 }
