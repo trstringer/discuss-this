@@ -14,9 +14,10 @@ function queryCurrentQuestion(db, callback) {
         }
     });
 }
-
 exports.getCurrentQuestion = function (callback) {
     mongoClient.connect(url, function (err, db) {
+        assert.equal(err, null);
+        
         queryCurrentQuestion(db, function (topQuestion) {
             db.close();
             callback(topQuestion);
