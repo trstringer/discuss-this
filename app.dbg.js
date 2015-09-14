@@ -1,7 +1,7 @@
 var content = require('./data/content.js');
 
 console.log('about to retrieve top question...');
-var topQuestion = content.getTopQuestions(function (topQuestion) {
-    console.log('and the top question is... ' + topQuestion.text);
+content.getCurrentQuestion(function (currentQuestion) {
+    console.log('and the top question is... ' + currentQuestion.text);
 });
 console.log('done...');
