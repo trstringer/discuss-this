@@ -21,8 +21,5 @@ exports.getCurrentQuestion = function (callback) {
             db.close();
             callback(topQuestion);
         });
-        
-        // console.log('Finished retrieving top question...');
-        // console.log(topQuestion);
     });
 }
