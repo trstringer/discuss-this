@@ -8,6 +8,7 @@ content.getCurrentQuestion(function (currentQuestion) {
 });
 */
 
+/*
 var rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
@@ -32,3 +33,15 @@ rl.question("question text ", function (questionText) {
         })
     })
 })
+*/
+
+console.log('getting next question candidates...');
+content.getNextQuestionCandidates(function (questions) {
+    console.log('found ' + questions.length + ' question(s)...');
+    
+    var i;
+    for (i = 0; i < questions.length; i++) {
+        console.log('question #' + i + ' with ' + questions[i].upVotes + 'votes');
+        console.log(questions[i].text);        
+    }
+});

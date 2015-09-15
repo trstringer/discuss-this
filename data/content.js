@@ -6,6 +6,7 @@ var url = 'mongodb://localhost:27017/letsdiscuss';
 // ********************************************************
 //                  current question
 // ********************************************************
+
 function queryCurrentQuestion(db, callback) {
     var cursor = 
         db.collection('questions').find({"isCurrent": true});
@@ -28,9 +29,11 @@ exports.getCurrentQuestion = function (callback) {
     });
 }
 
+
 // ********************************************************
 //                  next question
 // ********************************************************
+
 function insertNextQuestionCandidate(db, question, callback) {
     db.collection('questions').insertOne(question, function (err, result) {
         assert.equal(err, null);
@@ -45,4 +48,37 @@ exports.addNextQuestionCandidate = function (question, callback) {
             callback();
         });
     })
+}
+
+function queryNextQuestionCandidates(db, callback) {
+    var cursor = db.collection('questions')
+        .find({
+            isNextPossibility: true
+        })
+        .sort({
+            upVotes: 1
+        });
+    
+    var questions = [];
+    var i = 0;
+    var docCount = cursor.count();
+    
+    cursor.each(function (err, doc) {
+        assert.equal(err, null);
+        questions[i] = doc;
+        i++;
+        
+        if (i === docCount) {
+            callback(questions);
+        }
+    });
+}
+exports.getNextQuestionCandidates = function (callback) {
+    mongoClient.connect(url, function (err, db) {
+        assert.equal(err, null);
+        queryNextQuestionCandidates(db, function (questions) {
+            db.close();
+            callback(questions);
+        })
+    });
 }
