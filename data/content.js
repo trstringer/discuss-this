@@ -56,20 +56,21 @@ function queryNextQuestionCandidates(db, callback) {
             isNextPossibility: true
         })
         .sort({
-            upVotes: 1
+            upVotes: -1
         });
     
     var questions = [];
     var i = 0;
-    var docCount = cursor.count();
     
     cursor.each(function (err, doc) {
         assert.equal(err, null);
-        questions[i] = doc;
-        i++;
         
-        if (i === docCount) {
+        if (doc === null) {
             callback(questions);
+        }
+        else {
+            questions[i] = doc;
+            i++;
         }
     });
 }
