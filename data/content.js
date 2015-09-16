@@ -113,3 +113,11 @@ exports.getTopNextQuestionCandidate = function (callback) {
         })
     });
 }
+
+function addVoteToQuestion(db, question, callback) {
+    db.collection('questions')
+        .update(
+            { _id: question._id },
+            { $inc: { upVotes: 1 }}
+        );
+}
