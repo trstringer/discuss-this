@@ -121,3 +121,11 @@ function addVoteToQuestion(db, question, callback) {
             { $inc: { upVotes: 1 }}
         );
 }
+exports.upVoteQuestion = function (question, callback) {
+    mongoClient.connect(url, function (err, db) {
+        assert.equal(err, null);
+        addVoteToQuestion(db, question, function () {
+            db.close();
+        });
+    })
+}
