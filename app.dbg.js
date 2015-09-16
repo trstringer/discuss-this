@@ -48,10 +48,35 @@ content.getNextQuestionCandidates(function (questions) {
 });
 */
 
+/*
 console.log('getting top next question candidate...');
 content.getTopNextQuestionCandidate(function (question) {
     if (question !== undefined) {
         console.log("next question votes :: " + question.upVotes);
         console.log("next question :: " + question.text);
     }
+});
+*/
+
+console.log('testing up votes...');
+content.getNextQuestionCandidates(function (questions) {
+    console.log("Found " + questions.length + " question(s)...");
+    if (questions.length === 0) {
+        throw "Expected to have more questions than 0...";
+    }
+    
+    var randomQuestionIndex = Math.floor(Math.random() * questions.length);
+    
+    console.log("Question selected:\n" + questions[randomQuestionIndex].text);
+    console.log("Question votes :: " + questions[randomQuestionIndex].upVotes);
+    
+    console.log("upvoting questions...");
+    
+    content.upVoteQuestion(questions[randomQuestionIndex], function () {
+        console.log("question upvoting complete...");
+        
+        content.getQuestionByObjectId(questions[randomQuestionIndex]._id, function (question) {
+            console.log("Question votes :: " + question.upVotes);
+        });
+    });
 });

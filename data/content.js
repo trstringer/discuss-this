@@ -4,12 +4,39 @@ var objectId = require('mongodb').ObjectID;
 var url = 'mongodb://localhost:27017/letsdiscuss';
 
 // ********************************************************
+//                  helpers
+// ********************************************************
+
+function queryQuestionByObjectId(db, objectId, callback) {
+    var cursor = 
+        db.collection('questions').find({ _id: objectId });
+        
+    cursor.next(function (err, doc) {
+        assert.equal(err, null);
+        
+        if (doc !== null) {
+            callback(doc);
+        }
+    });
+}
+exports.getQuestionByObjectId = function (objectId, callback) {
+    mongoClient.connect(url, function (err, db) {
+        assert.equal(err, null);
+        queryQuestionByObjectId(db, objectId, function (question) {
+            db.close();
+            callback(question);
+        });
+    });
+}
+
+
+// ********************************************************
 //                  current question
 // ********************************************************
 
 function queryCurrentQuestion(db, callback) {
     var cursor = 
-        db.collection('questions').find({"isCurrent": true});
+        db.collection('questions').find({isCurrent: true});
     
     cursor.each(function (err, doc) {
         assert.equal(err, null);
@@ -118,14 +145,19 @@ function addVoteToQuestion(db, question, callback) {
     db.collection('questions')
         .update(
             { _id: question._id },
-            { $inc: { upVotes: 1 }}
+            { $inc: { upVotes: 1 }},
+            function (err, results) {
+                assert.equal(err, null);
+                callback(results);
+            }
         );
 }
 exports.upVoteQuestion = function (question, callback) {
     mongoClient.connect(url, function (err, db) {
         assert.equal(err, null);
-        addVoteToQuestion(db, question, function () {
+        addVoteToQuestion(db, question, function (result) {
             db.close();
+            callback();
         });
     })
 }
