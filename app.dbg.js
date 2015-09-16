@@ -35,6 +35,7 @@ rl.question("question text ", function (questionText) {
 })
 */
 
+/*
 console.log('getting next question candidates...');
 content.getNextQuestionCandidates(function (questions) {
     console.log('found ' + questions.length + ' question(s)...');
@@ -43,5 +44,14 @@ content.getNextQuestionCandidates(function (questions) {
     for (i = 0; i < questions.length; i++) {
         console.log('question #' + i + ' with ' + questions[i].upVotes + 'votes');
         console.log(questions[i].text);        
+    }
+});
+*/
+
+console.log('getting top next question candidate...');
+content.getTopNextQuestionCandidate(function (question) {
+    if (question !== undefined) {
+        console.log("next question votes :: " + question.upVotes);
+        console.log("next question :: " + question.text);
     }
 });

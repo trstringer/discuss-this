@@ -83,3 +83,33 @@ exports.getNextQuestionCandidates = function (callback) {
         })
     });
 }
+
+function queryTopNextQuestionCandidate(db, callback) {
+    var cursor = db.collection('questions')
+        .find({
+            isNextPossibility: true
+        })
+        .sort({
+            upVotes: -1
+        })
+        .limit(1);
+        
+    cursor.each(function (err, doc) {
+        assert.equal(err, null);
+        
+        if (doc !== null) {
+            callback(doc);
+        }
+        else {
+            callback();
+        }
+    });
+}
+exports.getTopNextQuestionCandidate = function (callback) {
+    mongoClient.connect(url, function (err, db) {
+        queryTopNextQuestionCandidate(db, function (question) {
+            db.close();
+            callback(question);
+        })
+    });
+}
