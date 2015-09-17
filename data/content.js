@@ -141,7 +141,7 @@ exports.getTopNextQuestionCandidate = function (callback) {
     });
 }
 
-function addVoteToQuestion(db, question, callback) {
+function addUpVoteToQuestion(db, question, callback) {
     db.collection('questions')
         .update(
             { _id: question._id },
@@ -155,7 +155,7 @@ function addVoteToQuestion(db, question, callback) {
 exports.upVoteQuestion = function (question, callback) {
     mongoClient.connect(url, function (err, db) {
         assert.equal(err, null);
-        addVoteToQuestion(db, question, function (result) {
+        addUpVoteToQuestion(db, question, function (result) {
             db.close();
             callback();
         });
