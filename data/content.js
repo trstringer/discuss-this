@@ -56,6 +56,31 @@ exports.getCurrentQuestion = function (callback) {
     });
 }
 
+function archiveCurrentQuestion(db, callback) {
+    db.collection('questions')
+        .update(
+            { isCurrent: true },
+            { $set: { isCurrent: false }},
+            function (result) {
+                callback(result);
+            }
+        );
+}
+function setQuestionAsCurrent(db, question, callback) {
+    // first we need to archive the current question
+    //
+    archiveCurrentQuestion(db, function(result) {
+        db.collection('questions')
+            .update(
+                { _id: question._id },
+                { $set: { isCurrent: true }},
+                function (result) {
+                    callback(result);
+                }
+            );
+    });
+}
+
 
 // ********************************************************
 //                  next question
