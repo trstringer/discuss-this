@@ -161,3 +161,24 @@ exports.upVoteQuestion = function (question, callback) {
         });
     })
 }
+
+function addDownVoteToQuestion(db, question, callback) {
+    db.collection('questions')
+        .update(
+            { _id: question._id },
+            { $inc: { downVotes: 1 }},
+            function (err, results) {
+                assert.equal(err, null);
+                callback(results);
+            }
+        );
+}
+exports.downVoteQuestion = function (question, callback) {
+    mongoClient.connect(url, function (err, db) {
+        assert.equal(err, null);
+        addDownVoteToQuestion(db, question, function (result) {
+            db.close();
+            callback();
+        });
+    })
+}

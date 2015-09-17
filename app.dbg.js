@@ -58,6 +58,7 @@ content.getTopNextQuestionCandidate(function (question) {
 });
 */
 
+/*
 console.log('testing up votes...');
 content.getNextQuestionCandidates(function (questions) {
     console.log("Found " + questions.length + " question(s)...");
@@ -77,6 +78,30 @@ content.getNextQuestionCandidates(function (questions) {
         
         content.getQuestionByObjectId(questions[randomQuestionIndex]._id, function (question) {
             console.log("Question votes :: " + question.upVotes);
+        });
+    });
+});
+*/
+
+console.log('testing down votes...');
+content.getNextQuestionCandidates(function (questions) {
+    console.log("Found " + questions.length + " question(s)...");
+    if (questions.length === 0) {
+        throw "Expected to have more questions than 0...";
+    }
+    
+    var randomQuestionIndex = Math.floor(Math.random() * questions.length);
+    
+    console.log("Question selected:\n" + questions[randomQuestionIndex].text);
+    console.log("Question votes :: " + questions[randomQuestionIndex].downVotes);
+    
+    console.log("downvoting questions...");
+    
+    content.downVoteQuestion(questions[randomQuestionIndex], function () {
+        console.log("question downvoting complete...");
+        
+        content.getQuestionByObjectId(questions[randomQuestionIndex]._id, function (question) {
+            console.log("Question votes :: " + question.downVotes);
         });
     });
 });
