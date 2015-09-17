@@ -83,6 +83,7 @@ content.getNextQuestionCandidates(function (questions) {
 });
 */
 
+/*
 console.log('testing down votes...');
 content.getNextQuestionCandidates(function (questions) {
     console.log("Found " + questions.length + " question(s)...");
@@ -103,5 +104,15 @@ content.getNextQuestionCandidates(function (questions) {
         content.getQuestionByObjectId(questions[randomQuestionIndex]._id, function (question) {
             console.log("Question votes :: " + question.downVotes);
         });
+    });
+});
+*/
+
+console.log('testing setting next question...');
+content.getCurrentQuestion(function (question) {
+    console.log('current question :: ' + question.text);
+    content.setCurrentQuestion(undefined, function (question) {
+        console.log('new current question :: ' + question.text);
+        console.log('new current question votes :: ' + question.upVotes);
     });
 });

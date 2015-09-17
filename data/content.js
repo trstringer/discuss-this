@@ -70,14 +70,44 @@ function setQuestionAsCurrent(db, question, callback) {
     // first we need to archive the current question
     //
     archiveCurrentQuestion(db, function(result) {
-        db.collection('questions')
-            .update(
-                { _id: question._id },
-                { $set: { isCurrent: true }},
-                function (result) {
-                    callback(result);
-                }
-            );
+        if (question !== undefined) {
+            db.collection('questions')
+                .update(
+                    { _id: question._id },
+                    { $set: { isCurrent: true, isNextPossibility: false }},
+                    function (result) {
+                        //callback(result);
+                        exports.getCurrentQuestion(function (question) {
+                            callback(question);
+                        });
+                    }
+                );
+        }
+        else {
+            exports.getTopNextQuestionCandidate(function (question) {
+                db.collection('questions')
+                    .update(
+                        { _id: question._id },
+                        { $set: { isCurrent: true, isNextPossibility: false }},
+                        function (result) {
+                            //callback(result);
+                            exports.getCurrentQuestion(function (question) {
+                                callback(question);
+                            });
+                        }
+                    );
+            });
+        }
+    });
+}
+exports.setCurrentQuestion = function (question, callback) {
+    mongoClient.connect(url, function (err, db) {
+        assert.equal(err, null);
+        
+        setQuestionAsCurrent(db, question, function (currentQuestion) {
+            db.close();
+            callback(currentQuestion);
+        });
     });
 }
 
@@ -151,9 +181,6 @@ function queryTopNextQuestionCandidate(db, callback) {
         
         if (doc !== null) {
             callback(doc);
-        }
-        else {
-            callback();
         }
     });
 }
