@@ -56,6 +56,16 @@ exports.getCurrentQuestion = function (callback) {
     });
 }
 
+function archiveUnselectedNextQuestionCandidates(db, callback) {
+    db.collection('questions')
+        .update(
+            { isCurrent: false, isNextPossibility: true },
+            { $set: { isNextPossibility: false }},
+            function (result) {
+                callback(result);
+            }
+        );
+}
 function archiveCurrentQuestion(db, callback) {
     db.collection('questions')
         .update(
