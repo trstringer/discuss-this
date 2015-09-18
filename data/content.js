@@ -77,24 +77,12 @@ function archiveCurrentQuestion(db, callback) {
         );
 }
 function setQuestionAsCurrent(db, question, callback) {
-    // first we need to archive the current question
+    // first we need to set all other candidate questions 
+    // as no longer a possibility for the next question
     //
-    archiveCurrentQuestion(db, function(result) {
-        if (question !== undefined) {
-            db.collection('questions')
-                .update(
-                    { _id: question._id },
-                    { $set: { isCurrent: true, isNextPossibility: false }},
-                    function (result) {
-                        //callback(result);
-                        exports.getCurrentQuestion(function (question) {
-                            callback(question);
-                        });
-                    }
-                );
-        }
-        else {
-            exports.getTopNextQuestionCandidate(function (question) {
+    archiveUnselectedNextQuestionCandidates(db, function (result) {
+        archiveCurrentQuestion(db, function(result) {
+            if (question !== undefined) {
                 db.collection('questions')
                     .update(
                         { _id: question._id },
@@ -106,8 +94,23 @@ function setQuestionAsCurrent(db, question, callback) {
                             });
                         }
                     );
-            });
-        }
+            }
+            else {
+                exports.getTopNextQuestionCandidate(function (question) {
+                    db.collection('questions')
+                        .update(
+                            { _id: question._id },
+                            { $set: { isCurrent: true, isNextPossibility: false }},
+                            function (result) {
+                                //callback(result);
+                                exports.getCurrentQuestion(function (question) {
+                                    callback(question);
+                                });
+                            }
+                        );
+                });
+            }
+        });
     });
 }
 exports.setCurrentQuestion = function (question, callback) {
