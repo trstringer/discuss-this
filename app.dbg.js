@@ -108,11 +108,20 @@ content.getNextQuestionCandidates(function (questions) {
 });
 */
 
+/*
 console.log('testing setting next question...');
 content.getCurrentQuestion(function (question) {
     console.log('current question :: ' + question.text);
     content.setCurrentQuestion(undefined, function (question) {
         console.log('new current question :: ' + question.text);
         console.log('new current question votes :: ' + question.upVotes);
+    });
+});
+*/
+
+console.log('testing adding an answer...');
+content.getCurrentQuestion(function (question) {
+    content.addAnswer(question, {text: "yes I agree"}, function () {
+        console.log("completed adding answer");
     });
 });

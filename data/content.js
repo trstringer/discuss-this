@@ -247,3 +247,27 @@ exports.downVoteQuestion = function (question, callback) {
         });
     })
 }
+
+
+// ********************************************************
+//                  answers
+// ********************************************************
+
+function insertAnswer(db, question, answer, callback) {
+    db.collection('questions')
+        .update(
+            { _id: question._id},
+            { $push: { answers: answer }},
+            function (result) {
+                callback(result);
+            }
+        );
+}
+exports.addAnswer = function (question, answer, callback) {
+    mongoClient.connect(url, function (err, db) {
+        assert.equal(err, null);
+        insertAnswer(db, question, answer, function (result) {
+            callback(result);
+        });
+    });
+}
