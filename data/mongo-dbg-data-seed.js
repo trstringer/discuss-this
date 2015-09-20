@@ -36,6 +36,20 @@ var documents = [
         "downVotes" : 24,
         "isCurrent" : false,
         "isNextPossibility" : true
+    },
+    {
+        "text" : "what is the best city to live in?",
+        "upVotes" : 1523,
+        "downVotes" : 62,
+        "isCurrent" : false,
+        "isNextPossibility" : false
+    },
+    {
+        "text" : "who sells the best cheeseburger?",
+        "upVotes" : 12629,
+        "downVotes" : 4,
+        "isCurrent" : false,
+        "isNextPossibility" : false
     }
 ];
 db.questions.insert(documents);
