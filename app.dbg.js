@@ -121,7 +121,8 @@ content.getCurrentQuestion(function (question) {
 
 console.log('testing adding an answer...');
 content.getCurrentQuestion(function (question) {
-    content.addAnswer(question, {text: "yes I agree"}, function () {
+    content.addAnswer(question, {text: "yes I agree", upVotes: 0, downVotes: 0}, function (question) {
         console.log("completed adding answer");
+        console.log("the current question is :: " + question.text);
     });
 });

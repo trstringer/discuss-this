@@ -267,7 +267,9 @@ exports.addAnswer = function (question, answer, callback) {
     mongoClient.connect(url, function (err, db) {
         assert.equal(err, null);
         insertAnswer(db, question, answer, function (result) {
-            callback(result);
+            exports.getCurrentQuestion(function (question) {
+                callback(question);
+            });
         });
     });
 }
