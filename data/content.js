@@ -1,6 +1,6 @@
 var mongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
-var objectId = require('mongodb').ObjectID;
+var ObjectId = require('mongodb').ObjectID;
 var url = 'mongodb://localhost:27017/letsdiscuss';
 
 // ********************************************************
@@ -270,7 +270,7 @@ function insertAnswer(db, question, answer, callback) {
     // inject an ObjectId() if it doesn't already exist
     //
     if (answer._id === undefined)
-        answer._id = new objectId();
+        answer._id = new ObjectId();
     
     db.collection('questions')
         .update(
