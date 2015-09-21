@@ -24,11 +24,13 @@ var documents = [
         "isNextPossibility" : false,
         "answers": [
             {
+                "_id": ObjectId(),
                 "text": "definitely orange-ish",
                 "upVotes": 53,
                 "downVotes": 2
             },
             {
+                "_id": ObjectId(),
                 "text": "I think more like yellow orange",
                 "upVotes": 2587,
                 "downVotes": 253
@@ -57,16 +59,19 @@ var documents = [
         "isNextPossibility" : false,
         "answers": [
             {
+                "_id": ObjectId(),
                 "text": "definitely New York City.",
                 "upVotes": 2612,
                 "downVotes": 253
             },
             {
+                "_id": ObjectId(),
                 "text": "I would say San Francisco",
                 "upVotes": 523,
                 "downVotes": 426
             },
             {
+                "_id": ObjectId(),
                 "text": "Miami, most definitely no question about it.",
                 "upVotes": 1624,
                 "downVotes": 755
@@ -81,11 +86,13 @@ var documents = [
         "isNextPossibility" : false,
         "answers": [
             {
+                "_id": ObjectId(),
                 "text": "Tommy's burger.",
                 "upVotes": 75,
                 "downVotes": 26
             },
             {
+                "_id": ObjectId(),
                 "text": "Big burger.",
                 "upVotes": 462,
                 "downVotes": 95
