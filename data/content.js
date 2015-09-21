@@ -254,6 +254,11 @@ exports.downVoteQuestion = function (question, callback) {
 // ********************************************************
 
 function insertAnswer(db, question, answer, callback) {
+    // inject an ObjectId() if it doesn't already exist
+    //
+    if (answer._id === undefined)
+        answer._id = new objectId();
+    
     db.collection('questions')
         .update(
             { _id: question._id},
