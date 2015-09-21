@@ -14,8 +14,7 @@ var documents = [
         "upVotes" : 153,
         "downVotes" : 16,
         "isCurrent" : false,
-        "isNextPossibility" : true,
-        "answers": []
+        "isNextPossibility" : true
     },
     {
         "text" : "what color is a lion?",
@@ -41,16 +40,14 @@ var documents = [
         "upVotes" : 167,
         "downVotes" : 236,
         "isCurrent" : false,
-        "isNextPossibility" : true,
-        "answers": []
+        "isNextPossibility" : true
     },
     {
         "text" : "how many gallons of water does the ocean have?",
         "upVotes" : 53,
         "downVotes" : 24,
         "isCurrent" : false,
-        "isNextPossibility" : true,
-        "answers": []
+        "isNextPossibility" : true
     },
     {
         "text" : "what is the best city to live in?",
