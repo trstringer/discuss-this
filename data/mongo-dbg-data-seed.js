@@ -23,7 +23,18 @@ var documents = [
         "downVotes" : 4,
         "isCurrent" : true,
         "isNextPossibility" : false,
-        "answers": []
+        "answers": [
+            {
+                "text": "definitely orange-ish",
+                "upVotes": 53,
+                "downVotes": 2
+            },
+            {
+                "text": "I think more like yellow orange",
+                "upVotes": 2587,
+                "downVotes": 253
+            }
+        ]
     },
     {
         "text" : "do you think we'll have flying cars in 20 years?",
@@ -47,7 +58,23 @@ var documents = [
         "downVotes" : 62,
         "isCurrent" : false,
         "isNextPossibility" : false,
-        "answers": []
+        "answers": [
+            {
+                "text": "definitely New York City.",
+                "upVotes": 2612,
+                "downVotes": 253
+            },
+            {
+                "text": "I would say San Francisco",
+                "upVotes": 523,
+                "downVotes": 426
+            },
+            {
+                "text": "Miami, most definitely no question about it.",
+                "upVotes": 1624,
+                "downVotes": 755
+            }
+        ]
     },
     {
         "text" : "who sells the best cheeseburger?",
@@ -55,7 +82,18 @@ var documents = [
         "downVotes" : 4,
         "isCurrent" : false,
         "isNextPossibility" : false,
-        "answers": []
+        "answers": [
+            {
+                "text": "Tommy's burger.",
+                "upVotes": 75,
+                "downVotes": 26
+            },
+            {
+                "text": "Big burger.",
+                "upVotes": 462,
+                "downVotes": 95
+            }
+        ]
     }
 ];
 db.questions.insert(documents);
