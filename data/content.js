@@ -253,6 +253,19 @@ exports.downVoteQuestion = function (question, callback) {
 //                  answers
 // ********************************************************
 
+function queryAnswer(db, answerObjectId, callback) {
+    var cursor = db.collections('questions')
+        .find( {'answers_id': answerObjectId} );
+        
+    cursor.next(function (err, doc) {
+        assert.equal(err, null);
+        
+        if (doc !== null && doc.answers.length >= 1) {
+            callback(doc.answers[0]);
+        }
+    });
+}
+
 function insertAnswer(db, question, answer, callback) {
     // inject an ObjectId() if it doesn't already exist
     //
@@ -272,8 +285,32 @@ exports.addAnswer = function (question, answer, callback) {
     mongoClient.connect(url, function (err, db) {
         assert.equal(err, null);
         insertAnswer(db, question, answer, function (result) {
+            db.close();
             exports.getCurrentQuestion(function (question) {
                 callback(question);
+            });
+        });
+    });
+}
+
+function addUpVoteToAnswer(db, answer, callback) {
+    db.collection('questions')
+        .update(
+            { 'answers._id': answer._id },
+            { $inc: { 'answers.$.upVotes': 1 }},
+            function (result) {
+                callback(result);
+            }
+        );
+}
+exports.upVoteAnswer = function (answer, callback) {
+    mongoClient.connect(url, function (err, db) {
+        assert.equal(err, null);
+        
+        addUpVoteToAnswer(db, answer, function (result) {
+            queryAnswer(db, answer._id, function (answer) {
+                db.close();
+                callback (answer);
             });
         });
     });
