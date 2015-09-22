@@ -318,3 +318,26 @@ exports.upVoteAnswer = function (answer, callback) {
         });
     });
 }
+
+function addDownVoteToAnswer(db, answer, callback) {
+    db.collection('questions')
+        .update(
+            { 'answers._id': answer._id },
+            { $inc: { 'answers.$.downVotes': 1 }},
+            function (result) {
+                callback(result);
+            }
+        );
+}
+exports.downVoteAnswer = function (answer, callback) {
+    mongoClient.connect(url, function (err, db) {
+        assert.equal(err, null);
+        
+        addDownVoteToAnswer(db, answer, function (result) {
+            queryAnswer(db, answer._id, function (answer) {
+                db.close();
+                callback (answer);
+            });
+        });
+    });
+}

@@ -129,6 +129,7 @@ content.getCurrentQuestion(function (question) {
 });
 */
 
+/*
 console.log('testing upvoting an answer...');
 content.getCurrentQuestion(function (question) {
     var answerCount = question.answers.length;
@@ -140,6 +141,22 @@ content.getCurrentQuestion(function (question) {
         
         content.upVoteAnswer(answer, function (answer) {
             console.log('updated up votes count :: ' + answer.upVotes);
+        });
+    }
+});
+*/
+
+console.log('testing downvoting an answer...');
+content.getCurrentQuestion(function (question) {
+    var answerCount = question.answers.length;
+    console.log('current question answer count :: ' + answerCount);
+    if (answerCount > 0) {
+        var answer = question.answers[0];
+        console.log('answer :: ' + answer.text);
+        console.log('current down votes :: ' + answer.downVotes);
+        
+        content.downVoteAnswer(answer, function (answer) {
+            console.log('updated down votes count :: ' + answer.downVotes);
         });
     }
 });
