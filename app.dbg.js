@@ -119,10 +119,27 @@ content.getCurrentQuestion(function (question) {
 });
 */
 
+/*
 console.log('testing adding an answer...');
 content.getCurrentQuestion(function (question) {
     content.addAnswer(question, {text: "yes I agree", upVotes: 0, downVotes: 0}, function (question) {
         console.log("completed adding answer");
         console.log("the current question is :: " + question.text);
     });
+});
+*/
+
+console.log('testing upvoting an answer...');
+content.getCurrentQuestion(function (question) {
+    var answerCount = question.answers.length;
+    console.log('current question answer count :: ' + answerCount);
+    if (answerCount > 0) {
+        var answer = question.answers[0];
+        console.log('answer :: ' + answer.text);
+        console.log('current up votes :: ' + answer.upVotes);
+        
+        content.upVoteAnswer(answer, function (answer) {
+            console.log('updated up votes count :: ' + answer.upVotes);
+        });
+    }
 });

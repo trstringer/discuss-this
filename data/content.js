@@ -254,8 +254,11 @@ exports.downVoteQuestion = function (question, callback) {
 // ********************************************************
 
 function queryAnswer(db, answerObjectId, callback) {
-    var cursor = db.collections('questions')
-        .find( {'answers_id': answerObjectId} );
+    var cursor = db.collection('questions')
+        .find( 
+            { 'answers._id': answerObjectId },
+            { _id: 0, 'answers.$': 1 } 
+        );
         
     cursor.next(function (err, doc) {
         assert.equal(err, null);
