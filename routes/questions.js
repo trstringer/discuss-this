@@ -4,9 +4,7 @@ var router = express.Router();
 
 router.get('/', function (req, res, next) {
     content.getCurrentQuestion(function (currentQuestion) {
-        res.status(200).json({
-            message: currentQuestion.text
-        });
+        res.status(200).json(currentQuestion);
     });
 });
 
