@@ -179,6 +179,24 @@ exports.getNextQuestionCandidates = function (callback) {
     });
 }
 
+/*
+db.questions.aggregate([{$match: {isNextPossibility: true}}, {$project: {document: "$$ROOT", 'totalVotes': {$add: ["$upVotes", "$downVotes"]}}}, {$sort: {totalVotes: -1}}])
+*/
+function queryNextQuestionCandidateWithMostTotalVotes(db, callback) {
+    var cursor = db.collection('questions')
+        .aggregate(
+            [
+                {$match: {isNextPossibility: true}}, 
+                {$project: 
+                    {
+                        document: "$$ROOT", 
+                        'totalVotes': {$add: ["$upVotes", "$downVotes"]}
+                    }
+                }, 
+                {$sort: {totalVotes: -1}}
+            ]);
+}
+
 // get the next question candidate with the highest count 
 // of down votes. I see this as being useful when presenting 
 // users with a really bad next question
