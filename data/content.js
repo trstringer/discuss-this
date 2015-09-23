@@ -179,9 +179,13 @@ exports.getNextQuestionCandidates = function (callback) {
     });
 }
 
-/*
-db.questions.aggregate([{$match: {isNextPossibility: true}}, {$project: {document: "$$ROOT", 'totalVotes': {$add: ["$upVotes", "$downVotes"]}}}, {$sort: {totalVotes: -1}}])
-*/
+// this function gets the next question candidate with the most 
+// total votes, calculated as (upVotes + downVotes). this can be 
+// significant as the most "active" question, good or bad
+//
+// at the moment, this shouldn't necessarily be the next question 
+// that is asked, but could possibly be
+//
 function queryNextQuestionCandidateWithMostTotalVotes(db, callback) {
     var cursor = db.collection('questions')
         .aggregate(
