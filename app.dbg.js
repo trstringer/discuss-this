@@ -163,8 +163,16 @@ content.getCurrentQuestion(function (question) {
 });
 */
 
+/*
 console.log('testing next question with most total votes...');
 content.getNextQuestionCandidateWithMostTotalVotes(function (question) {
     console.log('question text :: ' + question.text);
     console.log('total votes count :: ' + (question.upVotes + question.downVotes));
+});
+*/
+
+console.log('testing next question with most down votes...');
+content.getNextQuestionCandidateWithMostDownVotes(function (question) {
+    console.log('question text :: ' + question.text);
+    console.log('down vote count :: ' + question.downVotes);
 });

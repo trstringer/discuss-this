@@ -233,6 +233,16 @@ function queryNextQuestionCandidateWithMostDownVotes(db, callback) {
         }
     });
 }
+exports.getNextQuestionCandidateWithMostDownVotes = function (callback) {
+    mongoClient.connect(url, function (err, db) {
+        assert.equal(err, null);
+        
+        queryNextQuestionCandidateWithMostDownVotes(db, function (question) {
+            db.close();
+            callback(question);
+        });
+    });
+}
 
 // this logic assumes that the next question should be 
 // the question with the highest amount of up votes.
