@@ -189,8 +189,8 @@ function queryNextQuestionCandidateWithMostTotalVotes(db, callback) {
                 {$match: {isNextPossibility: true}}, 
                 {$project: 
                     {
-                        document: "$$ROOT", 
-                        'totalVotes': {$add: ["$upVotes", "$downVotes"]}
+                        document: '$$ROOT', 
+                        totalVotes: {$add: ['$upVotes', '$downVotes']}
                     }
                 }, 
                 {$sort: {totalVotes: -1}}
