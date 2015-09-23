@@ -179,6 +179,30 @@ exports.getNextQuestionCandidates = function (callback) {
     });
 }
 
+// get the next question candidate with the highest count 
+// of down votes. I see this as being useful when presenting 
+// users with a really bad next question
+//
+function queryNextQuestionCandidateWithMostDownVotes(db, callback) {
+    var cursor = db.collection('questions')
+        .find({ isNextPossibility: true })
+        .sort({ downVotes: -1 })
+        .limit(1);
+        
+    cursor.each(function (err, doc) {
+        assert.equal(err, null);
+        
+        if (doc !== null) {
+            callback(doc);
+        }
+    });
+}
+
+// this logic assumes that the next question should be 
+// the question with the highest amount of up votes.
+// at the moment this is the safest assumption but is 
+// definitely subject to change
+//
 function queryTopNextQuestionCandidate(db, callback) {
     var cursor = db.collection('questions')
         .find({
