@@ -146,6 +146,7 @@ content.getCurrentQuestion(function (question) {
 });
 */
 
+/*
 console.log('testing downvoting an answer...');
 content.getCurrentQuestion(function (question) {
     var answerCount = question.answers.length;
@@ -159,4 +160,11 @@ content.getCurrentQuestion(function (question) {
             console.log('updated down votes count :: ' + answer.downVotes);
         });
     }
+});
+*/
+
+console.log('testing next question with most total votes...');
+content.getNextQuestionCandidateWithMostTotalVotes(function (question) {
+    console.log('question text :: ' + question.text);
+    console.log('total votes count :: ' + (question.upVotes + question.downVotes));
 });

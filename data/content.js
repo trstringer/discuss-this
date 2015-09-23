@@ -204,6 +204,16 @@ function queryNextQuestionCandidateWithMostTotalVotes(db, callback) {
         }
     });
 }
+exports.getNextQuestionCandidateWithMostTotalVotes = function (callback) {
+    mongoClient.connect(url, function (err, db) {
+        assert.equal(err, null);
+        
+        queryNextQuestionCandidateWithMostTotalVotes(db, function (question) {
+            db.close();
+            callback(question);
+        });
+    });
+}
 
 // get the next question candidate with the highest count 
 // of down votes. I see this as being useful when presenting 
