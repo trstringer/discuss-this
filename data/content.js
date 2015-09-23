@@ -195,6 +195,14 @@ function queryNextQuestionCandidateWithMostTotalVotes(db, callback) {
                 }, 
                 {$sort: {totalVotes: -1}}
             ]);
+            
+    cursor.each(function (err, doc) {
+        assert.equal(err, null);
+        
+        if (doc !== null) {
+            callback(doc.document);
+        }
+    });
 }
 
 // get the next question candidate with the highest count 
