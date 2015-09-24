@@ -14,7 +14,7 @@ router.get('/next/', function (req, res, next) {
     });
 });
 router.post('/next/', function (req, res, next) {
-    var inputQuestionText = req.body.text;
+    var inputQuestionText = req.body.questionText;
     if (inputQuestionText === undefined) {
         res.status(400).send('Error when reading POST body data');
     }
