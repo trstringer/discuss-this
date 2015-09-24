@@ -8,4 +8,10 @@ router.get('/', function (req, res, next) {
     });
 });
 
+router.get('/next/', function (req, res, next) {
+    content.getTopNextQuestionCandidate(function (question) {
+        res.status(200).json(question);
+    });
+});
+
 module.exports = router;
