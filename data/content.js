@@ -145,14 +145,15 @@ exports.addNextQuestionCandidate = function (question, callback) {
     })
 }
 
-function queryNextQuestionCandidates(db, callback) {
+function queryNextQuestionCandidates(db, count, callback) {
     var cursor = db.collection('questions')
         .find({
             isNextPossibility: true
         })
         .sort({
             upVotes: -1
-        });
+        })
+        .limit(count);
     
     var questions = [];
     var i = 0;
@@ -169,10 +170,10 @@ function queryNextQuestionCandidates(db, callback) {
         }
     });
 }
-exports.getNextQuestionCandidates = function (callback) {
+exports.getNextQuestionCandidates = function (count, callback) {
     mongoClient.connect(url, function (err, db) {
         assert.equal(err, null);
-        queryNextQuestionCandidates(db, function (questions) {
+        queryNextQuestionCandidates(db, count, function (questions) {
             db.close();
             callback(questions);
         })
