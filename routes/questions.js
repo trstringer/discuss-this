@@ -13,6 +13,16 @@ router.get('/next/', function (req, res, next) {
         res.status(200).json(question);
     });
 });
+router.post('/next/', function (req, res, next) {
+    var inputQuestionText = req.body.text;
+    if (inputQuestionText === undefined) {
+        res.status(400).send('Error when reading POST body data');
+    }
+    
+    content.addNextQuestionCandidate(inputQuestionText, function () {
+        res.status(200).send('Question added succesfully!');
+    });
+});
 
 router.get('/next/unpopular/', function (req, res, next) {
     content.getNextQuestionCandidateWithMostDownVotes(function (question) {
