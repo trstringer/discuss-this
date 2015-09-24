@@ -19,8 +19,8 @@ router.post('/next/', function (req, res, next) {
         res.status(400).send('Error when reading POST body data');
     }
     
-    content.addNextQuestionCandidate(inputQuestionText, function () {
-        res.status(200).send('Question added succesfully!');
+    content.addNextQuestionCandidate(inputQuestionText, function (addedQuestion) {
+        res.status(200).json(addedQuestion);
     });
 });
 

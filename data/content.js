@@ -149,7 +149,14 @@ exports.addNextQuestionCandidate = function (question, callback) {
         assert.equal(err, null);
         insertNextQuestionCandidate(db, question, function (result) {
             db.close();
-            callback();
+            if (result.insertedCount >= 1) {
+                exports.getQuestionByObjectId(result.insertedId, function (question) {
+                    callback(question);
+                });
+            }
+            else {
+                callback(null);
+            }
         });
     })
 }
