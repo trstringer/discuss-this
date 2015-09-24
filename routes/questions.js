@@ -20,4 +20,15 @@ router.get('/next/unpopular/', function (req, res, next) {
     });
 });
 
+router.get('/next/:count', function (req, res, next) {
+    var count = parseInt(req.params.count, 10);
+    if (isNaN(count)) {
+        res.status(400).send('Input parameter is not a number');
+    }
+    
+    content.getNextQuestionCandidates(count, function (questions) {
+        res.status(200).json(questions);
+    });
+});
+
 module.exports = router;
