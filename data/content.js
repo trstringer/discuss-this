@@ -129,16 +129,25 @@ exports.setCurrentQuestion = function (question, callback) {
 //                  next question
 // ********************************************************
 
-function insertNextQuestionCandidate(db, question, callback) {
-    db.collection('questions').insertOne(question, function (err, result) {
-        assert.equal(err, null);
-        callback(result);
-    });
+function insertNextQuestionCandidate(db, questionText, callback) {
+    db.collection('questions')
+        .insertOne(
+            {
+                text: questionText,
+                upVotes: 0,
+                downVotes: 0,
+                isCurrent: false,
+                isNextPossibility: true
+            }, 
+            function (err, result) {
+                assert.equal(err, null);
+                callback(result);
+        });
 }
 exports.addNextQuestionCandidate = function (question, callback) {
     mongoClient.connect(url, function(err, db) {
         assert.equal(err, null);
-        insertNextQuestionCandidate(db, question, function () {
+        insertNextQuestionCandidate(db, question, function (result) {
             db.close();
             callback();
         });
