@@ -420,6 +420,10 @@ exports.upVoteAnswer = function (answerId, callback) {
         assert.equal(err, null);
         
         queryAnswer(db, answerObjectId, function (answer) {
+            if (answer === undefined || answer === null) {
+                callback (null);
+                return;
+            }
             addUpVoteToAnswer(db, answer, function (result) {
                 queryAnswer(db, answerObjectId, function (answer) {
                     db.close();
@@ -456,6 +460,10 @@ exports.downVoteAnswer = function (answerId, callback) {
         assert.equal(err, null);
         
         queryAnswer(db, answerObjectId, function (answer) {
+            if (answer === undefined || answer === null) {
+                callback (null);
+                return;
+            }
             addDownVoteToAnswer(db, answer, function (result) {
                 queryAnswer(db, answerObjectId, function (answer) {
                     db.close();

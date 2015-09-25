@@ -63,7 +63,15 @@ router.post('/answers/upvote/:answerId', function(req, res, next) {
     }
     else {
         content.upVoteAnswer(answerId, function (answer) {
-            res.status(200).json(answer);
+            // test for a null answer, which should mean that 
+            // the answer doesn't exist given the objectid
+            //
+            if (answer === null) {
+                res.status(400).json('answer not found');
+            }
+            else {
+                res.status(200).json(answer);
+            }
         });
     }
 });
@@ -75,7 +83,15 @@ router.post('/answers/downvote/:answerId', function(req, res, next) {
     }
     else {
         content.downVoteAnswer(answerId, function (answer) {
-            res.status(200).json(answer);
+            // test for a null answer, which should mean that 
+            // the answer doesn't exist given the objectid
+            //
+            if (answer === null) {
+                res.status(400).json('answer not found');
+            }
+            else {
+                res.status(200).json(answer);
+            }
         });
     }
 });
