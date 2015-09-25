@@ -308,12 +308,34 @@ function addUpVoteToQuestion(db, question, callback) {
             }
         );
 }
-exports.upVoteQuestion = function (question, callback) {
+exports.upVoteQuestion = function (questionId, callback) {
+    try {
+        var questionObjectId = new ObjectId.createFromHexString(questionId);
+    }
+    catch (err) {
+        // need to figure out a logging mechanism but for now let's just 
+        // return a null answer
+        //
+        callback(null);
+        return;
+    }
+    
     mongoClient.connect(url, function (err, db) {
         assert.equal(err, null);
-        addUpVoteToQuestion(db, question, function (result) {
-            db.close();
-            callback();
+        
+        queryQuestionByObjectId(questionObjectId, function (question) {
+            if (question === undefined || question === null) {
+                db.close();
+                callback(null);
+            }
+            else {
+                addUpVoteToQuestion(db, question, function (result) {
+                    queryQuestionByObjectId(db, questionObjectId, function (question) {
+                        db.close();
+                        callback(question);
+                    });
+                });
+            }
         });
     })
 }
@@ -329,12 +351,34 @@ function addDownVoteToQuestion(db, question, callback) {
             }
         );
 }
-exports.downVoteQuestion = function (question, callback) {
+exports.downVoteQuestion = function (questionId, callback) {
+    try {
+        var questionObjectId = new ObjectId.createFromHexString(questionId);
+    }
+    catch (err) {
+        // need to figure out a logging mechanism but for now let's just 
+        // return a null answer
+        //
+        callback(null);
+        return;
+    }
+    
     mongoClient.connect(url, function (err, db) {
         assert.equal(err, null);
-        addDownVoteToQuestion(db, question, function (result) {
-            db.close();
-            callback();
+        
+        queryQuestionByObjectId(questionObjectId, function (question) {
+            if (question === undefined || question === null) {
+                db.close();
+                callback(null);
+            }
+            else {
+                addDownVoteToQuestion(db, question, function (result) {
+                    queryQuestionByObjectId(db, questionObjectId, function (question) {
+                        db.close();
+                        callback(question);
+                    });
+                });
+            }
         });
     })
 }
@@ -421,6 +465,7 @@ exports.upVoteAnswer = function (answerId, callback) {
         
         queryAnswer(db, answerObjectId, function (answer) {
             if (answer === undefined || answer === null) {
+                db.close();
                 callback (null);
                 return;
             }
@@ -461,6 +506,7 @@ exports.downVoteAnswer = function (answerId, callback) {
         
         queryAnswer(db, answerObjectId, function (answer) {
             if (answer === undefined || answer === null) {
+                db.close();
                 callback (null);
                 return;
             }
