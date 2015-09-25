@@ -18,10 +18,11 @@ router.post('/next/', function (req, res, next) {
     if (inputQuestionText === undefined) {
         res.status(400).send('Error when reading POST body data');
     }
-    
-    content.addNextQuestionCandidate(inputQuestionText, function (addedQuestion) {
-        res.status(200).json(addedQuestion);
-    });
+    else {
+        content.addNextQuestionCandidate(inputQuestionText, function (addedQuestion) {
+            res.status(200).json(addedQuestion);
+        });
+    }
 });
 
 router.get('/next/unpopular/', function (req, res, next) {
@@ -39,6 +40,20 @@ router.get('/next/:count', function (req, res, next) {
     content.getNextQuestionCandidates(count, function (questions) {
         res.status(200).json(questions);
     });
+});
+
+router.post('/answers/', function (req, res, next) {
+    var answerText = req.body.answerText;
+    if (answerText === undefined) {
+        res.status(400).send('answer text in bad format');
+    }
+    else {
+        content.getCurrentQuestion(function (question) {
+            content.addAnswer(question, answerText, function (question) {
+                res.status(200).json(question);
+            });
+        });
+    }
 });
 
 module.exports = router;
