@@ -56,4 +56,16 @@ router.post('/answers/', function (req, res, next) {
     }
 });
 
+router.post('/answers/upvote/:answerId', function(req, res, next) {
+    var answerId = req.params.answerId;
+    if (typeof answerId === 'undefined' || answerId === null || answerId === "") {
+        res.status(400).send('incorrect format for answerId');
+    }
+    else {
+        content.upVoteAnswer(answerId, function (answer) {
+            res.status(200).json(answer);
+        });
+    }
+});
+
 module.exports = router;

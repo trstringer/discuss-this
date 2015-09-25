@@ -404,17 +404,25 @@ function addUpVoteToAnswer(db, answer, callback) {
             }
         );
 }
-exports.upVoteAnswer = function (answer, callback) {
-    mongoClient.connect(url, function (err, db) {
-        assert.equal(err, null);
-        
-        addUpVoteToAnswer(db, answer, function (result) {
-            queryAnswer(db, answer._id, function (answer) {
-                db.close();
-                callback (answer);
+exports.upVoteAnswer = function (answerId, callback) {
+    var answerObjectId = new ObjectId.createFromHexString(answerId);
+    if (answerObjectId === undefined || answerObjectId === null) {
+        callback(null);
+    }
+    else {
+        mongoClient.connect(url, function (err, db) {
+            assert.equal(err, null);
+            
+            queryAnswer(db, answerObjectId, function (answer) {
+                addUpVoteToAnswer(db, answer, function (result) {
+                    queryAnswer(db, answerObjectId, function (answer) {
+                        db.close();
+                        callback (answer);
+                    });
+                });
             });
         });
-    });
+    }
 }
 
 function addDownVoteToAnswer(db, answer, callback) {
