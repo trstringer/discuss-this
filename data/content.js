@@ -413,6 +413,7 @@ exports.upVoteAnswer = function (answerId, callback) {
         // return a null answer
         //
         callback(null);
+        return;
     }
     
     mongoClient.connect(url, function (err, db) {
@@ -448,6 +449,7 @@ exports.downVoteAnswer = function (answerId, callback) {
         // return a null answer
         //
         callback(null);
+        return;
     }
     
     mongoClient.connect(url, function (err, db) {
