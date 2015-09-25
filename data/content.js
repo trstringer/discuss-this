@@ -405,24 +405,28 @@ function addUpVoteToAnswer(db, answer, callback) {
         );
 }
 exports.upVoteAnswer = function (answerId, callback) {
-    var answerObjectId = new ObjectId.createFromHexString(answerId);
-    if (answerObjectId === undefined || answerObjectId === null) {
+    try {
+        var answerObjectId = new ObjectId.createFromHexString(answerId);
+    }
+    catch (err) {
+        // need to figure out a logging mechanism but for now let's just 
+        // return a null answer
+        //
         callback(null);
     }
-    else {
-        mongoClient.connect(url, function (err, db) {
-            assert.equal(err, null);
-            
-            queryAnswer(db, answerObjectId, function (answer) {
-                addUpVoteToAnswer(db, answer, function (result) {
-                    queryAnswer(db, answerObjectId, function (answer) {
-                        db.close();
-                        callback (answer);
-                    });
+    
+    mongoClient.connect(url, function (err, db) {
+        assert.equal(err, null);
+        
+        queryAnswer(db, answerObjectId, function (answer) {
+            addUpVoteToAnswer(db, answer, function (result) {
+                queryAnswer(db, answerObjectId, function (answer) {
+                    db.close();
+                    callback (answer);
                 });
             });
         });
-    }
+    });
 }
 
 function addDownVoteToAnswer(db, answer, callback) {
@@ -435,14 +439,26 @@ function addDownVoteToAnswer(db, answer, callback) {
             }
         );
 }
-exports.downVoteAnswer = function (answer, callback) {
+exports.downVoteAnswer = function (answerId, callback) {
+    try {
+        var answerObjectId = new ObjectId.createFromHexString(answerId);
+    }
+    catch (err) {
+        // need to figure out a logging mechanism but for now let's just 
+        // return a null answer
+        //
+        callback(null);
+    }
+    
     mongoClient.connect(url, function (err, db) {
         assert.equal(err, null);
         
-        addDownVoteToAnswer(db, answer, function (result) {
-            queryAnswer(db, answer._id, function (answer) {
-                db.close();
-                callback (answer);
+        queryAnswer(db, answerObjectId, function (answer) {
+            addDownVoteToAnswer(db, answer, function (result) {
+                queryAnswer(db, answerObjectId, function (answer) {
+                    db.close();
+                    callback (answer);
+                });
             });
         });
     });
