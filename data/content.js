@@ -360,11 +360,15 @@ function queryAnswer(db, answerObjectId, callback) {
     });
 }
 
-function insertAnswer(db, question, answer, callback) {
+function insertAnswer(db, question, answerText, callback) {
     // inject an ObjectId() if it doesn't already exist
     //
-    if (answer._id === undefined)
-        answer._id = new ObjectId();
+    var answer = {
+        _id: new ObjectId(),
+        text: answerText,
+        upVotes: 0,
+        downVotes: 0
+    };
     
     db.collection('questions')
         .update(
@@ -375,10 +379,10 @@ function insertAnswer(db, question, answer, callback) {
             }
         );
 }
-exports.addAnswer = function (question, answer, callback) {
+exports.addAnswer = function (question, answerText, callback) {
     mongoClient.connect(url, function (err, db) {
         assert.equal(err, null);
-        insertAnswer(db, question, answer, function (result) {
+        insertAnswer(db, question, answerText, function (result) {
             db.close();
             exports.getCurrentQuestion(function (question) {
                 callback(question);
