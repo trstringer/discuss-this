@@ -357,6 +357,9 @@ function queryAnswer(db, answerObjectId, callback) {
         if (doc !== null && doc.answers.length >= 1) {
             callback(doc.answers[0]);
         }
+        else if (doc === null || doc.answer.length === 0) {
+            callback(null);
+        }
     });
 }
 
