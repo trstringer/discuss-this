@@ -323,7 +323,7 @@ exports.upVoteQuestion = function (questionId, callback) {
     mongoClient.connect(url, function (err, db) {
         assert.equal(err, null);
         
-        queryQuestionByObjectId(questionObjectId, function (question) {
+        queryQuestionByObjectId(db, questionObjectId, function (question) {
             if (question === undefined || question === null) {
                 db.close();
                 callback(null);

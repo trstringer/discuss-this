@@ -96,4 +96,21 @@ router.post('/answers/downvote/:answerId', function(req, res, next) {
     }
 });
 
+router.post('/upvote/:questionId', function (req, res, next) {
+    var questionId = req.params.questionId;
+    if (typeof questionId === 'undefined' || questionId === null || questionId === "") {
+        res.status(400).send('incorrect format for questionId');
+    }
+    else {
+        content.upVoteQuestion(questionId, function (question) {
+            if (question === null) {
+                res.status(400).json('question not found');
+            }
+            else {
+                res.status(200).json(question);
+            }
+        });
+    }
+});
+
 module.exports = router;
