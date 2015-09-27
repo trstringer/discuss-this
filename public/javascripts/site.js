@@ -1,3 +1,7 @@
+function initialLoadActions() {
+    
+}
+
 $(function () {
-    alert('hello');
+    initialLoadActions();
 });
