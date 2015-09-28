@@ -30,3 +30,5 @@ node_modules
 # Visual Studio Code files
 .vscode
 .git
+
+design/
