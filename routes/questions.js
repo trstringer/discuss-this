@@ -7,6 +7,18 @@ router.get('/', function (req, res, next) {
         res.status(200).json(currentQuestion);
     });
 });
+router.post('/gen/', function (req, res, next) {
+    content.getTopNextQuestionCandidate(function (question) {
+        if (question === undefined || question === null) {
+            res.status(400).send('not possible next question');
+        }
+        else {
+            content.setCurrentQuestion(question, function (question) {
+                res.status(200).json(question);
+            });
+        }
+    });
+});
 
 router.get('/next/', function (req, res, next) {
     content.getTopNextQuestionCandidate(function (question) {
