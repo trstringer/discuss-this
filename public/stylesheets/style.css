@@ -14,6 +14,10 @@ a {
   border-color: lightgray;
 }
 
+.answer .vote-button {
+  font-size: x-large;
+}
+
 .answer .votes {
   font-weight: bold;
 }
