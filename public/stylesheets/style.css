@@ -9,6 +9,9 @@ a {
 
 .answer {
   color: darkgray;
+  border-style: solid;
+  border-width: 1px;
+  border-color: lightgray;
 }
 
 .answer .votes {

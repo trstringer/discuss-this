@@ -4,19 +4,23 @@ block content
   div(class='container')
     div(class='row')
       div(class='col-md-8 col-md-offset-2 text-center')
-        h1 hello there
+        h1 let's talk about it...
         p Welcome to #{title}
         
     div(class='row')
       div(class='col-md-8 col-md-offset-2')
         h2(class='col-md-12') this is the question text
+        
         div(class='col-md-12 answer')
-          div(class='col-md-12 votes')
+          div(class='col-md-1')
+            span(class='glyphicon glyphicon-chevron-up')
+            span(class='glyphicon glyphicon-chevron-down')
+          div(class='col-md-11 votes')
             div(class='col-md-3')
               p(class='up-votes') upVotes
             div(class='col-md-3')
               p(class='down-votes') downVotes
-          div(class='col-md-12')
+          div(class='col-md-11 col-md-offset-1')
             p this is an answer
     
     
