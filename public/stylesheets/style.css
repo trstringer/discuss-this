@@ -6,3 +6,19 @@ body {
 a {
   color: #00B7FF;
 }
+
+.answer {
+  color: darkgray;
+}
+
+.answer .votes {
+  font-weight: bold;
+}
+
+.answer .up-votes {
+  color: blue;
+}
+
+.answer .down-votes {
+  color: darkred;
+}
