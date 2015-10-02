@@ -7,10 +7,14 @@ a {
   color: #00B7FF;
 }
 
+.question {
+  padding-bottom: 5px;
+}
+
 .answer {
   color: darkgray;
-  border-style: solid;
-  border-width: 1px;
+  border-style: outset;
+  border-width: 2px;
   border-color: lightgray;
   padding: 4px;
   margin: 4px;
@@ -40,5 +44,5 @@ a {
 }
 
 .new-answer {
-  margin-top: 10px;
+  margin-top: 20px;
 }
