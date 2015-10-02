@@ -13,6 +13,7 @@ a {
   border-width: 1px;
   border-color: lightgray;
   padding: 4px;
+  margin: 4px;
 }
 
 .answer .vote-button {
@@ -20,6 +21,10 @@ a {
   cursor: pointer;
   margin-top: 4px;
   margin-bottom: 4px;  
+}
+
+.selected {
+  color: darkorange;
 }
 
 .answer .votes {
