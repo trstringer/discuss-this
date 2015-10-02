@@ -38,3 +38,7 @@ a {
 .answer .down-votes {
   color: darkred;
 }
+
+.new-answer {
+  margin-top: 10px;
+}
