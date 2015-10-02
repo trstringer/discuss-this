@@ -11,14 +11,14 @@ a {
   padding-bottom: 5px;
   border-bottom-style: solid;
   border-bottom-width: 1px;
-  border-bottom-color: lightgray;
+  border-bottom-color: #DDDDDD;
 }
 
 .answer {
   color: darkgray;
   border-bottom-style: solid;
   border-bottom-width: 1px;
-  border-bottom-color: lightgray;
+  border-bottom-color: #DDDDDD;
   padding: 4px;
   margin: 4px;
 }
