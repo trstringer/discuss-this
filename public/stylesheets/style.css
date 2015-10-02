@@ -12,10 +12,14 @@ a {
   border-style: solid;
   border-width: 1px;
   border-color: lightgray;
+  padding: 4px;
 }
 
 .answer .vote-button {
   font-size: x-large;
+  cursor: pointer;
+  margin-top: 4px;
+  margin-bottom: 4px;  
 }
 
 .answer .votes {
