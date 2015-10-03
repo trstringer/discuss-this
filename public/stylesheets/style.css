@@ -14,7 +14,7 @@ a {
   border-bottom-color: #DDDDDD;
 }
 
-.answer {
+.voting-item {
   color: darkgray;
   border-bottom-style: solid;
   border-bottom-width: 1px;
@@ -23,7 +23,7 @@ a {
   margin: 4px;
 }
 
-.answer .vote-button {
+.vote-button {
   font-size: x-large;
   cursor: pointer;
   margin-top: 4px;
@@ -34,15 +34,15 @@ a {
   color: darkorange;
 }
 
-.answer .votes {
+.votes {
   font-weight: bold;
 }
 
-.answer .up-votes {
+.up-votes {
   color: blue;
 }
 
-.answer .down-votes {
+.down-votes {
   color: darkred;
 }
 
@@ -50,7 +50,7 @@ a {
   margin-top: 20px;
 }
 
-.new-question {
+.new-questions {
   color: gray;
   margin-top: 30px;
 }
