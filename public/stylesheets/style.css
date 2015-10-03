@@ -49,3 +49,8 @@ a {
 .new-answer {
   margin-top: 20px;
 }
+
+.new-question {
+  color: gray;
+  margin-top: 30px;
+}
