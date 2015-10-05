@@ -59,3 +59,14 @@ a {
   color: gray;
   margin-top: 30px;
 }
+
+.new-questions h4 {
+  padding-bottom: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-bottom-color: #DDDDDD;
+}
+
+.new-question-add {
+  margin-top: 20px;
+}
