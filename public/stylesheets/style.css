@@ -14,6 +14,11 @@ a {
   border-bottom-color: #DDDDDD;
 }
 
+.countdown-timer {
+  font-size: xx-large;
+  color: darkgray;
+}
+
 .voting-item {
   color: darkgray;
   border-bottom-style: solid;
