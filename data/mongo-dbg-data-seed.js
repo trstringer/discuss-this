@@ -14,7 +14,8 @@ var documents = [
         "upVotes" : 153,
         "downVotes" : 16,
         "isCurrent" : false,
-        "isNextPossibility" : true
+        "isNextPossibility" : true,
+        "dateCreated": new Date()
     },
     {
         "text" : "what color is a lion?",
@@ -22,18 +23,21 @@ var documents = [
         "downVotes" : 4,
         "isCurrent" : true,
         "isNextPossibility" : false,
+        "dateCreated": new Date(),
         "answers": [
             {
                 "_id": ObjectId(),
                 "text": "definitely orange-ish",
                 "upVotes": 53,
-                "downVotes": 2
+                "downVotes": 2,
+                "dateCreated": new Date()
             },
             {
                 "_id": ObjectId(),
                 "text": "I think more like yellow orange",
                 "upVotes": 2587,
-                "downVotes": 253
+                "downVotes": 253,
+                "dateCreated": new Date()
             }
         ]
     },
@@ -42,14 +46,16 @@ var documents = [
         "upVotes" : 167,
         "downVotes" : 236,
         "isCurrent" : false,
-        "isNextPossibility" : true
+        "isNextPossibility" : true,
+        "dateCreated": new Date()
     },
     {
         "text" : "how many gallons of water does the ocean have?",
         "upVotes" : 53,
         "downVotes" : 24,
         "isCurrent" : false,
-        "isNextPossibility" : true
+        "isNextPossibility" : true,
+        "dateCreated": new Date()
     },
     {
         "text" : "what is the best city to live in?",
@@ -57,24 +63,28 @@ var documents = [
         "downVotes" : 62,
         "isCurrent" : false,
         "isNextPossibility" : false,
+        "dateCreated": new Date(),
         "answers": [
             {
                 "_id": ObjectId(),
                 "text": "definitely New York City.",
                 "upVotes": 2612,
-                "downVotes": 253
+                "downVotes": 253,
+                "dateCreated": new Date()
             },
             {
                 "_id": ObjectId(),
                 "text": "I would say San Francisco",
                 "upVotes": 523,
-                "downVotes": 426
+                "downVotes": 426,
+                "dateCreated": new Date()
             },
             {
                 "_id": ObjectId(),
                 "text": "Miami, most definitely no question about it.",
                 "upVotes": 1624,
-                "downVotes": 755
+                "downVotes": 755,
+                "dateCreated": new Date()
             }
         ]
     },
@@ -84,18 +94,21 @@ var documents = [
         "downVotes" : 4,
         "isCurrent" : false,
         "isNextPossibility" : false,
+        "dateCreated": new Date(),
         "answers": [
             {
                 "_id": ObjectId(),
                 "text": "Tommy's burger.",
                 "upVotes": 75,
-                "downVotes": 26
+                "downVotes": 26,
+                "dateCreated": new Date()
             },
             {
                 "_id": ObjectId(),
                 "text": "Big burger.",
                 "upVotes": 462,
-                "downVotes": 95
+                "downVotes": 95,
+                "dateCreated": new Date()
             }
         ]
     }
