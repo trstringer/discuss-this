@@ -137,7 +137,8 @@ function insertNextQuestionCandidate(db, questionText, callback) {
                 upVotes: 0,
                 downVotes: 0,
                 isCurrent: false,
-                isNextPossibility: true
+                isNextPossibility: true,
+                dateCreated: new Date()
             }, 
             function (err, result) {
                 assert.equal(err, null);
@@ -414,7 +415,8 @@ function insertAnswer(db, question, answerText, callback) {
         _id: new ObjectId(),
         text: answerText,
         upVotes: 0,
-        downVotes: 0
+        downVotes: 0,
+        dateCreated: new Date()
     };
     
     db.collection('questions')
