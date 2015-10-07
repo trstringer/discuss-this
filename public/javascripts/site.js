@@ -32,6 +32,10 @@ function setCurrentQuestion(questionText) {
     $("#currentQuestionText").text(questionText);
 }
 
+function countDisplayedAnswers() {
+    return $('.answer').length;
+}
+
 
 // ********************************************************
 //                  API helpers
@@ -41,14 +45,9 @@ function apiRootUrl() {
     return "http://localhost:3000";
 }
 
-
-// ********************************************************
-//                  initial load
-// ********************************************************
-
 function getCurrentQuestion(callback) {
     $.getJSON(apiRootUrl() + '/questions/', function (question) {
-        callback(question.text);
+        callback(question);
     });
 }
 
@@ -58,11 +57,21 @@ function getCurrentQuestion(callback) {
 // ********************************************************
 
 function initialLoadActions() {
-    getCurrentQuestion(function (questionText) {
-        setCurrentQuestion(questionText);
+    getCurrentQuestion(function (question) {
+        setCurrentQuestion(question.text);
+        
+        if (question.answers !== undefined && question.answers !== null) {
+            var answerCount = question.answers.length;
+            var i;
+            for (i = 0; i < answerCount; i++) {
+                insertAnswer(
+                    question.answers[i].text,
+                    question.answers[i].upVotes,
+                    question.answers[i].downVotes
+                );
+            }
+        }
     });
-    
-    insertAnswer('this is my test insert answer', 10, 50);
 }
 
 $(function () {
