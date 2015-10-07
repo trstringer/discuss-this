@@ -30,11 +30,22 @@ function setCurrentQuestion(questionText) {
 
 
 // ********************************************************
+//                  API helpers
+// ********************************************************
+
+function apiRootUrl() {
+    return "http://localhost:3000";
+}
+
+
+// ********************************************************
 //                  initial load
 // ********************************************************
 
-function getCurrentQuestion() {
-    
+function getCurrentQuestion(callback) {
+    $.getJSON(apiRootUrl() + '/questions/', function (question) {
+        callback(question.text);
+    });
 }
 
 
@@ -43,7 +54,9 @@ function getCurrentQuestion() {
 // ********************************************************
 
 function initialLoadActions() {
-    
+    getCurrentQuestion(function (questionText) {
+        setCurrentQuestion(questionText);
+    });
 }
 
 $(function () {
