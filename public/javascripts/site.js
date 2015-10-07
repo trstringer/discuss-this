@@ -24,6 +24,10 @@ function generateAnswerBox(answerText, upVoteCount, downVoteCount) {
         "</div>";
 }
 
+function insertAnswer(answerText, upVoteCount, downVoteCount) {
+    $('.new-answer').before(generateAnswerBox(answerText, upVoteCount, downVoteCount));
+}
+
 function setCurrentQuestion(questionText) {
     $("#currentQuestionText").text(questionText);
 }
@@ -57,6 +61,8 @@ function initialLoadActions() {
     getCurrentQuestion(function (questionText) {
         setCurrentQuestion(questionText);
     });
+    
+    insertAnswer('this is my test insert answer', 10, 50);
 }
 
 $(function () {
