@@ -52,6 +52,41 @@ function getCurrentQuestion(callback) {
     });
 }
 
+function sortAnswersByUpVotes(answers) {
+    if (answers === undefined || answers === null || answers.length === 0) {
+        return null;
+    }
+    else {
+        answers.sort(function (a, b) {
+            if (a.upVotes > b.upVotes) {
+                return -1;
+            }
+            else if (a.upVotes < b.upVotes) {
+                return 1;
+            }
+            return 0;
+        });
+        return answers;
+    }
+}
+function sortAnswersByDownVotes(answers) {
+    if (answers === undefined || answers === null || answers.length === 0) {
+        return null;
+    }
+    else {
+        answers.sort(function (a, b) {
+            if (a.downVotes > b.downVotes) {
+                return -1;
+            }
+            else if (a.downVotes < b.downVotes) {
+                return 1;
+            }
+            return 0;
+        });
+        return answers;
+    }
+}
+
 
 // ********************************************************
 //                  initial load
@@ -61,11 +96,26 @@ function initialLoadActions() {
     getCurrentQuestion(function (question) {
         setCurrentQuestion(question.text);
         
-        if (question.answers !== undefined && question.answers !== null) {
-            var answerCount = question.answers.length;
-            var i;
-            for (i = 0; i < answerCount; i++) {
-                insertAnswer(question.answers[i]);
+        // if (question.answers !== undefined && question.answers !== null) {
+        //     var answerCount = question.answers.length;
+        //     var i;
+        //     for (i = 0; i < answerCount; i++) {
+        //         insertAnswer(question.answers[i]);
+        //     }
+        // }
+        
+        if (question.answers === undefined || question.answers === null || question.answers.length === 0) {
+            return;
+        }
+        else {
+            sortAnswersByUpVotes(question.answers);
+            insertAnswer(question.answers[0]);
+            if (question.answers.length > 1) {
+                insertAnswer(question.answers[1]);
+                if (question.answers.length > 2) {
+                    sortAnswersByDownVotes(question.answers);
+                    insertAnswer(question.answers[0]);
+                }
             }
         }
     });
