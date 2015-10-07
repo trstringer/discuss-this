@@ -37,6 +37,27 @@ function countDisplayedAnswers() {
     return $('.answer').length;
 }
 
+function answerIsCurrentlyDisplayed(answer) {
+    var displayedAnswers = [];
+    $('.answer .object-id').each(function () { displayedAnswers.push($(this).text()); });
+    if ($.inArray(answer._id, displayedAnswers) === 1) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+// this is the wrapper function to consolidate all of 
+// the logic to determine if the answer doesn't meet any 
+// of the following criteria:
+//
+// - is currently being reviewed (on the screen)
+// - (not implemented yet) was already reviewed (local storage)
+// 
+function isAnswerReviewed(answer) {
+    return answerIsCurrentlyDisplayed(answer);
+}
+
 
 // ********************************************************
 //                  API helpers
