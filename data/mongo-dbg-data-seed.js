@@ -38,6 +38,27 @@ var documents = [
                 "upVotes": 2587,
                 "downVotes": 253,
                 "dateCreated": new Date()
+            },
+            {
+                "_id": ObjectId(),
+                "text": "i would say light brown for sure",
+                "upVotes": 4,
+                "downVotes": 16246,
+                "dateCreated": new Date()
+            },
+            {
+                "_id": ObjectId(),
+                "text": "let's go with brown-orange-yellow",
+                "upVotes": 61236,
+                "downVotes": 2326,
+                "dateCreated": new Date()
+            },
+            {
+                "_id": ObjectId(),
+                "text": "i don't care...",
+                "upVotes": 152,
+                "downVotes": 18347,
+                "dateCreated": new Date()
             }
         ]
     },
