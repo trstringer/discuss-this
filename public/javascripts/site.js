@@ -2,7 +2,7 @@
 //                  UI helpers
 // ********************************************************
 
-function generateAnswerBox(answerText, upVoteCount, downVoteCount) {
+function generateAnswerBox(answerText, objectId, upVoteCount, downVoteCount) {
     return "<div class='col-md-12 answer voting-item'>" +
             "<div class='col-md-1'>" +
                 "<span class='glyphicon glyphicon-chevron-up vote-button'></span>" +
@@ -16,6 +16,7 @@ function generateAnswerBox(answerText, upVoteCount, downVoteCount) {
                     "<div class='col-md-3'>" +
                         "<p class='down-votes'>" + downVoteCount + "</p>" +
                     "</div>" +
+                    "<div class='col-md-3 object-id'>" + objectId + "</div>" +                    
                 "</div>" +
                 "<div class='col-md-11'>" +
                     "<p>" + answerText + "</p>" +
@@ -24,8 +25,14 @@ function generateAnswerBox(answerText, upVoteCount, downVoteCount) {
         "</div>";
 }
 
-function insertAnswer(answerText, upVoteCount, downVoteCount) {
-    $('.new-answer').before(generateAnswerBox(answerText, upVoteCount, downVoteCount));
+function insertAnswer(answerText, objectId, upVoteCount, downVoteCount) {
+    $('.new-answer').before(
+        generateAnswerBox(
+            answerText, 
+            objectId,
+            upVoteCount, 
+            downVoteCount
+        ));
 }
 
 function setCurrentQuestion(questionText) {
@@ -66,6 +73,7 @@ function initialLoadActions() {
             for (i = 0; i < answerCount; i++) {
                 insertAnswer(
                     question.answers[i].text,
+                    question.answers[i]._id,
                     question.answers[i].upVotes,
                     question.answers[i].downVotes
                 );

@@ -7,6 +7,10 @@ a {
   color: #00B7FF;
 }
 
+.object-id {
+  visibility: hidden;
+}
+
 .question h2 {
   padding-bottom: 5px;
   border-bottom-style: solid;
