@@ -24,6 +24,20 @@ function generateAnswerBox(answerText, upVoteCount, downVoteCount) {
         "</div>";
 }
 
+function setCurrentQuestion(questionText) {
+    $("#currentQuestionText").text(questionText);
+}
+
+
+// ********************************************************
+//                  initial load
+// ********************************************************
+
+function getCurrentQuestion() {
+    
+}
+
+
 // ********************************************************
 //                  initial load
 // ********************************************************

@@ -8,6 +8,12 @@ router.get('/', function (req, res, next) {
     });
 });
 router.post('/gen/', function (req, res, next) {
+    // need to add here logic to authenticate who is 
+    // trying to cycle for a new question
+    //
+    // this will server to prevent just anybody from 
+    // cycling a new question
+    //
     content.getTopNextQuestionCandidate(function (question) {
         if (question === undefined || question === null) {
             res.status(400).send('not possible next question');
