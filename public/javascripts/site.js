@@ -2,7 +2,7 @@
 //                  UI helpers
 // ********************************************************
 
-function generateAnswerBox(answerText, objectId, upVoteCount, downVoteCount) {
+function generateAnswerBox(answer) {
     return "<div class='col-md-12 answer voting-item'>" +
             "<div class='col-md-1'>" +
                 "<span class='glyphicon glyphicon-chevron-up vote-button'></span>" +
@@ -11,28 +11,22 @@ function generateAnswerBox(answerText, objectId, upVoteCount, downVoteCount) {
             "<div class='col-md-11'>" +
                 "<div class='col-md-11 votes'>" +
                     "<div class='col-md-3'>" +
-                        "<p class='up-votes'>" + upVoteCount + "</p>" +
+                        "<p class='up-votes'>" + answer.upVotes + "</p>" +
                     "</div>" +
                     "<div class='col-md-3'>" +
-                        "<p class='down-votes'>" + downVoteCount + "</p>" +
+                        "<p class='down-votes'>" + answer.downVotes + "</p>" +
                     "</div>" +
-                    "<div class='col-md-3 object-id'>" + objectId + "</div>" +                    
+                    "<div class='col-md-3 object-id'>" + answer._id + "</div>" +                    
                 "</div>" +
                 "<div class='col-md-11'>" +
-                    "<p>" + answerText + "</p>" +
+                    "<p>" + answer.text + "</p>" +
                 "</div>" +
             "</div>" +
         "</div>";
 }
 
-function insertAnswer(answerText, objectId, upVoteCount, downVoteCount) {
-    $('.new-answer').before(
-        generateAnswerBox(
-            answerText, 
-            objectId,
-            upVoteCount, 
-            downVoteCount
-        ));
+function insertAnswer(answer) {
+    $('.new-answer').before(generateAnswerBox(answer));
 }
 
 function setCurrentQuestion(questionText) {
@@ -71,12 +65,7 @@ function initialLoadActions() {
             var answerCount = question.answers.length;
             var i;
             for (i = 0; i < answerCount; i++) {
-                insertAnswer(
-                    question.answers[i].text,
-                    question.answers[i]._id,
-                    question.answers[i].upVotes,
-                    question.answers[i].downVotes
-                );
+                insertAnswer(question.answers[i]);
             }
         }
     });
