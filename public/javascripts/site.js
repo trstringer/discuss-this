@@ -116,7 +116,6 @@ function sortAnswersByUpVotes(answers) {
             }
             return 0;
         });
-        return answers;
     }
 }
 function sortAnswersByDownVotes(answers) {
