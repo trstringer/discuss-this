@@ -128,6 +128,15 @@ function initialLoadActions() {
         if (question.answers === undefined || question.answers === null || question.answers.length === 0) {
             return;
         }
+        // this will add currently three (3) answers to the display 
+        // provided that there are three (3) valid answers that can 
+        // and should be displayed
+        //
+        // three (3) answers has been chosen as a good cycling sample 
+        // so that the user isn't shown too many for UX. When the user 
+        // votes on answers (or [not implemented yet] dismisses answers) 
+        // then different answers will show
+        //
         else {
             sortAnswersByUpVotes(question.answers);
             insertFirstOrderedUnreviewedAnswer(question.answers);
