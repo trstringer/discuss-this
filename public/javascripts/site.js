@@ -54,7 +54,7 @@ function answerIsCurrentlyDisplayed(answer) {
 // - is currently being reviewed (on the screen)
 // - (not implemented yet) was already reviewed (local storage)
 // 
-function isAnswerReviewed(answer) {
+function hasAnswerAlreadyBeenReviewed(answer) {
     return answerIsCurrentlyDisplayed(answer);
 }
 
