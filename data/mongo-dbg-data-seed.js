@@ -139,6 +139,14 @@ var documents = [
                 "dateCreated": new Date()
             }
         ]
+    },
+    {
+        "text" : "what is the best month of the year?",
+        "upVotes" : 16246,
+        "downVotes" : 253,
+        "isCurrent" : false,
+        "isNextPossibility" : true,
+        "dateCreated": new Date()
     }
 ];
 db.questions.insert(documents);

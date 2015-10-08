@@ -38,6 +38,7 @@ function generateNextQuestionBox(question) {
                     "<div class='col-md-3'>" +
                         "<p class='down-votes'>" + question.downVotes + "</p>" +
                     "</div>" +
+                    "<div class='col-md-3 object-id'>" + question._id + "</div>" + 
                 "</div>" +
                 "<div class='col-md-11'>" +
                     "<p>" + question.text + "</p>" +
@@ -60,6 +61,14 @@ function insertFirstOrderedUnreviewedAnswer(answers) {
 
 function insertQuestion(question) {
     $('.new-question-add').before(generateNextQuestionBox(question));
+}
+function insertFirstOrderedUnreviewedQuestionCandidate(questions) {
+    for (var i = 0; i < questions.length; i++) {
+        if (!hasQuestionCandidateAlreadyBeenReviewed(questions[i])) {
+            insertQuestion(questions[i]);
+            break;
+        }
+    }
 }
 
 function setCurrentQuestion(questionText) {
@@ -91,6 +100,20 @@ function hasAnswerAlreadyBeenReviewed(answer) {
     return answerIsCurrentlyDisplayed(answer);
 }
 
+function questionCandidateIsCurrentlyDisplayed(question) {
+    var displayedQuestionCandidates = [];
+    $('.new-question .object-id').each(function () { displayedQuestionCandidates.push($(this).text()); });
+    if ($.inArray(question._id, displayedQuestionCandidates) >= 0) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+function hasQuestionCandidateAlreadyBeenReviewed(question) {
+    return questionCandidateIsCurrentlyDisplayed(question);
+}
+
 
 // ********************************************************
 //                  API helpers
@@ -104,7 +127,7 @@ function getCurrentQuestion(callback) {
 
 function sortAnswersByUpVotes(answers) {
     if (answers === undefined || answers === null || answers.length === 0) {
-        return null;
+        return;
     }
     else {
         answers.sort(function (a, b) {
@@ -120,7 +143,7 @@ function sortAnswersByUpVotes(answers) {
 }
 function sortAnswersByDownVotes(answers) {
     if (answers === undefined || answers === null || answers.length === 0) {
-        return null;
+        return;
     }
     else {
         answers.sort(function (a, b) {
@@ -132,7 +155,23 @@ function sortAnswersByDownVotes(answers) {
             }
             return 0;
         });
-        return answers;
+    }
+}
+
+function sortQuestionsByUpVotes(questions) {
+    if (questions === undefined || questions === null || questions.length === 0) {
+        return;
+    }
+    else {
+        questions.sort(function (a, b) {
+            if (a.upVotes > b.upVotes) {
+                return -1;
+            }
+            else if (a.upVotes < b.UpVotes) {
+                return 1;
+            }
+            return 0;
+        });
     }
 }
 
@@ -200,8 +239,19 @@ function populateCurrentQuestion() {
 
 function populateNextQuestions() {
     getNextQuestionCandidates(function (questions) {
-        for (var i = 0; i < questions.length; i++) {
-            insertQuestion(questions[i]);
+        if (questions === undefined || questions === null || questions.length === 0) {
+            return;
+        }
+        sortQuestionsByUpVotes(questions);
+        
+        // insert the first next question candidate
+        //
+        insertFirstOrderedUnreviewedQuestionCandidate(questions);
+        if (questions.length > 1) {
+            insertFirstOrderedUnreviewedQuestionCandidate(questions);
+            if (questions.length > 2) {
+                insertFirstOrderedUnreviewedQuestionCandidate(questions);
+            }
         }
     });
 }
