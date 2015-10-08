@@ -86,9 +86,8 @@ function setQuestionAsCurrent(db, question, callback) {
                 db.collection('questions')
                     .update(
                         { _id: question._id },
-                        { $set: { isCurrent: true, isNextPossibility: false }},
+                        { $set: { isCurrent: true, isNextPossibility: false, dateAsked: new Date() }},
                         function (result) {
-                            //callback(result);
                             exports.getCurrentQuestion(function (question) {
                                 callback(question);
                             });
@@ -100,9 +99,8 @@ function setQuestionAsCurrent(db, question, callback) {
                     db.collection('questions')
                         .update(
                             { _id: question._id },
-                            { $set: { isCurrent: true, isNextPossibility: false }},
+                            { $set: { isCurrent: true, isNextPossibility: false, dateAsked: new Date() }},
                             function (result) {
-                                //callback(result);
                                 exports.getCurrentQuestion(function (question) {
                                     callback(question);
                                 });
