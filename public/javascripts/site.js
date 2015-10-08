@@ -24,6 +24,27 @@ function generateAnswerBox(answer) {
             "</div>" +
         "</div>";
 }
+function generateNextQuestionBox(question) {
+    return "<div class='col-md-12 new-question voting-item'>" +
+            "<div class='col-md-1'>" +
+                "<span class='glyphicon glyphicon-chevron-up vote-button'></span>" +
+                "<span class='glyphicon glyphicon-chevron-down vote-button'></span>" +
+            "</div>" +
+            "<div class='col-md-11'>" +
+                "<div class='col-md-11 votes'>" +
+                    "<div class='col-md-3'>" +
+                        "<p class='up-votes'>" + question.upVotes + "</p>" +
+                    "</div>" +
+                    "<div class='col-md-3'>" +
+                        "<p class='down-votes'>" + question.downVotes + "</p>" +
+                    "</div>" +
+                "</div>" +
+                "<div class='col-md-11'>" +
+                    "<p>" + question.text + "</p>" +
+                "</div>" +
+            "</div>" +
+        "</div>";
+}
 
 function insertAnswer(answer) {
     $('.new-answer').before(generateAnswerBox(answer));
@@ -35,6 +56,10 @@ function insertFirstOrderedUnreviewedAnswer(answers) {
             break;
         }
     }
+}
+
+function insertQuestion(question) {
+    $('.new-question-add').before(generateNextQuestionBox(question));
 }
 
 function setCurrentQuestion(questionText) {
@@ -116,7 +141,7 @@ function sortAnswersByDownVotes(answers) {
     }
 }
 
-function getNextQuestionCandidates (callback) {
+function getNextQuestionCandidates(callback) {
     // make an API to get all next question candidates by specifying 
     // zero (0) as the question count, instead of specifying a 
     // positive number to limit the return
@@ -181,7 +206,7 @@ function populateCurrentQuestion() {
 function populateNextQuestions() {
     getNextQuestionCandidates(function (questions) {
         for (var i = 0; i < questions.length; i++) {
-            alert(questions[i].text);
+            insertQuestion(questions[i]);
         }
     });
 }
