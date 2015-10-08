@@ -59,6 +59,13 @@ var documents = [
                 "upVotes": 152,
                 "downVotes": 18347,
                 "dateCreated": new Date()
+            },
+            {
+                "_id": ObjectId(),
+                "text": "lions are most definitely a large array of colors",
+                "upVotes": 152352,
+                "downVotes": 65601,
+                "dateCreated": new Date()
             }
         ]
     },
