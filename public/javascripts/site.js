@@ -124,15 +124,7 @@ function sortAnswersByDownVotes(answers) {
 function initialLoadActions() {
     getCurrentQuestion(function (question) {
         setCurrentQuestion(question.text);
-        
-        // if (question.answers !== undefined && question.answers !== null) {
-        //     var answerCount = question.answers.length;
-        //     var i;
-        //     for (i = 0; i < answerCount; i++) {
-        //         insertAnswer(question.answers[i]);
-        //     }
-        // }
-        
+                
         if (question.answers === undefined || question.answers === null || question.answers.length === 0) {
             return;
         }
