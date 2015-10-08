@@ -116,12 +116,26 @@ function sortAnswersByDownVotes(answers) {
     }
 }
 
+function getNextQuestionCandidates (callback) {
+    // make an API to get all next question candidates by specifying 
+    // zero (0) as the question count, instead of specifying a 
+    // positive number to limit the return
+    //
+    $.getJSON(apiRootUrl() + '/questions/next/0/', function (questions) {
+        callback(questions);
+    });}
+
 
 // ********************************************************
 //                  initial load
 // ********************************************************
 
 function initialLoadActions() {
+    populateCurrentQuestion();
+    populateNextQuestions();
+}
+
+function populateCurrentQuestion() {
     getCurrentQuestion(function (question) {
         setCurrentQuestion(question.text);
                 
@@ -160,6 +174,14 @@ function initialLoadActions() {
                     insertFirstOrderedUnreviewedAnswer(question.answers);
                 }
             }
+        }
+    });
+}
+
+function populateNextQuestions() {
+    getNextQuestionCandidates(function (questions) {
+        for (var i = 0; i < questions.length; i++) {
+            alert(questions[i].text);
         }
     });
 }

@@ -161,14 +161,26 @@ exports.addNextQuestionCandidate = function (question, callback) {
 }
 
 function queryNextQuestionCandidates(db, count, callback) {
-    var cursor = db.collection('questions')
-        .find({
-            isNextPossibility: true
-        })
-        .sort({
-            upVotes: -1
-        })
-        .limit(count);
+    var cursor;    
+    if (count === undefined || count === null || count <= 0) {
+        cursor = db.collection('questions')
+            .find({
+                isNextPossibility: true
+            })
+            .sort({
+                upVotes: -1
+            });
+    }
+    else {
+        cursor = db.collection('questions')
+            .find({
+                isNextPossibility: true
+            })
+            .sort({
+                upVotes: -1
+            })
+            .limit(count);
+    }
     
     var questions = [];
     var i = 0;
