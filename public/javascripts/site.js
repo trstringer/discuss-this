@@ -96,12 +96,8 @@ function hasAnswerAlreadyBeenReviewed(answer) {
 //                  API helpers
 // ********************************************************
 
-function apiRootUrl() {
-    return "http://localhost:3000";
-}
-
 function getCurrentQuestion(callback) {
-    $.getJSON(apiRootUrl() + '/questions/', function (question) {
+    $.getJSON('/questions/', function (question) {
         callback(question);
     });
 }
@@ -146,7 +142,7 @@ function getNextQuestionCandidates(callback) {
     // zero (0) as the question count, instead of specifying a 
     // positive number to limit the return
     //
-    $.getJSON(apiRootUrl() + '/questions/next/0/', function (questions) {
+    $.getJSON('/questions/next/0/', function (questions) {
         callback(questions);
     });}
 
