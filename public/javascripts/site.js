@@ -28,6 +28,14 @@ function generateAnswerBox(answer) {
 function insertAnswer(answer) {
     $('.new-answer').before(generateAnswerBox(answer));
 }
+function insertFirstOrderedUnreviewedAnswer(answers) {
+    for (var i = 0; i < answers.length; i++) {
+        if (!hasAnswerAlreadyBeenReviewed(answers[i])) {
+            insertAnswer(answers[i]);
+            break;
+        }
+    }
+}
 
 function setCurrentQuestion(questionText) {
     $("#currentQuestionText").text(questionText);
@@ -40,7 +48,7 @@ function countDisplayedAnswers() {
 function answerIsCurrentlyDisplayed(answer) {
     var displayedAnswers = [];
     $('.answer .object-id').each(function () { displayedAnswers.push($(this).text()); });
-    if ($.inArray(answer._id, displayedAnswers) === 1) {
+    if ($.inArray(answer._id, displayedAnswers) >= 0) {
         return true;
     }
     else {
@@ -130,12 +138,25 @@ function initialLoadActions() {
         }
         else {
             sortAnswersByUpVotes(question.answers);
-            insertAnswer(question.answers[0]);
+            insertFirstOrderedUnreviewedAnswer(question.answers);
+            
             if (question.answers.length > 1) {
-                insertAnswer(question.answers[1]);
+                // insert another high up vote answer
+                //
+                // the logic here is that the previously inserted 
+                // answer into the GUI won't get re-inserted due to 
+                // the check that it is already been reviewed, moving 
+                // onto the next one
+                //
+                insertFirstOrderedUnreviewedAnswer(question.answers);
+                
+                // now if there are enough answers, sort the answers 
+                // by down votes so that we show an "unpopular" 
+                // answer
+                //
                 if (question.answers.length > 2) {
                     sortAnswersByDownVotes(question.answers);
-                    insertAnswer(question.answers[0]);
+                    insertFirstOrderedUnreviewedAnswer(question.answers);
                 }
             }
         }
