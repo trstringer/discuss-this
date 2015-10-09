@@ -240,7 +240,18 @@ function addAnswer(answerText, callback) {
         { answerText: answerText },
         function (question) {
             callback(question);
-        });
+        }
+    );
+}
+
+function addQuestion(questionText, callback) {
+    $.post(
+        '/questions/next/',
+        { questionText: questionText },
+        function (question) {
+            callback(question);
+        }
+    );
 }
 
 
@@ -336,6 +347,7 @@ function submitAnswer() {
             //
             // currently I'm thinking... do nothing
             //
+            clearAnswerInputText();
         });
     }
     else {
@@ -356,6 +368,9 @@ function submitQuestion() {
         
         // add the next candidate question
         //
+        addQuestion(questionText, function (question) {
+            clearQuestionInputText();
+        });
     }
     else {
         setQuestionInputError(questionText);
