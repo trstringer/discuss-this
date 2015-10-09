@@ -123,8 +123,8 @@ function clearAnswerInputText() {
 // at the moment, the answers will need to be a minimum 
 // of 40 characters. This is subject to change
 //
-function isSubmittedAnswerValid(answerText) {
-    if (answerText.length < 40) {
+function isSubmittedInputValid(inputText) {
+    if (inputText.length < 40) {
         return false;
     }
     else {
@@ -138,6 +138,21 @@ function setAnswerInputError() {
 function clearAnswerInputError() {
     $('.new-answer').removeClass('has-error');
     $('.new-answer .error-block').hide();
+}
+
+function getQuestionInputText() {
+    return $('#newQuestion').val();
+}
+function clearQuestionInputText() {
+    $('#newQuestion').val('');
+}
+function setQuestionInputError() {
+    $('.new-question-add').addClass('has-error');
+    $('.new-question-add .error-block').show();
+}
+function clearQuestionInputError() {
+    $('.new-question-add').removeClass('has-error');
+    $('.new-question-add .error-block').hide();
 }
 
 
@@ -230,10 +245,12 @@ function initialLoadActions() {
     populateNextQuestions();
     
     $('#addAnswer').click(submitAnswer);
+    $('#addQuestion').click(submitQuestion);
     
     // do an initial hide on this error
     //
     clearAnswerInputError();
+    clearQuestionInputError();
 }
 
 function populateCurrentQuestion() {
@@ -300,7 +317,7 @@ function populateNextQuestions() {
 
 function submitAnswer() {
     var answerText = getAnswerInputText();
-    if (isSubmittedAnswerValid(answerText)) {
+    if (isSubmittedInputValid(answerText)) {
         // clear any error if it has it just in case
         //
         clearAnswerInputError();
@@ -321,6 +338,19 @@ function submitAnswer() {
         // already have
         //
         setAnswerInputError();
+    }
+}
+
+function submitQuestion() {
+    var questionText = getQuestionInputText();
+    if (isSubmittedInputValid(questionText)) {
+        clearQuestionInputError();
+        
+        // add the next candidate question
+        //
+    }
+    else {
+        setQuestionInputError();
     }
 }
 

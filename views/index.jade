@@ -27,6 +27,7 @@ block content
               
         div(class='col-md-12 new-question-add')
           div(class='input-group')
-            input(type='text', class='form-control', placeholder="what's on your mind?")
+            input(type='text', class='form-control', id='newQuestion', placeholder="what's on your mind?")
             span(class='input-group-btn')
-              button(type='button', class='btn btn-success') ask
+              button(type='button', class='btn btn-success', id='addQuestion') ask
+          span(class='help-block error-block') Minimum of 40 characters required
