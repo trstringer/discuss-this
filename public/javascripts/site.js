@@ -133,9 +133,11 @@ function isSubmittedAnswerValid(answerText) {
 }
 function setAnswerInputError() {
     $('.new-answer').addClass('has-error');
+    $('.new-answer .error-block').show();
 }
 function clearAnswerInputError() {
     $('.new-answer').removeClass('has-error');
+    $('.new-answer .error-block').hide();
 }
 
 
@@ -226,6 +228,12 @@ function addAnswer(answerText, callback) {
 function initialLoadActions() {
     populateCurrentQuestion();
     populateNextQuestions();
+    
+    $('#addAnswer').click(submitAnswer);
+    
+    // do an initial hide on this error
+    //
+    clearAnswerInputError();
 }
 
 function populateCurrentQuestion() {
@@ -318,5 +326,4 @@ function submitAnswer() {
 
 $(function () {
     initialLoadActions();
-    $('#addAnswer').click(submitAnswer);
 });
