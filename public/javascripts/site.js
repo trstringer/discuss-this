@@ -114,6 +114,10 @@ function hasQuestionCandidateAlreadyBeenReviewed(question) {
     return questionCandidateIsCurrentlyDisplayed(question);
 }
 
+function getAnswerInputText() {
+    return $('#newAnswer').val();
+}
+
 
 // ********************************************************
 //                  API helpers
@@ -182,7 +186,17 @@ function getNextQuestionCandidates(callback) {
     //
     $.getJSON('/questions/next/0/', function (questions) {
         callback(questions);
-    });}
+    });
+}
+
+function addAnswer(answerText, callback) {
+    $.post(
+        '/questions/answers/', 
+        { answerText: answerText },
+        function (question) {
+            callback(question);
+        });
+}
 
 
 // ********************************************************
@@ -256,6 +270,17 @@ function populateNextQuestions() {
     });
 }
 
+function submitAnswer() {
+    addAnswer(getAnswerInputText(), function (question) {
+        // not currently sure what to do after the user 
+        // adds an answer.
+        //
+        // currently I'm thinking... do nothing
+        //
+    });
+}
+
 $(function () {
     initialLoadActions();
+    $('#addAnswer').click(submitAnswer);
 });
