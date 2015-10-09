@@ -132,15 +132,25 @@ function isSubmittedInputValid(inputText) {
     }
 }
 function setAnswerInputError(answerText) {
-    $('.new-answer').addClass('has-error');
+    $('.new-answer').removeClass('has-success').addClass('has-error');
     $('.new-answer .error-block').text(
-        'Minimum of 40 characters required (current length: ' + 
+        'minimum of 40 characters required (current length: ' + 
         answerText.length + 
         ')');
     $('.new-answer .error-block').show();
 }
 function clearAnswerInputError() {
     $('.new-answer').removeClass('has-error');
+    $('.new-answer .error-block').hide();
+}
+function setAnswerInputSuccess() {
+    clearAnswerInputText();
+    $('.new-answer').removeClass('has-error').addClass('has-success');
+    $('.new-answer .error-block').text('successfully added answer!');
+    $('.new-answer .error-block').show();
+}
+function clearAnswerInputSuccess() {
+    $('.new-answer').removeClass('has-success');
     $('.new-answer .error-block').hide();
 }
 
@@ -151,9 +161,9 @@ function clearQuestionInputText() {
     $('#newQuestion').val('');
 }
 function setQuestionInputError(questionText) {
-    $('.new-question-add').addClass('has-error');
+    $('.new-question-add').removeClass('has-success').addClass('has-error');
     $('.new-question-add .error-block').text(
-        'Minimum of 40 characters required (current length: ' + 
+        'minimum of 40 characters required (current length: ' + 
         questionText.length + 
         ')');
     $('.new-question-add .error-block').show();
@@ -162,7 +172,16 @@ function clearQuestionInputError() {
     $('.new-question-add').removeClass('has-error');
     $('.new-question-add .error-block').hide();
 }
-
+function setQuestionInputSuccess() {
+    clearQuestionInputText();
+    $('.new-question-add').removeClass('has-error').addClass('has-success');
+    $('.new-question-add .error-block').text('successfully added question!');
+    $('.new-question-add .error-block').show();
+}
+function clearQuestionInputSuccess() {
+    $('.new-question-add').removeClass('has-success');
+    $('.new-question-add .error-block').hide();
+}
 
 // ********************************************************
 //                  API helpers
@@ -342,12 +361,7 @@ function submitAnswer() {
         clearAnswerInputError();
         
         addAnswer(answerText, function (question) {
-            // not currently sure what to do after the user 
-            // adds an answer.
-            //
-            // currently I'm thinking... do nothing
-            //
-            clearAnswerInputText();
+            setAnswerInputSuccess();
         });
     }
     else {
@@ -369,7 +383,7 @@ function submitQuestion() {
         // add the next candidate question
         //
         addQuestion(questionText, function (question) {
-            clearQuestionInputText();
+            setQuestionInputSuccess();
         });
     }
     else {
