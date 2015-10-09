@@ -117,6 +117,26 @@ function hasQuestionCandidateAlreadyBeenReviewed(question) {
 function getAnswerInputText() {
     return $('#newAnswer').val();
 }
+function clearAnswerInputText() {
+    $('#newAnswer').val('');
+}
+// at the moment, the answers will need to be a minimum 
+// of 40 characters. This is subject to change
+//
+function isSubmittedAnswerValid(answerText) {
+    if (answerText.length < 40) {
+        return false;
+    }
+    else {
+        return true;
+    }
+}
+function setAnswerInputError() {
+    $('.new-answer').addClass('has-error');
+}
+function clearAnswerInputError() {
+    $('.new-answer').removeClass('has-error');
+}
 
 
 // ********************************************************
@@ -271,13 +291,29 @@ function populateNextQuestions() {
 }
 
 function submitAnswer() {
-    addAnswer(getAnswerInputText(), function (question) {
-        // not currently sure what to do after the user 
-        // adds an answer.
+    var answerText = getAnswerInputText();
+    if (isSubmittedAnswerValid(answerText)) {
+        // clear any error if it has it just in case
         //
-        // currently I'm thinking... do nothing
+        clearAnswerInputError();
+        
+        addAnswer(answerText, function (question) {
+            // not currently sure what to do after the user 
+            // adds an answer.
+            //
+            // currently I'm thinking... do nothing
+            //
+        });
+    }
+    else {
+        // answer submitted isn't valid
         //
-    });
+        // we don't want to clear the input text in case 
+        // the user just wants to append to what they 
+        // already have
+        //
+        setAnswerInputError();
+    }
 }
 
 $(function () {
