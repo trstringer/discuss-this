@@ -131,8 +131,12 @@ function isSubmittedInputValid(inputText) {
         return true;
     }
 }
-function setAnswerInputError() {
+function setAnswerInputError(answerText) {
     $('.new-answer').addClass('has-error');
+    $('.new-answer .error-block').text(
+        'Minimum of 40 characters required (current length: ' + 
+        answerText.length + 
+        ')');
     $('.new-answer .error-block').show();
 }
 function clearAnswerInputError() {
@@ -146,8 +150,12 @@ function getQuestionInputText() {
 function clearQuestionInputText() {
     $('#newQuestion').val('');
 }
-function setQuestionInputError() {
+function setQuestionInputError(questionText) {
     $('.new-question-add').addClass('has-error');
+    $('.new-question-add .error-block').text(
+        'Minimum of 40 characters required (current length: ' + 
+        questionText.length + 
+        ')');
     $('.new-question-add .error-block').show();
 }
 function clearQuestionInputError() {
@@ -337,7 +345,7 @@ function submitAnswer() {
         // the user just wants to append to what they 
         // already have
         //
-        setAnswerInputError();
+        setAnswerInputError(answerText);
     }
 }
 
@@ -350,7 +358,7 @@ function submitQuestion() {
         //
     }
     else {
-        setQuestionInputError();
+        setQuestionInputError(questionText);
     }
 }
 
