@@ -289,6 +289,33 @@ function initialLoadActions() {
     //
     clearAnswerInputError();
     clearQuestionInputError();
+    
+    initiateCountdownTimer(65);
+}
+
+function initiateCountdownTimer(secondsToKeepQuestionAlive) {
+    var currentSecondsRemaining = secondsToKeepQuestionAlive;
+    var minutes;
+    var seconds;
+   
+    var timer =     
+        setInterval(function () {
+            minutes = parseInt(currentSecondsRemaining / 60, 10);
+            seconds = parseInt(currentSecondsRemaining % 60, 10);
+            seconds = seconds < 10 ? "0" + seconds : seconds;
+            
+            $('.countdown-timer').text(minutes + ':' + seconds);
+            
+            currentSecondsRemaining--;
+            if (currentSecondsRemaining < 0) {
+                // at this point we have come to the end of the 
+                // current question and now need to cycle to the 
+                // new question and handle other actions that 
+                // are appropriate at this time
+                //
+                clearInterval(timer);
+            }
+        }, 1000);
 }
 
 function populateCurrentQuestion() {
