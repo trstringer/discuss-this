@@ -24,6 +24,7 @@ var documents = [
         "isCurrent" : true,
         "isNextPossibility" : false,
         "dateCreated": new Date(),
+        "dateAsked": new Date(),
         "answers": [
             {
                 "_id": ObjectId(),

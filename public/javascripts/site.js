@@ -289,8 +289,6 @@ function initialLoadActions() {
     //
     clearAnswerInputError();
     clearQuestionInputError();
-    
-    initiateCountdownTimer(65);
 }
 
 function initiateCountdownTimer(secondsToKeepQuestionAlive) {
@@ -335,6 +333,19 @@ function populateCurrentQuestion() {
         // then different answers will show
         //
         else {
+            var questionAskedDate = new Date(question.dateAsked);
+            // *** TEST CODE *** just to set the countdown timer
+            // during test. Testing with 122 seconds (1:22)
+            //
+            // uncomment out the first nowDate definition and comment 
+            // out the second definition for production
+            //
+            // var nowDate = new Date();
+            var nowDate = new Date(questionAskedDate.getTime() + 122 * 1000);
+            var secondsSinceAsked = (nowDate - questionAskedDate) / 1000;
+            
+            initiateCountdownTimer(secondsSinceAsked);
+            
             sortAnswersByUpVotes(question.answers);
             insertFirstOrderedUnreviewedAnswer(question.answers);
             
