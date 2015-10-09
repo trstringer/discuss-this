@@ -362,6 +362,7 @@ function submitAnswer() {
         
         addAnswer(answerText, function (question) {
             setAnswerInputSuccess();
+            setTimeout(clearAnswerInputSuccess, 5000);
         });
     }
     else {
@@ -384,6 +385,7 @@ function submitQuestion() {
         //
         addQuestion(questionText, function (question) {
             setQuestionInputSuccess();
+            setTimeout(clearQuestionInputSuccess, 5000);
         });
     }
     else {
