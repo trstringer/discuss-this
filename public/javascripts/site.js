@@ -184,8 +184,23 @@ function clearQuestionInputSuccess() {
 }
 
 function answerVoted() {
-    var answerObjectId = $(this).parent().next().find('.object-id').text()
+    var $voteElement = $(this);
+    var answerObjectId = $voteElement.parent().next().find('.object-id').text();
     
+    $voteElement.addClass('selected');
+    
+    if ($voteElement.hasClass('glyphicon-chevron-up')) {
+        upVoteAnswer(answerObjectId, function (answer) {
+            var upVotesDisplay = $voteElement.parent().next().find('.up-votes');
+            upVotesDisplay.text(parseInt(upVotesDisplay.text()) + 1);
+        });
+    }
+    else {
+        downVoteAnswer(answerObjectId, function (answer) {
+            var downVotesDisplay = $voteElement.parent().next().find('.down-votes');
+            downVotesDisplay.text(parseInt(downVotesDisplay.text()) + 1);
+        });
+    }
 }
 
 // ********************************************************
@@ -275,6 +290,20 @@ function addQuestion(questionText, callback) {
         function (question) {
             callback(question);
         }
+    );
+}
+
+function upVoteAnswer(answerObjectId, callback) {
+    $.post(
+        '/questions/answers/upvote/' + answerObjectId,
+        callback
+    );
+}
+
+function downVoteAnswer(answerObjectId, callback) {
+    $.post(
+        '/questions/answers/downvote/' + answerObjectId,
+        callback
     );
 }
 
