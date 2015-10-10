@@ -197,14 +197,34 @@ function answerVoted() {
         upVoteAnswer(answerObjectId, function (answer) {
             var upVotesDisplay = $voteElement.parent().next().find('.up-votes');
             upVotesDisplay.text(parseInt(upVotesDisplay.text()) + 1);
+            
+            // now we can keep the voted answer here for a short time, but then 
+            // we should remove it from the UI to make room for a new unreviewed 
+            // answer
+            //
+            setTimeout(function() {
+                removeAnswer(answerObjectId);
+            }, 500);
         });
     }
     else {
         downVoteAnswer(answerObjectId, function (answer) {
             var downVotesDisplay = $voteElement.parent().next().find('.down-votes');
             downVotesDisplay.text(parseInt(downVotesDisplay.text()) + 1);
+            
+            // now we can keep the voted answer here for a short time, but then 
+            // we should remove it from the UI to make room for a new unreviewed 
+            // answer
+            //
+            setTimeout(function() {
+                removeAnswer(answerObjectId);
+            }, 500);
         });
     }
+}
+
+function removeAnswer(answerObjectId) {
+    $('.answer:contains("' + answerObjectId + '")').remove();
 }
 
 // ********************************************************
