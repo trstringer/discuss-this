@@ -183,6 +183,10 @@ function clearQuestionInputSuccess() {
     $('.new-question-add .error-block').hide();
 }
 
+function displayedAnswerCount() {
+    return $('.answer').length;
+}
+
 function answerVoted() {
     var $voteElement = $(this);
     var answerObjectId = $voteElement.parent().next().find('.object-id').text();
