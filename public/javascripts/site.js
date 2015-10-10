@@ -183,6 +183,11 @@ function clearQuestionInputSuccess() {
     $('.new-question-add .error-block').hide();
 }
 
+function answerVoted() {
+    var answerObjectId = $(this).parent().next().find('.object-id').text()
+    
+}
+
 // ********************************************************
 //                  API helpers
 // ********************************************************
@@ -284,6 +289,7 @@ function initialLoadActions() {
     
     $('#addAnswer').click(submitAnswer);
     $('#addQuestion').click(submitQuestion);
+    $('.question').on('click', '.vote-button', answerVoted);
     
     // do an initial hide on this error
     //
