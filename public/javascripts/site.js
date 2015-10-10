@@ -334,17 +334,12 @@ function populateCurrentQuestion() {
         //
         else {
             var questionAskedDate = new Date(question.dateAsked);
-            // *** TEST CODE *** just to set the countdown timer
-            // during test. Testing with 122 seconds (1:22)
-            //
-            // uncomment out the first nowDate definition and comment 
-            // out the second definition for production
-            //
-            // var nowDate = new Date();
-            var nowDate = new Date(questionAskedDate.getTime() + 122 * 1000);
-            var secondsSinceAsked = (nowDate - questionAskedDate) / 1000;
+            var nowDate = new Date();
+            // seconds remaining is going to be this pseudocode algorithm
+            // seconds-remaining = 7 minutes - (now - askedDate)
+            var secondsRemainingForQuestion = (7 * 60) - ((nowDate - questionAskedDate) / 1000);
             
-            initiateCountdownTimer(secondsSinceAsked);
+            initiateCountdownTimer(secondsRemainingForQuestion);
             
             sortAnswersByUpVotes(question.answers);
             insertFirstOrderedUnreviewedAnswer(question.answers);
