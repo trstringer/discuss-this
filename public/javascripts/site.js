@@ -204,6 +204,12 @@ function answerVoted() {
             //
             setTimeout(function() {
                 removeAnswer(answerObjectId);
+                
+                // insert an unreviewed answer if it exists
+                //
+                getCurrentQuestion(function (question) {
+                    insertFirstOrderedUnreviewedAnswer(question.answers);
+                });
             }, 500);
         });
     }
@@ -218,6 +224,12 @@ function answerVoted() {
             //
             setTimeout(function() {
                 removeAnswer(answerObjectId);
+                
+                // insert an unreviewed answer if it exists
+                //
+                getCurrentQuestion(function (question) {
+                    insertFirstOrderedUnreviewedAnswer(question.answers);
+                });
             }, 500);
         });
     }
