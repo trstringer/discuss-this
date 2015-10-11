@@ -1,4 +1,5 @@
 var http = require('http');
+var querystring = require('querystring');
 var words = ["blue", "green", "yellow", "red", "purple", "pink", "lion", "horse", "shark", "dolphin"];
 
 function getRandomWord() {
@@ -23,11 +24,63 @@ function getRandomQuestion() {
 }
 
 setInterval(function () {
-    console.log(getRandomQuestion());
+    addNextQuestion();
 }, 1000);
 
 setTimeout(function() {
     setInterval(function () {
-        console.log(getRandomAnswer());
+        addAnswer();
     }, 1000);
 }, 500);
+
+function addAnswer() {
+    var answerText = JSON.stringify({
+        answerText: getRandomAnswer()
+    });
+    
+    var req = http.request(
+        {
+            host: 'localhost',
+            path: '/questions/answers',
+            port: 3000,
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Content-Length': answerText.length
+            }
+        }
+    );
+    
+    req.on('error', function (ex) {
+        console.log('request error: ' + ex.message);
+    });
+    
+    req.write(answerText);
+    req.end();
+}
+
+function addNextQuestion() {
+    var questionText = JSON.stringify({
+        questionText: getRandomQuestion()
+    });
+    
+    var req = http.request(
+        {
+            host: 'localhost',
+            path: '/questions/next',
+            port: 3000,
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Content-Length': questionText.length
+            }
+        }
+    );
+    
+    req.on('error', function (ex) {
+        console.log('request error: ' + ex.message);
+    });
+    
+    req.write(questionText);
+    req.end();
+}
