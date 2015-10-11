@@ -438,6 +438,16 @@ function initiateCountdownTimer(secondsToKeepQuestionAlive) {
             
             $('.countdown-timer').text(minutes + ':' + seconds);
             
+            // if there aren't three answers displayed then the 
+            // current answer set might not be complete so get the 
+            // fresh question and add answers if available
+            //
+            if (countDisplayedAnswers() < 3) {
+                getCurrentQuestion(function (question) {
+                    insertFirstOrderedUnreviewedAnswer(question.answers);
+                });
+            }
+            
             currentSecondsRemaining--;
             if (currentSecondsRemaining < 0) {
                 // at this point we have come to the end of the 
