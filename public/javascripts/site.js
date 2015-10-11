@@ -248,12 +248,41 @@ function localStorageIsAvailable() {
     return typeof(Storage) !== "undefined";
 }
 
-function cacheObjectId(objectId) {
+function isObjectIdCached(objectId) {
     if (localStorageIsAvailable()) {
-        var objectIdList = localStorage.objectIdList === undefined ? [] : JSON.parse(localStorage.objectIdList);
-        objectIdList.push(objectId);
-        localStorage.objectIdList = objectIdList;
+        if (localStorage.objectIdList === undefined || localStorage.objectIdList === "") {
+            // the local storage string doesn't exist, which would mean 
+            // that the ObjectId is not cached
+            //
+            return false;
+        }
+        else {
+            var objectIdList = JSON.parse(localStorage.objectIdList);
+            if ($.inArray(objectId, objectIdList) >= 0) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
     }
+}
+
+function cacheObjectId(objectId) {
+    // we don't want to add duplicate ObjectId elements (primarily
+    // to keep the bloat and unknown behavior at a minimum), so 
+    // we will also first do a check to see if it already exists
+    //
+    if (localStorageIsAvailable() && !isObjectIdCached(objectId)) {
+        var objectIdList = 
+            localStorage.objectIdList === undefined || localStorage.objectIdList === "" ? [] : JSON.parse(localStorage.objectIdList);
+        objectIdList.push(objectId);
+        localStorage.objectIdList = JSON.stringify(objectIdList);
+    }
+}
+
+function clearCachedObjectIdElements() {
+    localStorage.objectIdList = "[]";
 }
 
 
