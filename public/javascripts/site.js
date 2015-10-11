@@ -239,6 +239,24 @@ function removeAnswer(answerObjectId) {
     $('.answer:contains("' + answerObjectId + '")').remove();
 }
 
+
+// ********************************************************
+//                  Web Storage helpers
+// ********************************************************
+
+function localStorageIsAvailable() {
+    return typeof(Storage) !== "undefined";
+}
+
+function cacheObjectId(objectId) {
+    if (localStorageIsAvailable()) {
+        var objectIdList = localStorage.objectIdList === undefined ? [] : JSON.parse(localStorage.objectIdList);
+        objectIdList.push(objectId);
+        localStorage.objectIdList = objectIdList;
+    }
+}
+
+
 // ********************************************************
 //                  API helpers
 // ********************************************************
