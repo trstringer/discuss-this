@@ -78,6 +78,9 @@ function setCurrentQuestion(questionText) {
 function countDisplayedAnswers() {
     return $('.answer').length;
 }
+function countDisplayedNextQuestionCandidates() {
+    return $('.new-question').length;
+}
 
 function answerIsCurrentlyDisplayed(answer) {
     var displayedAnswers = [];
@@ -251,8 +254,74 @@ function answerVoted() {
     }
 }
 
+function questionVoted() {
+    var $voteElement = $(this);
+    var questionObjectId = $voteElement.parent().next().find('.object-id').text();
+    
+    $voteElement.addClass('selected');
+    
+    // up vote handling
+    //
+    if ($voteElement.hasClass('glyphicon-chevron-up')) {
+        upVoteQuestion(questionObjectId, function (question) {
+            var upVotesDisplay = $voteElement.parent().next().find('.up-votes');
+            upVotesDisplay.text(parseInt(upVotesDisplay.text()) + 1);
+            
+            // remove the voted question after a brief pause
+            //
+            setTimeout(function () {
+                // get the question off of the page
+                //
+                removeQuestion(questionObjectId);
+                // cache the object id so it doesn't 
+                // appear again
+                //
+                cacheObjectId(questionObjectId);
+                
+                // insert an unreviewed next question candidate if 
+                // it exists
+                //
+                getNextQuestionCandidates(function (questions) {
+                    insertFirstOrderedUnreviewedQuestionCandidate(questions);
+                });
+            }, 500);
+        });
+    }
+    // down vote handling
+    //
+    else {
+        downVoteQuestion(questionObjectId, function (question) {
+            var downVotesDisplay = $voteElement.parent().next().find('.down-votes');
+            downVotesDisplay.text(parseInt(downVotesDisplay.text()) + 1);
+            
+            // remove the question after a short time to make room 
+            // for next question candidates
+            //
+            setTimeout(function () {
+                // get the question off of the page
+                //
+                removeQuestion(questionObjectId);
+                // cache the object id so it doesn't 
+                // show up again
+                //
+                cacheObjectId(questionObjectId);
+                
+                // insert an unreviewed next question candidate if 
+                // it exists
+                //
+                getNextQuestionCandidates(function (questions) {
+                    insertFirstOrderedUnreviewedQuestionCandidate(questions);
+                });
+            }, 500);
+        });
+    }
+}
+
 function removeAnswer(answerObjectId) {
     $('.answer:contains("' + answerObjectId + '")').remove();
+}
+function removeQuestion(questionObjectId) {
+    $('.new-question:contains("' + questionObjectId + '")').remove();
 }
 
 
@@ -406,6 +475,20 @@ function downVoteAnswer(answerObjectId, callback) {
     );
 }
 
+function upVoteQuestion(questionObjectId, callback) {
+    $.post(
+        '/questions/upvote/' + questionObjectId,
+        callback
+    );
+}
+
+function downVoteQuestion(questionObjectId, callback) {
+    $.post(
+        '/questions/downvote/' + questionObjectId,
+        callback
+    );
+}
+
 
 // ********************************************************
 //                  initial load
@@ -418,6 +501,7 @@ function initialLoadActions() {
     $('#addAnswer').click(submitAnswer);
     $('#addQuestion').click(submitQuestion);
     $('.question').on('click', '.vote-button', answerVoted);
+    $('.new-questions').on('click', '.vote-button', questionVoted);
     
     // do an initial hide on this error
     //
@@ -445,6 +529,16 @@ function initiateCountdownTimer(secondsToKeepQuestionAlive) {
             if (countDisplayedAnswers() < 3) {
                 getCurrentQuestion(function (question) {
                     insertFirstOrderedUnreviewedAnswer(question.answers);
+                });
+            }
+            
+            // if there aren't three next question candidates 
+            // displayed then refresh the next questions and add 
+            // more questions to the display
+            //
+            if (countDisplayedNextQuestionCandidates() < 3) {
+                getNextQuestionCandidates(function (questions) {
+                    insertFirstOrderedUnreviewedQuestionCandidate(questions);
                 });
             }
             
