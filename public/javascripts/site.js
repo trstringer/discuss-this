@@ -97,7 +97,7 @@ function answerIsCurrentlyDisplayed(answer) {
 // - (not implemented yet) was already reviewed (local storage)
 // 
 function hasAnswerAlreadyBeenReviewed(answer) {
-    return answerIsCurrentlyDisplayed(answer);
+    return answerIsCurrentlyDisplayed(answer) || objectIdIsCached(answer._id);
 }
 
 function questionCandidateIsCurrentlyDisplayed(question) {
@@ -111,7 +111,7 @@ function questionCandidateIsCurrentlyDisplayed(question) {
     }
 }
 function hasQuestionCandidateAlreadyBeenReviewed(question) {
-    return questionCandidateIsCurrentlyDisplayed(question);
+    return questionCandidateIsCurrentlyDisplayed(question) || objectIdIsCached(question._id);
 }
 
 function getAnswerInputText() {
@@ -193,6 +193,8 @@ function answerVoted() {
     
     $voteElement.addClass('selected');
     
+    // up vote handling
+    //
     if ($voteElement.hasClass('glyphicon-chevron-up')) {
         upVoteAnswer(answerObjectId, function (answer) {
             var upVotesDisplay = $voteElement.parent().next().find('.up-votes');
@@ -203,7 +205,13 @@ function answerVoted() {
             // answer
             //
             setTimeout(function() {
+                // get the answer off of the page
+                //
                 removeAnswer(answerObjectId);
+                // also cache the object id so we don't see
+                // this answer again
+                //
+                cacheObjectId(answerObjectId);
                 
                 // insert an unreviewed answer if it exists
                 //
@@ -213,6 +221,8 @@ function answerVoted() {
             }, 500);
         });
     }
+    // down vote handling
+    //
     else {
         downVoteAnswer(answerObjectId, function (answer) {
             var downVotesDisplay = $voteElement.parent().next().find('.down-votes');
@@ -223,7 +233,13 @@ function answerVoted() {
             // answer
             //
             setTimeout(function() {
+                // get the answer off of the page
+                //
                 removeAnswer(answerObjectId);
+                // also cache the object id so we don't see
+                // this answer again
+                //
+                cacheObjectId(answerObjectId);
                 
                 // insert an unreviewed answer if it exists
                 //
@@ -248,7 +264,7 @@ function localStorageIsAvailable() {
     return typeof(Storage) !== "undefined";
 }
 
-function isObjectIdCached(objectId) {
+function objectIdIsCached(objectId) {
     if (localStorageIsAvailable()) {
         if (localStorage.objectIdList === undefined || localStorage.objectIdList === "") {
             // the local storage string doesn't exist, which would mean 
@@ -273,7 +289,7 @@ function cacheObjectId(objectId) {
     // to keep the bloat and unknown behavior at a minimum), so 
     // we will also first do a check to see if it already exists
     //
-    if (localStorageIsAvailable() && !isObjectIdCached(objectId)) {
+    if (localStorageIsAvailable() && !objectIdIsCached(objectId)) {
         var objectIdList = 
             localStorage.objectIdList === undefined || localStorage.objectIdList === "" ? [] : JSON.parse(localStorage.objectIdList);
         objectIdList.push(objectId);
