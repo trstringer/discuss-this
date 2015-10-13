@@ -23,16 +23,6 @@ function getRandomQuestion() {
     return question + "?";
 }
 
-setInterval(function () {
-    addNextQuestion();
-}, 1000);
-
-setTimeout(function() {
-    setInterval(function () {
-        addAnswer();
-    }, 1000);
-}, 500);
-
 function addAnswer() {
     var answerText = JSON.stringify({
         answerText: getRandomAnswer()
@@ -84,3 +74,132 @@ function addNextQuestion() {
     req.write(questionText);
     req.end();
 }
+
+function getNextQuestionCandidates(callback) {
+    http.get('http://localhost:3000/questions/next/0', function (res) {
+        var dataTotal = '';
+        res.on('data', function (data) {
+            dataTotal += data;
+        });
+        res.on('end', function () {
+            var questions = JSON.parse(dataTotal);
+            callback(questions);
+        });
+    });
+}
+function getRandomNextQuestionCandidates(callback) {
+    getNextQuestionCandidates(function (questions) {
+        var count = questions.length;
+        callback(questions[Math.floor(Math.random(0, count) * count)]);
+    });
+}
+
+function getAnswers(callback) {
+    http.get('http://localhost:3000/questions', function (res) {
+        var dataTotal = '';
+        res.on('data', function (data) {
+            dataTotal += data;
+        });
+        res.on('end', function () {
+            var answers = JSON.parse(dataTotal).answers;
+            callback(answers);
+        });
+    })
+}
+function getCurrentQuestionRandomAnswer(callback) {
+    getAnswers(function (answers) {
+        var count = answers.length;
+        callback(answers[Math.floor(Math.random(0, count) * count)]);
+    });
+}
+
+function upVoteQuestion(objectId) {
+    var req = http.request(
+        {
+            host: 'localhost',
+            path: '/questions/upvote/' + objectId,
+            port: 3000,
+            method: 'POST'
+        }
+    );
+    
+    req.on('error', function (ex) {
+        console.log('request error: ' + ex.message);
+    });
+    
+    req.end();
+}
+function downVoteQuestion(objectId) {
+    var req = http.request(
+        {
+            host: 'localhost',
+            path: '/questions/downvote/' + objectId,
+            port: 3000,
+            method: 'POST'
+        }
+    );
+    
+    req.on('error', function (ex) {
+        console.log('request error: ' + ex.message);
+    });
+    
+    req.end();
+}
+function upVoteAnswer(objectId) {
+    var req = http.request(
+        {
+            host: 'localhost',
+            path: '/questions/answers/upvote/' + objectId,
+            port: 3000,
+            method: 'POST'
+        }
+    );
+    
+    req.on('error', function (ex) {
+        console.log('request error: ' + ex.message);
+    });
+    
+    req.end();
+}
+function downVoteAnswer(objectId) {
+    var req = http.request(
+        {
+            host: 'localhost',
+            path: '/questions/answers/downvote/' + objectId,
+            port: 3000,
+            method: 'POST'
+        }
+    );
+    
+    req.on('error', function (ex) {
+        console.log('request error: ' + ex.message);
+    });
+    
+    req.end();
+}
+
+/*
+setInterval(function () {
+    addNextQuestion();
+}, 1000);
+
+setTimeout(function() {
+    setInterval(function () {
+        addAnswer();
+    }, 1000);
+}, 500);
+*/
+
+/*
+getRandomNextQuestionCandidates(function (question) {
+    console.log(question.text);
+    console.log(question.downVotes);
+    downVoteQuestion(question._id);
+});
+*/
+
+getCurrentQuestionRandomAnswer(function (answer) {
+    console.log(answer.text);
+    console.log(answer.downVotes);
+    downVoteAnswer(answer._id);
+});
