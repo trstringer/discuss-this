@@ -1,6 +1,8 @@
 var http = require('http');
 var querystring = require('querystring');
 var words = ["blue", "green", "yellow", "red", "purple", "pink", "lion", "horse", "shark", "dolphin"];
+var minVotes = 10;
+var maxVotes = 200;
 
 function getRandomWord() {
     return words[Math.floor(Math.random(0, words.length) * words.length)];
@@ -178,17 +180,47 @@ function downVoteAnswer(objectId) {
     req.end();
 }
 
-/*
+function getRandomNumber(min, max) {
+    return Math.floor(Math.random() * (max - min)) + min;
+}
+
 setInterval(function () {
     addNextQuestion();
 }, 1000);
 
-setTimeout(function() {
-    setInterval(function () {
-        addAnswer();
-    }, 1000);
-}, 500);
-*/
+setInterval(function () {
+    addAnswer();
+}, 1000);
+
+setInterval(function () {
+    getCurrentQuestionRandomAnswer(function (answer) {
+        for (var i = 0; i < getRandomNumber(minVotes, maxVotes); i++) {
+            upVoteAnswer(answer._id);
+        }
+    });
+}, 1000);
+setInterval(function () {
+    getCurrentQuestionRandomAnswer(function (answer) {
+        for (var i = 0; i < getRandomNumber(minVotes, maxVotes); i++) {
+            downVoteAnswer(answer._id);
+        }
+    });
+}, 1000);
+
+setInterval(function () {
+    getRandomNextQuestionCandidates(function (question) {
+        for (var i = 0; i < getRandomNumber(minVotes, maxVotes); i++) {
+            upVoteQuestion(question._id);
+        }
+    });
+}, 1000);
+setInterval(function () {
+    getRandomNextQuestionCandidates(function (question) {
+        for (var i = 0; i < getRandomNumber(minVotes, maxVotes); i++) {
+            downVoteQuestion(question._id);
+        }
+    });
+}, 1000);
 
 /*
 getRandomNextQuestionCandidates(function (question) {
@@ -198,8 +230,10 @@ getRandomNextQuestionCandidates(function (question) {
 });
 */
 
+/*
 getCurrentQuestionRandomAnswer(function (answer) {
     console.log(answer.text);
     console.log(answer.downVotes);
     downVoteAnswer(answer._id);
 });
+*/
