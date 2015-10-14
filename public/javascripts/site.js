@@ -374,6 +374,10 @@ function clearCachedObjectIdElements() {
     localStorage.objectIdList = "[]";
 }
 
+function elementIsSelected($votingItem) {
+    return $votingItem.find('.selected').length > 0;
+}
+
 
 // ********************************************************
 //                  API helpers
