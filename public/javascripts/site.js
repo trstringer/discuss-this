@@ -219,6 +219,7 @@ function answerVoted() {
                 // insert an unreviewed answer if it exists
                 //
                 getCurrentQuestion(function (question) {
+                    sortAnswersByUpVotes(question.answers);
                     insertFirstOrderedUnreviewedAnswer(question.answers);
                 });
             }, 500);
@@ -247,6 +248,7 @@ function answerVoted() {
                 // insert an unreviewed answer if it exists
                 //
                 getCurrentQuestion(function (question) {
+                    sortAnswersByUpVotes(question.answers);
                     insertFirstOrderedUnreviewedAnswer(question.answers);
                 });
             }, 500);
@@ -282,6 +284,7 @@ function questionVoted() {
                 // it exists
                 //
                 getNextQuestionCandidates(function (questions) {
+                    sortQuestionsByUpVotes(questions);
                     insertFirstOrderedUnreviewedQuestionCandidate(questions);
                 });
             }, 500);
@@ -310,6 +313,7 @@ function questionVoted() {
                 // it exists
                 //
                 getNextQuestionCandidates(function (questions) {
+                    sortQuestionsByUpVotes(questions);
                     insertFirstOrderedUnreviewedQuestionCandidate(questions);
                 });
             }, 500);
