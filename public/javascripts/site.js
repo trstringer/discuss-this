@@ -193,6 +193,17 @@ function displayedAnswerCount() {
 function answerVoted() {
     var $voteElement = $(this);
     var answerObjectId = $voteElement.parent().next().find('.object-id').text();
+    // we need to get the over-arching answer div to do a test to see 
+    // if it has already been voted on, so that we don't duplicate 
+    // vote before it is hidden
+    //
+    // if this answer has *already* been voted on, then take no action 
+    // so as not to throw it off
+    //
+    var $answerElement = $voteElement.parent().parent();
+    if (elementIsSelected($answerElement)) {
+        return;
+    }
     
     $voteElement.addClass('selected');
     
@@ -259,6 +270,17 @@ function answerVoted() {
 function questionVoted() {
     var $voteElement = $(this);
     var questionObjectId = $voteElement.parent().next().find('.object-id').text();
+    // we need to get the over-arching question div to do a test to see 
+    // if it has already been voted on, so that we don't duplicate 
+    // vote before it is hidden
+    //
+    // if this question has *already* been voted on, then take no action 
+    // so as not to throw it off
+    //
+    var $questionElement = $voteElement.parent().parent();
+    if (elementIsSelected($questionElement)) {
+        return;
+    }
     
     $voteElement.addClass('selected');
     
