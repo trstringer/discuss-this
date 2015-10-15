@@ -198,14 +198,14 @@ setInterval(function () {
             upVoteAnswer(answer._id);
         }
     });
-}, 1000);
+}, 5000);
 setInterval(function () {
     getCurrentQuestionRandomAnswer(function (answer) {
         for (var i = 0; i < getRandomNumber(minVotes, maxVotes); i++) {
             downVoteAnswer(answer._id);
         }
     });
-}, 1000);
+}, 5000);
 
 setInterval(function () {
     getRandomNextQuestionCandidates(function (question) {
@@ -213,14 +213,14 @@ setInterval(function () {
             upVoteQuestion(question._id);
         }
     });
-}, 1000);
+}, 5000);
 setInterval(function () {
     getRandomNextQuestionCandidates(function (question) {
         for (var i = 0; i < getRandomNumber(minVotes, maxVotes); i++) {
             downVoteQuestion(question._id);
         }
     });
-}, 1000);
+}, 5000);
 
 /*
 getRandomNextQuestionCandidates(function (question) {
