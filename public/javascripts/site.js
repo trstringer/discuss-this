@@ -231,7 +231,9 @@ function answerVoted() {
                 //
                 getCurrentQuestion(function (question) {
                     sortAnswersByUpVotes(question.answers);
-                    insertFirstOrderedUnreviewedAnswer(question.answers);
+                    if (countDisplayedAnswers() < 3) {
+                        insertFirstOrderedUnreviewedAnswer(question.answers);
+                    }
                 });
             }, 500);
         });
@@ -260,7 +262,9 @@ function answerVoted() {
                 //
                 getCurrentQuestion(function (question) {
                     sortAnswersByUpVotes(question.answers);
-                    insertFirstOrderedUnreviewedAnswer(question.answers);
+                    if (countDisplayedAnswers() < 3) {
+                        insertFirstOrderedUnreviewedAnswer(question.answers);
+                    }
                 });
             }, 500);
         });
@@ -307,7 +311,9 @@ function questionVoted() {
                 //
                 getNextQuestionCandidates(function (questions) {
                     sortQuestionsByUpVotes(questions);
-                    insertFirstOrderedUnreviewedQuestionCandidate(questions);
+                    if (countDisplayedNextQuestionCandidates() < 3) {
+                        insertFirstOrderedUnreviewedQuestionCandidate(questions);
+                    }
                 });
             }, 500);
         });
@@ -336,7 +342,9 @@ function questionVoted() {
                 //
                 getNextQuestionCandidates(function (questions) {
                     sortQuestionsByUpVotes(questions);
-                    insertFirstOrderedUnreviewedQuestionCandidate(questions);
+                    if (countDisplayedNextQuestionCandidates() < 3) {
+                        insertFirstOrderedUnreviewedQuestionCandidate(questions);
+                    }
                 });
             }, 500);
         });
@@ -626,7 +634,9 @@ function populateCurrentQuestion() {
             initiateCountdownTimer(secondsRemainingForQuestion);
             
             sortAnswersByUpVotes(question.answers);
-            insertFirstOrderedUnreviewedAnswer(question.answers);
+            if (countDisplayedAnswers() < 3) {
+                insertFirstOrderedUnreviewedAnswer(question.answers);
+            }
             
             if (question.answers.length > 1) {
                 // insert another high up vote answer
@@ -636,7 +646,9 @@ function populateCurrentQuestion() {
                 // the check that it is already been reviewed, moving 
                 // onto the next one
                 //
-                insertFirstOrderedUnreviewedAnswer(question.answers);
+                if (countDisplayedAnswers() < 3) {
+                    insertFirstOrderedUnreviewedAnswer(question.answers);
+                }
                 
                 // now if there are enough answers, sort the answers 
                 // by down votes so that we show an "unpopular" 
@@ -644,7 +656,9 @@ function populateCurrentQuestion() {
                 //
                 if (question.answers.length > 2) {
                     sortAnswersByDownVotes(question.answers);
-                    insertFirstOrderedUnreviewedAnswer(question.answers);
+                    if (countDisplayedAnswers() < 3) {
+                        insertFirstOrderedUnreviewedAnswer(question.answers);
+                    }
                 }
             }
         }
@@ -664,11 +678,17 @@ function populateNextQuestions() {
         
         // insert the first next question candidate
         //
-        insertFirstOrderedUnreviewedQuestionCandidate(questions);
-        if (questions.length > 1) {
+        if (countDisplayedNextQuestionCandidates() < 3) {
             insertFirstOrderedUnreviewedQuestionCandidate(questions);
-            if (questions.length > 2) {
+        }
+        if (questions.length > 1) {
+            if (countDisplayedNextQuestionCandidates() < 3) {
                 insertFirstOrderedUnreviewedQuestionCandidate(questions);
+            }
+            if (questions.length > 2) {
+                if (countDisplayedNextQuestionCandidates() < 3) {
+                    insertFirstOrderedUnreviewedQuestionCandidate(questions);
+                }
             }
         }
     });
