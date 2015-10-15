@@ -58,7 +58,7 @@ exports.getCurrentQuestion = function (callback) {
 
 function archiveUnselectedNextQuestionCandidates(db, callback) {
     db.collection('questions')
-        .update(
+        .updateMany(
             { isCurrent: false, isNextPossibility: true },
             { $set: { isNextPossibility: false }},
             function (result) {
