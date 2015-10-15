@@ -10,6 +10,7 @@
  */
 
 var http = require('http');
+var exec = require('child_process').exec;
 
 var interval = 7 * 60 * 1000;
 
@@ -29,4 +30,12 @@ function setNextQuestion() {
     req.end();
 }
 
-setInterval(setNextQuestion, interval);
+// set the dateAsked of the current question to the now time
+//
+exec('mongo ..\\data\\mongo-set-current-question-dateAsked.js', function (err, stdout, stderr) {
+    console.log(stdout);
+    console.log(stderr);
+    
+    console.log('current date: ' + (new Date()).toLocaleString());
+    setInterval(setNextQuestion, interval);
+});
