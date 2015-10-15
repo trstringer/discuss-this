@@ -400,6 +400,14 @@ function elementIsSelected($votingItem) {
     return $votingItem.find('.selected').length > 0;
 }
 
+function clearAllAnswers() {
+    $('.answer').remove();
+}
+
+function clearAllNextQuestionCandidates() {
+    $('.new-question').remove();
+}
+
 
 // ********************************************************
 //                  API helpers
@@ -579,7 +587,13 @@ function initiateCountdownTimer(secondsToKeepQuestionAlive) {
                 // new question and handle other actions that 
                 // are appropriate at this time
                 //
-                clearInterval(timer);
+                clearAllAnswers();
+                clearAllNextQuestionCandidates();
+                
+                getCurrentQuestion(function (question) {
+                    setCurrentQuestion(question.text);
+                });
+                currentSecondsRemaining = 7 * 60;
             }
         }, 1000);
 }
@@ -587,6 +601,8 @@ function initiateCountdownTimer(secondsToKeepQuestionAlive) {
 function populateCurrentQuestion() {
     getCurrentQuestion(function (question) {
         setCurrentQuestion(question.text);
+        
+        clearAllAnswers();
                 
         if (question.answers === undefined || question.answers === null || question.answers.length === 0) {
             return;
@@ -637,6 +653,10 @@ function populateCurrentQuestion() {
 
 function populateNextQuestions() {
     getNextQuestionCandidates(function (questions) {
+        // remove any and all next question candidates 
+        //
+        clearAllNextQuestionCandidates();
+        
         if (questions === undefined || questions === null || questions.length === 0) {
             return;
         }
