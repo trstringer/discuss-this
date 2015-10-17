@@ -14,20 +14,55 @@ var exec = require('child_process').exec;
 
 var interval = 7 * 60 * 1000;
 
-function setNextQuestion() {
-    var req = http.request(
-        {
-            host: 'localhost',
-            path: '/questions/gen',
-            port: 3000,
-            method: 'POST'
+function getTopNextQuestionCandidate(callback) {
+    http.get('http://localhost:3000/questions/next/1', function (questions) {
+        if (questions === undefined || questions === null || questions.length === 0) {
+            callback(null);
         }
-    );
-    req.on('error', function (ex) {
-        console.log('request error: ' + ex.message);
+        else {
+            callback(questions[0]);
+        }
     });
-    
-    req.end();
+}
+
+function setNextQuestion() {
+    getNextQuestionCandidates(function (question) {
+        var req;
+        if (question === undefined || question === null) {
+            // there is no next question candidate so now
+            // we need to set the current no question start date
+            // to right now for clients to pull from
+            //
+            req = http.request(
+                {
+                    host: 'localhost',
+                    path: '/questions/noquestion',
+                    port: 3000,
+                    method: 'POST'
+                }
+            );
+            req.on('error', function (ex) {
+                console.log('request error: ' + ex.message);
+            });
+            
+            req.end();
+        }
+        else {
+            req = http.request(
+                {
+                    host: 'localhost',
+                    path: '/questions/gen',
+                    port: 3000,
+                    method: 'POST'
+                }
+            );
+            req.on('error', function (ex) {
+                console.log('request error: ' + ex.message);
+            });
+            
+            req.end();
+        }
+    });
 }
 
 // set the dateAsked of the current question to the now time
