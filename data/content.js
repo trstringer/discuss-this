@@ -394,6 +394,25 @@ exports.downVoteQuestion = function (questionId, callback) {
     })
 }
 
+function updateNoQuestionDate(db, callback) {
+    db.collection('noQuestion')
+        .updateOne(
+            {}, 
+            { $set: { noQuestionStart: new Date() }}, 
+            callback
+        );
+}
+exports.setNoQuestionDate = function (callback) {
+    mongoClient.connect(url, function (err, db) {
+        assert.equal(err, null);
+        
+        updateNoQuestionDate(db, function (result) {
+            db.close();
+            callback(result);
+        });
+    });
+};
+
 
 // ********************************************************
 //                  answers

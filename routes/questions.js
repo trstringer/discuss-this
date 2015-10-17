@@ -148,4 +148,10 @@ router.post('/downvote/:questionId', function (req, res, next) {
     }
 });
 
+router.post('/noquestion/', function (req, res, next) {
+    content.setNoQuestionDate(function () {
+        res.status(200).send();
+    });
+});
+
 module.exports = router;
