@@ -398,7 +398,7 @@ function updateNoQuestionDate(db, callback) {
     db.collection('noQuestion')
         .updateOne(
             {}, 
-            { $set: { noQuestionStart: new Date() }}, 
+            { $set: { noQuestionStartDate: new Date() }}, 
             callback
         );
 }
@@ -409,6 +409,27 @@ exports.setNoQuestionDate = function (callback) {
         updateNoQuestionDate(db, function (result) {
             db.close();
             callback(result);
+        });
+    });
+};
+
+function queryNoQuestionDate(db, callback) {
+    var cursor = db.collection('noQuestion').find({});
+    
+    cursor.each(function (err, doc) {
+        if (doc !== null) {
+            callback(doc);
+            return;
+        }
+    });
+}
+exports.getNoQuestionDate = function (callback) {
+    mongoClient.connect(url, function (err, db) {
+        assert.equal(err, null);
+        
+        queryNoQuestionDate(db, function (doc) {
+            db.close();
+            callback(doc.noQuestionStartDate);
         });
     });
 };
