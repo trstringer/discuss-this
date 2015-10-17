@@ -36,12 +36,15 @@ exports.getQuestionByObjectId = function (objectId, callback) {
 
 function queryCurrentQuestion(db, callback) {
     var cursor = 
-        db.collection('questions').find({isCurrent: true});
+        db.collection('questions')
+            .find({isCurrent: true});
     
+    var sentDoc = false;
     cursor.each(function (err, doc) {
-        assert.equal(err, null);
-        if (doc !== null) {
+        if (!sentDoc) {
+            assert.equal(err, null);
             callback(doc);
+            sentDoc = true;
         }
     });
 }
@@ -291,11 +294,12 @@ function queryTopNextQuestionCandidate(db, callback) {
         })
         .limit(1);
         
+    var docSent = false;
     cursor.each(function (err, doc) {
-        assert.equal(err, null);
-        
-        if (doc !== null) {
+        if (!docSent) {
+            assert.equal(err, null);
             callback(doc);
+            docSent = true;
         }
     });
 }
@@ -399,7 +403,18 @@ function updateNoQuestionDate(db, callback) {
         .updateOne(
             {}, 
             { $set: { noQuestionStartDate: new Date() }}, 
-            callback
+            function () {
+                // if there is no question then we should take 
+                // the current question and set is as no longer 
+                // the current question
+                //
+                db.collection('questions')
+                    .updateOne(
+                        { isCurrent: true },
+                        { $set: { isCurrent: false }},
+                        callback
+                    );
+            }
         );
 }
 exports.setNoQuestionDate = function (callback) {

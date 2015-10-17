@@ -1,4 +1,13 @@
 // ********************************************************
+//                  Configuration
+// ********************************************************
+
+var config = {
+    questionDurationMinutes: 1
+};
+
+
+// ********************************************************
 //                  UI helpers
 // ********************************************************
 
@@ -51,10 +60,15 @@ function insertAnswer(answer) {
     $('.new-answer').before(generateAnswerBox(answer));
 }
 function insertFirstOrderedUnreviewedAnswer(answers) {
-    for (var i = 0; i < answers.length; i++) {
-        if (!hasAnswerAlreadyBeenReviewed(answers[i])) {
-            insertAnswer(answers[i]);
-            break;
+    if (answers === undefined || answers === null || answers.length === 0) {
+        return;
+    }
+    else {
+        for (var i = 0; i < answers.length; i++) {
+            if (!hasAnswerAlreadyBeenReviewed(answers[i])) {
+                insertAnswer(answers[i]);
+                break;
+            }
         }
     }
 }
@@ -63,10 +77,15 @@ function insertQuestion(question) {
     $('.new-question-add').before(generateNextQuestionBox(question));
 }
 function insertFirstOrderedUnreviewedQuestionCandidate(questions) {
-    for (var i = 0; i < questions.length; i++) {
-        if (!hasQuestionCandidateAlreadyBeenReviewed(questions[i])) {
-            insertQuestion(questions[i]);
-            break;
+    if (questions === undefined || questions === null || questions.length === 0) {
+        return;
+    }
+    else {
+        for (var i = 0; i < questions.length; i++) {
+            if (!hasQuestionCandidateAlreadyBeenReviewed(questions[i])) {
+                insertQuestion(questions[i]);
+                break;
+            }
         }
     }
 }
@@ -550,7 +569,7 @@ function getTimeRemainingWithNoQuestion(callback) {
     getNoQuestionStartDate(function (noQuestionStartDate) {
         var startDate = new Date(noQuestionStartDate);
         var nowDate = new Date();
-        var secondsRemaining = (7 * 60) - ((nowDate - startDate) / 1000);
+        var secondsRemaining = (config.questionDurationMinutes * 60) - ((nowDate - startDate) / 1000);
         var minutes = parseInt(currentSecondsRemaining / 60, 10);
         var seconds = parseInt(currentSecondsRemaining % 60, 10);
         seconds = seconds < 10 ? "0" + seconds : seconds;
@@ -622,9 +641,15 @@ function initiateCountdownTimer(secondsToKeepQuestionAlive) {
                 clearAllNextQuestionCandidates();
                 
                 getCurrentQuestion(function (question) {
-                    setCurrentQuestion(question.text);
+                    if (question === undefined || question === null) {
+                        currentQuestionNonexistent();
+                    }
+                    else {
+                        currentQuestionExists();
+                        setCurrentQuestion(question.text);
+                    }
                 });
-                currentSecondsRemaining = 7 * 60;
+                currentSecondsRemaining = config.questionDurationMinutes * 60;
             }
         }, 1000);
 }
@@ -665,7 +690,7 @@ function populateCurrentQuestion() {
         var nowDate = new Date();
         // seconds remaining is going to be this pseudocode algorithm
         // seconds-remaining = 7 minutes - (now - askedDate)
-        var secondsRemainingForQuestion = (7 * 60) - ((nowDate - questionAskedDate) / 1000);
+        var secondsRemainingForQuestion = (config.questionDurationMinutes * 60) - ((nowDate - questionAskedDate) / 1000);
         
         initiateCountdownTimer(secondsRemainingForQuestion);
         
