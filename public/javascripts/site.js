@@ -611,10 +611,7 @@ function populateCurrentQuestion() {
         setCurrentQuestion(question.text);
         
         clearAllAnswers();
-                
-        if (question.answers === undefined || question.answers === null || question.answers.length === 0) {
-            return;
-        }
+          
         // this will add currently three (3) answers to the display 
         // provided that there are three (3) valid answers that can 
         // and should be displayed
@@ -624,15 +621,15 @@ function populateCurrentQuestion() {
         // votes on answers (or [not implemented yet] dismisses answers) 
         // then different answers will show
         //
-        else {
-            var questionAskedDate = new Date(question.dateAsked);
-            var nowDate = new Date();
-            // seconds remaining is going to be this pseudocode algorithm
-            // seconds-remaining = 7 minutes - (now - askedDate)
-            var secondsRemainingForQuestion = (7 * 60) - ((nowDate - questionAskedDate) / 1000);
-            
-            initiateCountdownTimer(secondsRemainingForQuestion);
-            
+        var questionAskedDate = new Date(question.dateAsked);
+        var nowDate = new Date();
+        // seconds remaining is going to be this pseudocode algorithm
+        // seconds-remaining = 7 minutes - (now - askedDate)
+        var secondsRemainingForQuestion = (7 * 60) - ((nowDate - questionAskedDate) / 1000);
+        
+        initiateCountdownTimer(secondsRemainingForQuestion);
+        
+        if (question.answers !== undefined && question.answers !== null && question.answers.length !== 0) {
             sortAnswersByUpVotes(question.answers);
             if (countDisplayedAnswers() < 3) {
                 insertFirstOrderedUnreviewedAnswer(question.answers);
