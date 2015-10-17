@@ -358,6 +358,14 @@ function removeQuestion(questionObjectId) {
     $('.new-question:contains("' + questionObjectId + '")').remove();
 }
 
+function currentQuestionNonexistent() {
+    $('#currentQuestionText').text('no current question, but ask one below!');
+    $('.new-answer').hide();
+}
+function currentQuestionExists() {
+    $('.new-answer').show();
+}
+
 
 // ********************************************************
 //                  Web Storage helpers
@@ -535,6 +543,21 @@ function downVoteQuestion(questionObjectId, callback) {
     );
 }
 
+function getNoQuestionStartDate(callback) {
+    $.get('/questions/noquestion/', callback);
+}
+function getTimeRemainingWithNoQuestion(callback) {
+    getNoQuestionStartDate(function (noQuestionStartDate) {
+        var startDate = new Date(noQuestionStartDate);
+        var nowDate = new Date();
+        var secondsRemaining = (7 * 60) - ((nowDate - startDate) / 1000);
+        var minutes = parseInt(currentSecondsRemaining / 60, 10);
+        var seconds = parseInt(currentSecondsRemaining % 60, 10);
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+        callback(minutes + ':' + seconds);
+    });
+}
+
 
 // ********************************************************
 //                  initial load
@@ -608,6 +631,23 @@ function initiateCountdownTimer(secondsToKeepQuestionAlive) {
 
 function populateCurrentQuestion() {
     getCurrentQuestion(function (question) {
+        if (question === undefined || question === null) {
+            currentQuestionNonexistent();
+            
+            // here we need to see when the last time a new question 
+            // was checked
+            //
+            getTimeRemainingWithNoQuestion(function (timeRemaining) {
+                $('.countdown-timer').text(timeRemaining);
+            });
+            
+            return;
+        }
+        
+        // there is a current question so make sure it is displayed here
+        //
+        currentQuestionExists();
+        
         setCurrentQuestion(question.text);
         
         clearAllAnswers();
