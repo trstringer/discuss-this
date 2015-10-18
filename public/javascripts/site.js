@@ -3,7 +3,8 @@
 // ********************************************************
 
 var config = {
-    questionDurationMinutes: 1
+    questionDurationMinutes: 1,
+    minInputLength: 30
 };
 
 
@@ -143,10 +144,10 @@ function clearAnswerInputText() {
     $('#newAnswer').val('');
 }
 // at the moment, the answers will need to be a minimum 
-// of 40 characters. This is subject to change
+// of minInputTextLength characters. This is subject to change
 //
 function isSubmittedInputValid(inputText) {
-    if (inputText.length < 40) {
+    if (inputText.length < config.minInputLength) {
         return false;
     }
     else {
@@ -156,7 +157,7 @@ function isSubmittedInputValid(inputText) {
 function setAnswerInputError(answerText) {
     $('.new-answer').removeClass('has-success').addClass('has-error');
     $('.new-answer .error-block').text(
-        'minimum of 40 characters required (current length: ' + 
+        'minimum of ' + config.minInputLength + 'characters required (current length: ' + 
         answerText.length + 
         ')');
     $('.new-answer .error-block').show();
@@ -185,7 +186,7 @@ function clearQuestionInputText() {
 function setQuestionInputError(questionText) {
     $('.new-question-add').removeClass('has-success').addClass('has-error');
     $('.new-question-add .error-block').text(
-        'minimum of 40 characters required (current length: ' + 
+        'minimum of ' + config.minInputLength + ' characters required (current length: ' + 
         questionText.length + 
         ')');
     $('.new-question-add .error-block').show();
