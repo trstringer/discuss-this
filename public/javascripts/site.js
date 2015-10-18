@@ -565,15 +565,12 @@ function downVoteQuestion(questionObjectId, callback) {
 function getNoQuestionStartDate(callback) {
     $.get('/questions/noquestion/', callback);
 }
-function getTimeRemainingWithNoQuestion(callback) {
+function getSecondsRemainingWithNoQuestion(callback) {
     getNoQuestionStartDate(function (noQuestionStartDate) {
         var startDate = new Date(noQuestionStartDate);
         var nowDate = new Date();
         var secondsRemaining = (config.questionDurationMinutes * 60) - ((nowDate - startDate) / 1000);
-        var minutes = parseInt(currentSecondsRemaining / 60, 10);
-        var seconds = parseInt(currentSecondsRemaining % 60, 10);
-        seconds = seconds < 10 ? "0" + seconds : seconds;
-        callback(minutes + ':' + seconds);
+        callback(secondsRemaining);
     });
 }
 
@@ -662,8 +659,8 @@ function populateCurrentQuestion() {
             // here we need to see when the last time a new question 
             // was checked
             //
-            getTimeRemainingWithNoQuestion(function (timeRemaining) {
-                $('.countdown-timer').text(timeRemaining);
+            getSecondsRemainingWithNoQuestion(function (secondsRemaining) {
+                initiateCountdownTimer(secondsRemaining);
             });
             
             return;
