@@ -644,6 +644,10 @@ function initiateCountdownTimer(secondsToKeepQuestionAlive) {
                     }
                     else {
                         currentQuestionExists();
+                        // at this point we can safely purge the local storage 
+                        // cahced object IDs
+                        //
+                        clearCachedObjectIdElements();
                         setCurrentQuestion(question.text);
                     }
                 });
