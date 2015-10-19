@@ -157,7 +157,7 @@ function isSubmittedInputValid(inputText) {
 function setAnswerInputError(answerText) {
     $('.new-answer').removeClass('has-success').addClass('has-error');
     $('.new-answer .error-block').text(
-        'minimum of ' + config.minInputLength + 'characters required (current length: ' + 
+        'minimum of ' + config.minInputLength + ' characters required (current length: ' + 
         answerText.length + 
         ')');
     $('.new-answer .error-block').show();
