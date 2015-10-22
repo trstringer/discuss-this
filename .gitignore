@@ -34,3 +34,4 @@ node_modules
 design/
 public/bootstrap/
 typings/
+data/documentdb/import-error.csv
