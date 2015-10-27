@@ -609,6 +609,30 @@ function initiateCountdownTimer(secondsToKeepQuestionAlive) {
    
     var timer =     
         setInterval(function () {
+            // what we need to do is periodically recalibrate the 
+            // remaining seconds so that the client application 
+            // doesn't get too far out of variation of the current 
+            // question or no question time
+            //
+            // we will way that above 15 seconds, and less than 
+            // 180 seconds (3 minutes) we should recheck and 
+            // recalculate currentSecondsRemaining every 10 seconds
+            // 
+            if (currentSecondsRemaining > 15 && currentSecondsRemaining < 180 && currentSecondsRemaining % 10 === 0) {
+                getCurrentQuestion(function (question) {
+                    if (question === undefined || question === null) {
+                        getSecondsRemainingWithNoQuestion(function (secondsRemaining) {
+                            currentSecondsRemaining = secondsRemaining;
+                        });
+                    }
+                    else {
+                        var questionAskedDate = new Date(question.dateAsked);
+                        var nowDate = new Date();
+                        currentSecondsRemaining = (config.questionDurationMinutes * 60) - ((nowDate - questionAskedDate) / 1000);
+                    }
+                });
+            }
+            
             minutes = parseInt(currentSecondsRemaining / 60, 10);
             seconds = parseInt(currentSecondsRemaining % 60, 10);
             seconds = seconds < 10 ? "0" + seconds : seconds;
