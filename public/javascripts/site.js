@@ -35,22 +35,22 @@ function generateAnswerBox(answer) {
         "</div>";
 }
 function generateNextQuestionBox(question) {
-    return "<div class='col-md-12 new-question voting-item'>" +
-            "<div class='col-md-1'>" +
+    return "<div class='col-xs-12 col-md-12 new-question voting-item'>" +
+            "<div class='col-xs-2 col-md-1'>" +
                 "<span class='glyphicon glyphicon-chevron-up vote-button'></span>" +
                 "<span class='glyphicon glyphicon-chevron-down vote-button'></span>" +
             "</div>" +
-            "<div class='col-md-11'>" +
-                "<div class='col-md-11 votes'>" +
-                    "<div class='col-md-3'>" +
+            "<div class='col-xs-10 col-md-11'>" +
+                "<div class='col-xs-12 col-md-11 votes'>" +
+                    "<div class='col-xs-3 col-md-3'>" +
                         "<p class='up-votes'>" + question.upVotes + "</p>" +
                     "</div>" +
-                    "<div class='col-md-3'>" +
+                    "<div class='col-xs-3 col-md-3'>" +
                         "<p class='down-votes'>" + question.downVotes + "</p>" +
                     "</div>" +
-                    "<div class='col-md-3 object-id'>" + question._id + "</div>" + 
+                    "<div class='col-xs-3 col-md-3 object-id'>" + question._id + "</div>" + 
                 "</div>" +
-                "<div class='col-md-11'>" +
+                "<div class='col-xs-12 col-md-11'>" +
                     "<p>" + question.text + "</p>" +
                 "</div>" +
             "</div>" +
