@@ -386,6 +386,13 @@ function currentQuestionExists() {
     $('.new-answer').show();
 }
 
+function clearInputs() {
+    clearAnswerInputError();
+    clearAnswerInputText();
+    clearQuestionInputError();
+    clearQuestionInputText();
+}
+
 
 // ********************************************************
 //                  Web Storage helpers
@@ -637,6 +644,7 @@ function initiateCountdownTimer(secondsToKeepQuestionAlive) {
                 //
                 clearAllAnswers();
                 clearAllNextQuestionCandidates();
+                clearInputs();
                 
                 getCurrentQuestion(function (question) {
                     if (question === undefined || question === null) {
