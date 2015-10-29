@@ -11,6 +11,7 @@
     "debug": "~2.2.0",
     "documentdb": "^1.4.0",
     "express": "~4.13.1",
+    "guid": "0.0.12",
     "jade": "~1.11.0",
     "morgan": "~1.6.1",
     "serve-favicon": "~2.3.0"
