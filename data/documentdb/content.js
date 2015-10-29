@@ -3,7 +3,9 @@ var Guid = require('guid');
 
 function DocContent(connectionInfo) {
     this.databaseLink = connectionInfo.databaseLink;
+    this.databaseName = connectionInfo.databaseName;
     this.questionsCol = connectionInfo.questionColLink;
+    this.questionsColName = connectionInfo.questionColName;
     this.client = new DocumentClient(connectionInfo.hostUrl, {masterKey: connectionInfo.masterKey});
 }
 
@@ -31,10 +33,20 @@ DocContent.prototype.addId = function (content) {
     }
 };
 
+DocContent.prototype.documentLink = function (document) {
+    return 'dbs/' + this.databaseName + '/colls/' + this.questionsColName + '/docs/' + document._id;
+};
+
+DocContent.prototype.updateDocument = function (document, callback) {
+    this.client.replaceDocument(this.documentLink(document), document, callback);
+};
+
 module.exports = new DocContent(
     {
         hostUrl: process.env.DOCUMENTDB_HOST_URL,
         masterKey: process.env.DOCUMENTDB_MASTER_KEY,
         databaseLink: process.env.DOCUMENTDB_DB_LINK, 
-        questionColLink: process.env.DOCUMENTDB_QUESTION_COL_LINK
+        databaseName: process.env.DOCUMENTDB_DB_NAME,
+        questionColLink: process.env.DOCUMENTDB_QUESTION_COL_LINK,
+        questionColName: process.env.DOCUMENTDB_QUESTION_COL_NAME
     });

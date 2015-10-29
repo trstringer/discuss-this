@@ -15,6 +15,9 @@ content.getCurrentQuestions(function (err, results) {
                     content.addId(results[i].answers[j]);
                 }
             }
+            content.updateDocument(results[i], function (err, results) {
+                console.log(results);
+            });
         }
     }
 });
