@@ -46,9 +46,7 @@ DocContent.prototype.documentLink = function (document) {
 
 DocContent.prototype.updateDocument = function (document, callback) {
     this.revertIdProperty(document);
-    this.client.replaceDocument(this.documentLink(document), document, function (err, results) {
-        callback(err, results);
-    });
+    this.client.replaceDocument(this.documentLink(document), document, callback);
 };
 
 module.exports = new DocContent(
