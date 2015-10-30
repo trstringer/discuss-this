@@ -9,6 +9,13 @@ function DocContent(connectionInfo) {
     this.client = new DocumentClient(connectionInfo.hostUrl, {masterKey: connectionInfo.masterKey});
 }
 
+DocContent.prototype.revertIdProperty = function (document) {
+    if (document.hasOwnProperty('_id')) {
+        document.id = document._id;
+        delete document._id;
+    }
+};
+
 DocContent.prototype.getCurrentQuestions = function (callback) {
     var selectAllQuestionsQuery = //'SELECT * FROM questions q';
         'SELECT \
@@ -34,11 +41,14 @@ DocContent.prototype.addId = function (content) {
 };
 
 DocContent.prototype.documentLink = function (document) {
-    return 'dbs/' + this.databaseName + '/colls/' + this.questionsColName + '/docs/' + document._id;
+    return 'dbs/' + this.databaseName + '/colls/' + this.questionsColName + '/docs/' + document.id;
 };
 
 DocContent.prototype.updateDocument = function (document, callback) {
-    this.client.replaceDocument(this.documentLink(document), document, callback);
+    this.revertIdProperty(document);
+    this.client.replaceDocument(this.documentLink(document), document, function (err, results) {
+        callback(err, results);
+    });
 };
 
 module.exports = new DocContent(
