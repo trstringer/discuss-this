@@ -7,6 +7,7 @@ if (process.env.DBMS_TYPE === 'documentdb') {
 
 console.log('debugging...');
 
+/*
 content.getCurrentQuestions(function (err, results) {
     for (var i = 0; i < results.length; i++) {
         if (results[i].answers) {
@@ -20,4 +21,21 @@ content.getCurrentQuestions(function (err, results) {
             });
         }
     }
+});
+*/
+
+/*
+content.getCurrentQuestion(function (question) {
+    console.log(question);
+});
+*/
+
+/*
+content.getQuestionByObjectId('dce31933-806d-53aa-9890-347f08bb39e6', function (question) {
+    console.log(question);
+});
+*/
+
+content.getNextQuestionCandidates(0, function (questions) {
+    console.log(questions);
 });
