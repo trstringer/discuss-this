@@ -36,6 +36,33 @@ content.getQuestionByObjectId('dce31933-806d-53aa-9890-347f08bb39e6', function (
 });
 */
 
+/*
 content.getNextQuestionCandidates(0, function (questions) {
     console.log(questions);
+});
+*/
+
+/*
+content.getNextQuestionCandidateWithMostTotalVotes(function (question) {
+    console.log(question);
+});
+*/
+
+/*
+content.getNextQuestionCandidateWithMostDownVotes(function (question) {
+    console.log(question); 
+});
+*/
+
+/*
+content.getTopNextQuestionCandidate(function (question) {
+    console.log(question);
+});
+*/
+
+content.getCurrentQuestion(function (question) {
+    console.log('current question: ' + question.text);
+    content.getTopNextQuestionCandidate(function (question) {
+        console.log('next question: ' + question.text);
+    });
 });

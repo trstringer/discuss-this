@@ -8,3 +8,11 @@ gulp.task('web-job', function (callback) {
         callback(err);
     });
 });
+
+gulp.task('documentdb-dbg-seed-data', function (callback) {
+    exec('node .\\data\\documentdb\\seed-dbg-data.js', function (err, stdout, stderr) {
+        console.log(stdout);
+        console.log(stderr);
+        callback(err);
+    });
+});

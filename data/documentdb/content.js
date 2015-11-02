@@ -157,14 +157,58 @@ DocContent.prototype.getNextQuestionCandidates = function (count, callback) {
 };
 
 DocContent.prototype.getNextQuestionCandidateWithMostTotalVotes = function (callback) {
-    throw { name: 'NotImplementedError', message: 'This has not been implemented yet' };
+    this.getNextQuestionCandidates(0, function (questions) {
+        if (!questions) {
+            callback(null);
+        }
+        else {
+            questions.sort(function (a, b) {
+                return (b.upVotes + b.downVotes) - (a.upVotes + a.downVotes);
+            });
+            callback(questions[0]);
+        }
+    });
 };
+
 DocContent.prototype.getNextQuestionCandidateWithMostDownVotes = function (callback) {
-    throw { name: 'NotImplementedError', message: 'This has not been implemented yet' };
+    var query = 
+        'SELECT \
+            q.id as _id, \
+            q.text, \
+            q.upVotes, \
+            q.downVotes, \
+            q.isCurrent, \
+            q.isNextPossibility, \
+            q.dateCreated, \
+            q.dateAsked, \
+            q.answers \
+        FROM questions q \
+        WHERE q.isNextPossibility = true \
+        ORDER BY q.downVotes DESC';
+        
+    this.client.queryDocuments(this.questionsCol, query)
+        .toArray(function (err, results) {
+            assert.equal(err, null);
+            if (err) {
+                callback(null);
+            }
+            else {
+                callback(results[0]);
+            }
+        });
 };
+
 DocContent.prototype.getTopNextQuestionCandidate = function (callback) {
-    throw { name: 'NotImplementedError', message: 'This has not been implemented yet' };
+    this.getNextQuestionCandidates(1, function (questions) {
+        if (!questions || questions.length === 0) {
+            callback(null);
+        }
+        else {
+            callback(questions[0]);
+        }
+    });
 };
+
 DocContent.prototype.upVoteQuestion = function (questionId, callback) {
     throw { name: 'NotImplementedError', message: 'This has not been implemented yet' };
 };
