@@ -115,8 +115,34 @@ DocContent.prototype.getCurrentQuestion = function (callback) {
         });
 };
 
+function archiveUnselectedQuestions(callback) {
+    
+}
+function unsetCurrentQuestion(callback) {
+    this.getCurrentQuestion(function (question) {
+        if (question) {
+            question.isCurrent = false;
+            this.updateDocument(question, callback);
+        }
+        else {
+            callback(null);
+        }
+    });
+}
 DocContent.prototype.setCurrentQuestion = function (question, callback) {
-    throw { name: 'NotImplementedError', message: 'This has not been implemented yet' };
+    if (!question) {
+        this.getTopNextQuestionCandidate(function (question) {
+            if (!question) {
+                callback(null);
+            }
+            else {
+                
+            }
+        });
+    }
+    else {
+        updateCurrentQuestion(question, callback);
+    }
 };
 
 DocContent.prototype.addNextQuestionCandidate = function (question, callback) {
