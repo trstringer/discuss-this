@@ -305,7 +305,19 @@ DocContent.prototype.getTopNextQuestionCandidate = function (callback) {
 };
 
 DocContent.prototype.upVoteQuestion = function (questionId, callback) {
-    throw { name: 'NotImplementedError', message: 'This has not been implemented yet' };
+    this.getQuestionByObjectId(questionId, question => {
+        if (!question) {
+            callback(null);
+        }
+        else {
+            question.upVotes++;
+            this.updateDocument(question, function (err, res) {
+                if (!err && res) {
+                    callback(question);
+                }
+            });
+        }
+    });
 };
 DocContent.prototype.downVoteQuestion = function (questionId, callback) {
     throw { name: 'NotImplementedError', message: 'This has not been implemented yet' };

@@ -72,6 +72,15 @@ content.getCurrentQuestion(function (question) {
 });
 */
 
+/*
 content.addNextQuestionCandidate('this is my new great question...', function (question) {
     console.log(question.text);
+});
+*/
+
+content.getCurrentQuestion(function (question) {
+    console.log('current upvotes: ' + question.upVotes);
+    content.upVoteQuestion(question._id, function (question) {
+        console.log('new upvotes: ' + question.upVotes);
+    });
 });
