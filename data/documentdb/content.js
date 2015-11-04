@@ -10,11 +10,17 @@ function DocContent(connectionInfo) {
     this.client = new DocumentClient(connectionInfo.hostUrl, {masterKey: connectionInfo.masterKey});
 }
 
-function revertIdProperty(document) {
-    if (document.hasOwnProperty('_id')) {
-        document.id = document._id;
-        delete document._id;
-    }
+DocContent.prototype.revertIdProperty = function (document) {
+    var docCached = {
+        id: document._id || document.id,
+        dateCreated: document.dateCreated,
+        downVotes: document.downVotes,
+        isCurrent: document.isCurrent,
+        isNextPossibility: document.isNextPossibility,
+        text: document.text,
+        upVotes: document.upVotes
+    };
+    return docCached;
 }
 
 DocContent.prototype.getCurrentQuestions = function (callback) {
@@ -45,9 +51,14 @@ DocContent.prototype.documentLink = function (document) {
 };
 
 DocContent.prototype.updateDocument = function (document, callback) {
-    this.revertIdProperty(document);
-    this.client.replaceDocument(this.documentLink(document), document, callback);
+    var modifiedDoc = this.revertIdProperty(document);
+    this.client.replaceDocument(this.documentLink(modifiedDoc), modifiedDoc, callback);
 };
+
+DocContent.prototype.insertDocument = function (document, callback) {
+    var modifiedDoc = this.revertIdProperty(document);
+    this.client.createDocument(this.questionsCol, modifiedDoc, callback);
+}
 
 /******************************************************************************
                             implementing required functionality
@@ -115,11 +126,52 @@ DocContent.prototype.getCurrentQuestion = function (callback) {
         });
 };
 
-function archiveUnselectedQuestions(callback) {
-    
+DocContent.prototype.updateQuestionAsCurrent = function (question, callback) {
+    if (!question) {
+        this.getTopNextQuestionCandidate(question => {
+            if (question) {
+                question.isCurrent = true;
+                this.updateDocument(question, callback);
+            }
+        });
+    }
+    else {
+        question.isCurrent = true;
+        this.updateDocument(question, callback);
+    }
 }
-function unsetCurrentQuestion(callback) {
-    this.getCurrentQuestion(function (question) {
+DocContent.prototype.archiveUnselectedQuestions = function (callback) {
+    var query = 
+        'SELECT \
+            q.id as _id, \
+            q.text, \
+            q.upVotes, \
+            q.downVotes, \
+            q.isCurrent, \
+            q.isNextPossibility, \
+            q.dateCreated, \
+            q.dateAsked, \
+            q.answers \
+        FROM questions q \
+        WHERE q.isNextPossibility = true';
+        
+    this.client.queryDocuments(this.questionsCol, query)
+        .forEach((err, element) => {
+            assert.equal(err, null);
+            if (!err && !element) {
+                callback();
+            }
+            else {
+                element.isNextPossibility = false;
+                this.updateDocument(element, function (err, res) {
+                    assert.equal(err, null);
+                    callback(element);
+                });
+            }
+        });
+}
+DocContent.prototype.unsetCurrentQuestion = function (callback) {
+    this.getCurrentQuestion(question => {
         if (question) {
             question.isCurrent = false;
             this.updateDocument(question, callback);
@@ -129,24 +181,41 @@ function unsetCurrentQuestion(callback) {
         }
     });
 }
+//
+// the order of events to set a current question is as follows
+//  1. set the current question as not the current question
+//  2. set the next question as the current question
+//  3. unset all next possibilities as not next possibilities
+//
 DocContent.prototype.setCurrentQuestion = function (question, callback) {
-    if (!question) {
-        this.getTopNextQuestionCandidate(function (question) {
-            if (!question) {
-                callback(null);
-            }
-            else {
-                
-            }
+    this.unsetCurrentQuestion((err, res) => {
+        assert.equal(err, null);
+        this.updateQuestionAsCurrent(question, (err, res) => {
+            assert.equal(err, null);
+            this.archiveUnselectedQuestions(archivedAnswer => {
+                if (!archivedAnswer) {
+                    this.getCurrentQuestion(callback);
+                }
+            });
         });
-    }
-    else {
-        updateCurrentQuestion(question, callback);
-    }
+    });
 };
 
-DocContent.prototype.addNextQuestionCandidate = function (question, callback) {
-    throw { name: 'NotImplementedError', message: 'This has not been implemented yet' };
+DocContent.prototype.addNextQuestionCandidate = function (questionText, callback) {
+    var newQuestion = {
+        _id: Guid.raw(),
+        text: questionText,
+        upVotes: 0,
+        downVotes: 0,
+        isCurrent: false,
+        isNextPossibility: true,
+        dateCreated: new Date()
+    };
+    
+    this.insertDocument(newQuestion, (err, res) => {
+        assert.equal(err, null);
+        this.getQuestionByObjectId(newQuestion._id, callback);
+    });
 };
 
 DocContent.prototype.getNextQuestionCandidates = function (count, callback) {

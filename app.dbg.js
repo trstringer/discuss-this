@@ -60,9 +60,18 @@ content.getTopNextQuestionCandidate(function (question) {
 });
 */
 
+/*
 content.getCurrentQuestion(function (question) {
     console.log('current question: ' + question.text);
     content.getTopNextQuestionCandidate(function (question) {
         console.log('next question: ' + question.text);
+        content.setCurrentQuestion(null, function (question) {
+            console.log('current question: ' + question.text);
+        });
     });
+});
+*/
+
+content.addNextQuestionCandidate('this is my new great question...', function (question) {
+    console.log(question.text);
 });
