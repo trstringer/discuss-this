@@ -320,7 +320,19 @@ DocContent.prototype.upVoteQuestion = function (questionId, callback) {
     });
 };
 DocContent.prototype.downVoteQuestion = function (questionId, callback) {
-    throw { name: 'NotImplementedError', message: 'This has not been implemented yet' };
+    this.getQuestionByObjectId(questionId, question => {
+        if (!question) {
+            callback(null);
+        }
+        else {
+            question.downVotes++;
+            this.updateDocument(question, function (err, res) {
+                if (!err && res) {
+                    callback(question);
+                }
+            });
+        }
+    });
 };
 DocContent.prototype.setNoQuestionDate = function (callback) {
     throw { name: 'NotImplementedError', message: 'This has not been implemented yet' };
