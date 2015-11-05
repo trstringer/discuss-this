@@ -412,7 +412,23 @@ DocContent.prototype.upVoteAnswer = function (answerId, callback) {
     });
 };
 DocContent.prototype.downVoteAnswer = function (answerId, callback) {
-    throw { name: 'NotImplementedError', message: 'This has not been implemented yet' };
+    this.getQuestionByAnswerId(answerId, question => {
+        if (!question || !question.answers || question.answers.length === 0) {
+            callback(null);
+        }
+        else {
+            for (var i = 0; i < question.answers.length; i++) {
+                if (question.answers[i]._id === answerId) {
+                    question.answers[i].downVotes++;
+                    this.updateDocument(question, (err, res) => {
+                        assert.equal(err, null);
+                        callback(question.answers[i]);
+                    });
+                    break;
+                }
+            }
+        }
+    });
 };
 
 module.exports = new DocContent(

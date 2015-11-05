@@ -102,9 +102,9 @@ content.getQuestionByAnswerId('c0a0c754-d316-ee4a-d9de-92f28beccfd5', function (
 */
 
 content.getCurrentQuestion(function (question) {
-    console.log('current upvotes: ' + question.answers[6].upVotes);
-    console.log('answer id: ' + question.answers[6]._id);
-    content.upVoteAnswer(question.answers[6]._id, function (answer) {
-        console.log('new upvotes: ' + answer.upVotes);
+    console.log('current downVotes: ' + question.answers[0].downVotes);
+    console.log('answer id: ' + question.answers[0]._id);
+    content.downVoteAnswer(question.answers[0]._id, function (answer) {
+        console.log('new downVotes: ' + answer.downVotes);
     });
 });
