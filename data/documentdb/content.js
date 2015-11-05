@@ -18,8 +18,11 @@ DocContent.prototype.revertIdProperty = function (document) {
         isCurrent: document.isCurrent,
         isNextPossibility: document.isNextPossibility,
         text: document.text,
-        upVotes: document.upVotes
+        upVotes: document.upVotes        
     };
+    if (document.answers) {
+        docCached.answers = document.answers;
+    }
     return docCached;
 }
 
@@ -341,10 +344,72 @@ DocContent.prototype.getNoQuestionDate = function (callback) {
     throw { name: 'NotImplementedError', message: 'This has not been implemented yet' };
 };
 DocContent.prototype.addAnswer = function (question, answerText, callback) {
-    throw { name: 'NotImplementedError', message: 'This has not been implemented yet' };
+    if (!question) {
+        callback(null);
+    }
+    else {
+        var newAnswer = {
+            _id: Guid.raw(),
+            text: answerText,
+            upVotes: 0,
+            downVotes: 0,
+            dateCreated: new Date()
+        };
+        
+        if (!question.answers) {
+            question.answers = [];
+        }
+        question.answers.push(newAnswer);
+        this.updateDocument(question, (err, res) => {
+            assert.equal(err, null);
+            this.getCurrentQuestion(callback);
+        });
+    }
 };
+DocContent.prototype.getQuestionByAnswerId = function (answerId, callback) {
+    var query = {
+        query: 
+            'SELECT q.id \
+            FROM questions q \
+            JOIN a IN q.answers \
+            WHERE a._id = @answerid',
+        parameters: [
+            {
+                name: '@answerid',
+                value: answerId
+            }
+        ]
+    };
+    
+    this.client.queryDocuments(this.questionsCol, query)
+        .current((err, element) => {
+            assert.equal(err, null);
+            if (element) {
+                this.getQuestionByObjectId(element.id, callback);
+            }
+            else {
+                callback(null);
+            }
+        });
+}
 DocContent.prototype.upVoteAnswer = function (answerId, callback) {
-    throw { name: 'NotImplementedError', message: 'This has not been implemented yet' };
+    this.getQuestionByAnswerId(answerId, question => {
+        if (!question || !question.answers || question.answers.length === 0) {
+            callback(null);
+        }
+        else {
+            for (var i = 0; i < question.answers.length; i++) {
+                if (question.answers[i]._id === answerId) {
+                    question.answers[i].upVotes++;
+                    this.updateDocument(question, (err, res) => {
+                        assert.equal(err, null);
+                        callback(question.answers[i]);
+                    });
+                    break;
+                }
+            }
+        }
+    });
 };
 DocContent.prototype.downVoteAnswer = function (answerId, callback) {
     throw { name: 'NotImplementedError', message: 'This has not been implemented yet' };

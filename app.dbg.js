@@ -78,9 +78,33 @@ content.addNextQuestionCandidate('this is my new great question...', function (q
 });
 */
 
+/*
 content.getCurrentQuestion(function (question) {
     console.log('current downvotes: ' + question.downVotes);
     content.downVoteQuestion(question._id, function (question) {
         console.log('new downvotes: ' + question.downVotes);
+    });
+});
+*/
+
+/*
+content.getCurrentQuestion(function (question) {
+    content.addAnswer(question, 'this is my amazing new answer', function (question) {
+        console.log(question.answers[question.answers.length - 1].text);
+    });
+});
+*/
+
+/*
+content.getQuestionByAnswerId('c0a0c754-d316-ee4a-d9de-92f28beccfd5', function (question) {
+    console.log(question);
+});
+*/
+
+content.getCurrentQuestion(function (question) {
+    console.log('current upvotes: ' + question.answers[6].upVotes);
+    console.log('answer id: ' + question.answers[6]._id);
+    content.upVoteAnswer(question.answers[6]._id, function (answer) {
+        console.log('new upvotes: ' + answer.upVotes);
     });
 });
