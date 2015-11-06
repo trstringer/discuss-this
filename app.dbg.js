@@ -101,10 +101,24 @@ content.getQuestionByAnswerId('c0a0c754-d316-ee4a-d9de-92f28beccfd5', function (
 });
 */
 
+/*
 content.getCurrentQuestion(function (question) {
     console.log('current downVotes: ' + question.answers[0].downVotes);
     console.log('answer id: ' + question.answers[0]._id);
     content.downVoteAnswer(question.answers[0]._id, function (answer) {
         console.log('new downVotes: ' + answer.downVotes);
+    });
+});
+*/
+
+/*
+content.getNoQuestionDate(function (noQuestionStartDate) {
+    console.log('no question start date: ' + noQuestionStartDate);
+});
+*/
+
+content.setNoQuestionDate(function () {
+    content.getNoQuestionDate(function (noQuestionDate) {
+        console.log('no question start date: ' + noQuestionDate);
     });
 });

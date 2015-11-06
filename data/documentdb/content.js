@@ -7,6 +7,8 @@ function DocContent(connectionInfo) {
     this.databaseName = connectionInfo.databaseName;
     this.questionsCol = connectionInfo.questionColLink;
     this.questionsColName = connectionInfo.questionColName;
+    this.noQuestionCol = connectionInfo.noQuestionColLink;
+    this.noQuestionColName = connectionInfo.noQuestionColName;
     this.client = new DocumentClient(connectionInfo.hostUrl, {masterKey: connectionInfo.masterKey});
 }
 
@@ -61,7 +63,15 @@ DocContent.prototype.updateDocument = function (document, callback) {
 DocContent.prototype.insertDocument = function (document, callback) {
     var modifiedDoc = this.revertIdProperty(document);
     this.client.createDocument(this.questionsCol, modifiedDoc, callback);
-}
+};
+
+DocContent.prototype.noQuestionDocumentLink = function (document) {
+    return 'dbs/' + this.databaseName + '/colls/' + this.noQuestionColName + '/docs/' + document.id;
+};
+
+DocContent.prototype.updateNoQuestionDocument = function (document, callback) {
+    this.client.replaceDocument(this.noQuestionDocumentLink(document), document, callback);
+};
 
 /******************************************************************************
                             implementing required functionality
@@ -338,10 +348,33 @@ DocContent.prototype.downVoteQuestion = function (questionId, callback) {
     });
 };
 DocContent.prototype.setNoQuestionDate = function (callback) {
-    throw { name: 'NotImplementedError', message: 'This has not been implemented yet' };
+    this.queryNoQuestionDate(noQuestion => {
+        if (noQuestion) {
+            noQuestion.noQuestionStartDate = new Date();
+            this.updateNoQuestionDocument(noQuestion, callback);
+        }
+    });
+};
+DocContent.prototype.queryNoQuestionDate = function (callback) {
+    var query = 
+        'SELECT n.id, n.noQuestionStartDate \
+        FROM noQuestion n';
+        
+    this.client.queryDocuments(this.noQuestionCol, query)
+        .current(function (err, element) {
+            assert.equal(err, null);
+            if (element) {
+                callback(element);
+            }
+            else {
+                callback(null);
+            }
+        });
 };
 DocContent.prototype.getNoQuestionDate = function (callback) {
-    throw { name: 'NotImplementedError', message: 'This has not been implemented yet' };
+    this.queryNoQuestionDate(function (noQuestion) {
+        callback(noQuestion.noQuestionStartDate);
+    });
 };
 DocContent.prototype.addAnswer = function (question, answerText, callback) {
     if (!question) {
@@ -438,5 +471,7 @@ module.exports = new DocContent(
         databaseLink: process.env.DOCUMENTDB_DB_LINK, 
         databaseName: process.env.DOCUMENTDB_DB_NAME,
         questionColLink: process.env.DOCUMENTDB_QUESTION_COL_LINK,
-        questionColName: process.env.DOCUMENTDB_QUESTION_COL_NAME
+        questionColName: process.env.DOCUMENTDB_QUESTION_COL_NAME,
+        noQuestionColLink: process.env.DOCUMENTDB_NOQUESTION_COL_LINK,
+        noQuestionColName: process.env.DOCUMENTDB_NOQUESTION_COL_NAME
     });
