@@ -1,6 +1,15 @@
 var express = require('express');
-var content = require('../data/content');
 var router = express.Router();
+var content;
+
+if (process.env.DBMS_TYPE === 'documentdb') {
+    // documentdb
+    content = require('../data/documentdb/content');
+}
+else {
+    // mongodb
+    content = require('../data/content');
+}
 
 router.get('/', function (req, res, next) {
     content.getCurrentQuestion(function (currentQuestion) {
