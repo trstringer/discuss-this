@@ -25,6 +25,9 @@ DocContent.prototype.revertIdProperty = function (document) {
     if (document.answers) {
         docCached.answers = document.answers;
     }
+    if (document.dateAsked) {
+        docCached.dateAsked = document.dateAsked;
+    }
     return docCached;
 }
 
@@ -144,12 +147,14 @@ DocContent.prototype.updateQuestionAsCurrent = function (question, callback) {
         this.getTopNextQuestionCandidate(question => {
             if (question) {
                 question.isCurrent = true;
+                question.dateAsked = (new Date()).toISOString();
                 this.updateDocument(question, callback);
             }
         });
     }
     else {
         question.isCurrent = true;
+        question.dateAsked = (new Date()).toISOString();
         this.updateDocument(question, callback);
     }
 }
