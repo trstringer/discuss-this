@@ -4,7 +4,8 @@
 
 var config = {
     questionDurationMinutes: 1,
-    minInputLength: 30
+    minInputLength: 30,
+    maxDisplayCount: 3
 };
 
 
@@ -58,7 +59,9 @@ function generateNextQuestionBox(question) {
 }
 
 function insertAnswer(answer) {
-    $('.new-answer').before(generateAnswerBox(answer));
+    if (countDisplayedAnswers() < config.maxDisplayCount) {
+        $('.new-answer').before(generateAnswerBox(answer));
+    }
 }
 function insertFirstOrderedUnreviewedAnswer(answers) {
     if (answers === undefined || answers === null || answers.length === 0) {
@@ -75,7 +78,9 @@ function insertFirstOrderedUnreviewedAnswer(answers) {
 }
 
 function insertQuestion(question) {
-    $('.new-question-add').before(generateNextQuestionBox(question));
+    if (countDisplayedNextQuestionCandidates() < config.maxDisplayCount) {
+        $('.new-question-add').before(generateNextQuestionBox(question));
+    }
 }
 function insertFirstOrderedUnreviewedQuestionCandidate(questions) {
     if (questions === undefined || questions === null || questions.length === 0) {
