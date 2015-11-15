@@ -110,6 +110,22 @@ function setCurrentQuestion(questionText) {
 function getCountDownTimerText() {
     return $('.countdown-timer').text().trim();
 }
+function setCountDownTimerText(secondsRemaining) {
+    var minutes = Math.floor(secondsRemaining / 60);
+    var seconds = secondsRemaining % 60;
+    
+    var minutesText = '00' + minutes;
+    minutesText= minutesText.substring(minutesText.length - 2);
+    var secondsText = '00' + seconds;
+    secondsText = secondsText.substring(secondsText.length - 2);
+    $('.countdown-timer').text(minutesText + ':' + secondsText);
+}
+function setCountDownTimerTextFromQuestion(question, totalQuestionDisplayTimeMinutes) {
+    var questionAskedDate = new Date(question.dateAsked);
+    var nowDate = new Date();
+    var currentSecondsRemaining = (totalQuestionDisplayTimeMinutes * 60) - ((nowDate - questionAskedDate) / 1000);
+    setCountDownTimerText(currentSecondsRemaining);
+}
 function countDownTimerIsEmpty() {
     return getCountDownTimerText() === "";
 }
@@ -628,6 +644,10 @@ function initialLoadActions() {
     runIterator();
 }
 
+function getRemainingSeconds(questionDate) {
+    
+}
+
 function runIterator() {
     setInterval(
         function () {
@@ -638,8 +658,9 @@ function runIterator() {
                 // no-question-state information and behavio
                 //
                 getCurrentQuestion(function (question) {
-                    if (question !== undefined && question !== null) {
+                    if (question) {
                         setCurrentQuestion(question.text);
+                        setCountDownTimerTextFromQuestion(question, config.questionDurationMinutes);
                     }
                     else {
                         // handle the possible situation where there is no current 
@@ -654,6 +675,12 @@ function runIterator() {
                     // if there is no timer data then we need to get the remaining
                     // time for the current question, as at this point it is already 
                     // determined that there is a currently displayed question
+                    getCurrentQuestion(function (question) {
+                        if (question) {
+                            setCurrentQuestion(question.text);
+                            setCountDownTimerTextFromQuestion(question, config.questionDurationMinutes);
+                        }
+                    });
                 }
                 else {
                     var currentCountdownTimerSeconds = getCountDownTimerSeconds();
@@ -671,12 +698,58 @@ function runIterator() {
                         // timer by pulling the current question and re-setting the timer 
                         // as we don't want to much of a variance between browser timer 
                         // and the actual remaining time of the question
+                        getCurrentQuestion(function (question) {
+                            if (question) {
+                                setCurrentQuestion(question.text);
+                                setCountDownTimerTextFromQuestion(question, config.questionDurationMinutes);
+                            }
+                        });
                     }
                 }
             }
         },
         1000
     );
+}
+
+function submitAnswer() {
+    var answerText = getAnswerInputText();
+    if (isSubmittedInputValid(answerText)) {
+        // clear any error if it has it just in case
+        //
+        clearAnswerInputError();
+        
+        addAnswer(answerText, function (question) {
+            setAnswerInputSuccess();
+            setTimeout(clearAnswerInputSuccess, 5000);
+        });
+    }
+    else {
+        // answer submitted isn't valid
+        //
+        // we don't want to clear the input text in case 
+        // the user just wants to append to what they 
+        // already have
+        //
+        setAnswerInputError(answerText);
+    }
+}
+
+function submitQuestion() {
+    var questionText = getQuestionInputText();
+    if (isSubmittedInputValid(questionText)) {
+        clearQuestionInputError();
+        
+        // add the next candidate question
+        //
+        addQuestion(questionText, function (question) {
+            setQuestionInputSuccess();
+            setTimeout(clearQuestionInputSuccess, 5000);
+        });
+    }
+    else {
+        setQuestionInputError(questionText);
+    }
 }
 
 $(function () {
