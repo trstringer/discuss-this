@@ -6,7 +6,9 @@ var config = {
     questionDurationMinutes: 1,
     minInputLength: 30,
     maxDisplayCount: 3,
-    refreshInterval: 10
+    refreshInterval: 10,
+    pendingQuestionText: '...',
+    pendingCountdownText: '...'
 };
 
 
@@ -106,6 +108,12 @@ function currentDisplayedQuestionIsEmpty() {
 function setCurrentQuestion(questionText) {
     $("#currentQuestionText").text(questionText);
 }
+function setPendingQuestionText() {
+    setCurrentQuestion(config.pendingQuestionText);
+}
+function isCurrentQuestionPending() {
+    return getCurrentDisplayedQuestion() === config.pendingQuestionText;
+}
 
 function getCountDownTimerText() {
     return $('.countdown-timer').text().trim();
@@ -136,6 +144,12 @@ function getCountDownTimerSeconds() {
     var seconds = parseInt(timerText.substring(indexOfColon + 1), 0);
     
     return (minutes * 60) + seconds;
+}
+function setPendingCountdownTimerText() {
+    $('.countdown-timer').text(config.pendingCountdownText);
+}
+function isCountdownTimerPending() {
+    return getCountDownTimerText() === config.pendingCountdownText;
 }
 
 function countDisplayedAnswers() {
@@ -651,12 +665,13 @@ function getRemainingSeconds(questionDate) {
 function runIterator() {
     setInterval(
         function () {
-            if (currentDisplayedQuestionIsEmpty()) {
+            if (currentDisplayedQuestionIsEmpty() && !isCurrentQuestionPending()) {
                 // we need to check here to see what the "no question condition" 
                 // looks like. if there is undefined returned during the no question 
                 // state then we need to use the else statement to populate the 
                 // no-question-state information and behavio
                 //
+                setPendingQuestionText();
                 getCurrentQuestion(function (question) {
                     if (question) {
                         setCurrentQuestion(question.text);
@@ -671,10 +686,11 @@ function runIterator() {
             else {
                 // there is already a currently displayed question, so we need 
                 // to make a check to see if the question is still current
-                if (countDownTimerIsEmpty()) {
+                if (countDownTimerIsEmpty() && !isCountdownTimerPending()) {
                     // if there is no timer data then we need to get the remaining
                     // time for the current question, as at this point it is already 
                     // determined that there is a currently displayed question
+                    setPendingCountdownTimerText();
                     getCurrentQuestion(function (question) {
                         if (question) {
                             setCurrentQuestion(question.text);
@@ -691,7 +707,16 @@ function runIterator() {
                     // if there is no more time remaining then we need to smartly 
                     // retrieve the new question or no question info
                     if (currentCountdownTimerSeconds <= 0) {
-                        
+                        setPendingQuestionText();
+                        setPendingCountdownTimerText();
+                        // here we need to somehow retrieve the CURRENT question id 
+                        // and then continuously retrieve the next question id and 
+                        // compare to make sure we aren't getting into a race condition 
+                        // where we pull the current question and the question has yet 
+                        // to cycle
+                        // 
+                        // also worth noting here is that if there is no next question 
+                        // then we need to handle that condition accordingly
                     }
                     else if (currentCountdownTimerSeconds % config.refreshInterval === 0) {
                         // otherwise we need to see if we should "refresh" our countdown
