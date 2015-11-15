@@ -5,7 +5,8 @@
 var config = {
     questionDurationMinutes: 1,
     minInputLength: 30,
-    maxDisplayCount: 3
+    maxDisplayCount: 3,
+    refreshInterval: 10
 };
 
 
@@ -96,8 +97,29 @@ function insertFirstOrderedUnreviewedQuestionCandidate(questions) {
     }
 }
 
+function getCurrentDisplayedQuestion() {
+    return $("#currentQuestionText").text().trim();
+}
+function currentDisplayedQuestionIsEmpty() {
+    return getCurrentDisplayedQuestion() === "";
+}
 function setCurrentQuestion(questionText) {
     $("#currentQuestionText").text(questionText);
+}
+
+function getCountDownTimerText() {
+    return $('.countdown-timer').text().trim();
+}
+function countDownTimerIsEmpty() {
+    return getCountDownTimerText() === "";
+}
+function getCountDownTimerSeconds() {
+    var timerText = getCountDownTimerText();
+    var indexOfColon = timerText.indexOf(':');
+    var minutes = parseInt(timerText.substring(0, indexOfColon), 0);
+    var seconds = parseInt(timerText.substring(indexOfColon + 1), 0);
+    
+    return (minutes * 60) + seconds;
 }
 
 function countDisplayedAnswers() {
@@ -592,10 +614,7 @@ function getSecondsRemainingWithNoQuestion(callback) {
 //                  initial load
 // ********************************************************
 
-function initialLoadActions() {
-    populateCurrentQuestion();
-    populateNextQuestions();
-    
+function initialLoadActions() {    
     $('#addAnswer').click(submitAnswer);
     $('#addQuestion').click(submitQuestion);
     $('.question').on('click', '.vote-button', answerVoted);
@@ -605,234 +624,59 @@ function initialLoadActions() {
     //
     clearAnswerInputError();
     clearQuestionInputError();
+    
+    runIterator();
 }
 
-function initiateCountdownTimer(secondsToKeepQuestionAlive) {
-    var currentSecondsRemaining = secondsToKeepQuestionAlive;
-    var minutes;
-    var seconds;
-   
-    var timer =     
-        setInterval(function () {
-            // what we need to do is periodically recalibrate the 
-            // remaining seconds so that the client application 
-            // doesn't get too far out of variation of the current 
-            // question or no question time
-            //
-            // we will way that above 15 seconds, and less than 
-            // 180 seconds (3 minutes) we should recheck and 
-            // recalculate currentSecondsRemaining every 10 seconds
-            // 
-            if (currentSecondsRemaining > 15 && currentSecondsRemaining < 180 && currentSecondsRemaining % 10 === 0) {
-                getCurrentQuestion(function (question) {
-                    if (question === undefined || question === null) {
-                        getSecondsRemainingWithNoQuestion(function (secondsRemaining) {
-                            currentSecondsRemaining = secondsRemaining;
-                        });
-                    }
-                    else {
-                        var questionAskedDate = new Date(question.dateAsked);
-                        var nowDate = new Date();
-                        currentSecondsRemaining = (config.questionDurationMinutes * 60) - ((nowDate - questionAskedDate) / 1000);
-                    }
-                });
-            }
-            
-            minutes = parseInt(currentSecondsRemaining / 60, 10);
-            seconds = parseInt(currentSecondsRemaining % 60, 10);
-            seconds = seconds < 10 ? "0" + seconds : seconds;
-            
-            $('.countdown-timer').text(minutes + ':' + seconds);
-            
-            // if there aren't three answers displayed then the 
-            // current answer set might not be complete so get the 
-            // fresh question and add answers if available
-            //
-            if (countDisplayedAnswers() < 3) {
-                getCurrentQuestion(function (question) {
-                    insertFirstOrderedUnreviewedAnswer(question.answers);
-                });
-            }
-            
-            // if there aren't three next question candidates 
-            // displayed then refresh the next questions and add 
-            // more questions to the display
-            //
-            if (countDisplayedNextQuestionCandidates() < 3) {
-                getNextQuestionCandidates(function (questions) {
-                    insertFirstOrderedUnreviewedQuestionCandidate(questions);
-                });
-            }
-            
-            currentSecondsRemaining--;
-            if (currentSecondsRemaining < 0) {
-                // at this point we have come to the end of the 
-                // current question and now need to cycle to the 
-                // new question and handle other actions that 
-                // are appropriate at this time
+function runIterator() {
+    setInterval(
+        function () {
+            if (currentDisplayedQuestionIsEmpty()) {
+                // we need to check here to see what the "no question condition" 
+                // looks like. if there is undefined returned during the no question 
+                // state then we need to use the else statement to populate the 
+                // no-question-state information and behavio
                 //
-                clearAllAnswers();
-                clearAllNextQuestionCandidates();
-                clearInputs();
-                
                 getCurrentQuestion(function (question) {
-                    if (question === undefined || question === null) {
-                        currentQuestionNonexistent();
-                    }
-                    else {
-                        currentQuestionExists();
-                        // at this point we can safely purge the local storage 
-                        // cahced object IDs
-                        //
-                        clearCachedObjectIdElements();
+                    if (question !== undefined && question !== null) {
                         setCurrentQuestion(question.text);
                     }
+                    else {
+                        // handle the possible situation where there is no current 
+                        // question
+                    }
                 });
-                currentSecondsRemaining = config.questionDurationMinutes * 60;
             }
-        }, 1000);
-}
-
-function populateCurrentQuestion() {
-    getCurrentQuestion(function (question) {
-        if (question === undefined || question === null) {
-            currentQuestionNonexistent();
-            
-            // here we need to see when the last time a new question 
-            // was checked
-            //
-            getSecondsRemainingWithNoQuestion(function (secondsRemaining) {
-                initiateCountdownTimer(secondsRemaining);
-            });
-            
-            return;
-        }
-        
-        // there is a current question so make sure it is displayed here
-        //
-        currentQuestionExists();
-        
-        setCurrentQuestion(question.text);
-        
-        clearAllAnswers();
-          
-        // this will add currently three (3) answers to the display 
-        // provided that there are three (3) valid answers that can 
-        // and should be displayed
-        //
-        // three (3) answers has been chosen as a good cycling sample 
-        // so that the user isn't shown too many for UX. When the user 
-        // votes on answers (or [not implemented yet] dismisses answers) 
-        // then different answers will show
-        //
-        var questionAskedDate = new Date(question.dateAsked);
-        var nowDate = new Date();
-        // seconds remaining is going to be this pseudocode algorithm
-        // seconds-remaining = 7 minutes - (now - askedDate)
-        var secondsRemainingForQuestion = (config.questionDurationMinutes * 60) - ((nowDate - questionAskedDate) / 1000);
-        
-        initiateCountdownTimer(secondsRemainingForQuestion);
-        
-        if (question.answers !== undefined && question.answers !== null && question.answers.length !== 0) {
-            sortAnswersByUpVotes(question.answers);
-            if (countDisplayedAnswers() < 3) {
-                insertFirstOrderedUnreviewedAnswer(question.answers);
-            }
-            
-            if (question.answers.length > 1) {
-                // insert another high up vote answer
-                //
-                // the logic here is that the previously inserted 
-                // answer into the GUI won't get re-inserted due to 
-                // the check that it is already been reviewed, moving 
-                // onto the next one
-                //
-                if (countDisplayedAnswers() < 3) {
-                    insertFirstOrderedUnreviewedAnswer(question.answers);
+            else {
+                // there is already a currently displayed question, so we need 
+                // to make a check to see if the question is still current
+                if (countDownTimerIsEmpty()) {
+                    // if there is no timer data then we need to get the remaining
+                    // time for the current question, as at this point it is already 
+                    // determined that there is a currently displayed question
                 }
-                
-                // now if there are enough answers, sort the answers 
-                // by down votes so that we show an "unpopular" 
-                // answer
-                //
-                if (question.answers.length > 2) {
-                    sortAnswersByDownVotes(question.answers);
-                    if (countDisplayedAnswers() < 3) {
-                        insertFirstOrderedUnreviewedAnswer(question.answers);
+                else {
+                    var currentCountdownTimerSeconds = getCountDownTimerSeconds();
+                    
+                    // decrement the seconds as this is the *new* time not the old
+                    currentCountdownTimerSeconds--;
+                    
+                    // if there is no more time remaining then we need to smartly 
+                    // retrieve the new question or no question info
+                    if (currentCountdownTimerSeconds <= 0) {
+                        
+                    }
+                    else if (currentCountdownTimerSeconds % config.refreshInterval === 0) {
+                        // otherwise we need to see if we should "refresh" our countdown
+                        // timer by pulling the current question and re-setting the timer 
+                        // as we don't want to much of a variance between browser timer 
+                        // and the actual remaining time of the question
                     }
                 }
             }
-        }
-    });
-}
-
-function populateNextQuestions() {
-    getNextQuestionCandidates(function (questions) {
-        // remove any and all next question candidates 
-        //
-        clearAllNextQuestionCandidates();
-        
-        if (questions === undefined || questions === null || questions.length === 0) {
-            return;
-        }
-        sortQuestionsByUpVotes(questions);
-        
-        // insert the first next question candidate
-        //
-        if (countDisplayedNextQuestionCandidates() < 3) {
-            insertFirstOrderedUnreviewedQuestionCandidate(questions);
-        }
-        if (questions.length > 1) {
-            if (countDisplayedNextQuestionCandidates() < 3) {
-                insertFirstOrderedUnreviewedQuestionCandidate(questions);
-            }
-            if (questions.length > 2) {
-                if (countDisplayedNextQuestionCandidates() < 3) {
-                    insertFirstOrderedUnreviewedQuestionCandidate(questions);
-                }
-            }
-        }
-    });
-}
-
-function submitAnswer() {
-    var answerText = getAnswerInputText();
-    if (isSubmittedInputValid(answerText)) {
-        // clear any error if it has it just in case
-        //
-        clearAnswerInputError();
-        
-        addAnswer(answerText, function (question) {
-            setAnswerInputSuccess();
-            setTimeout(clearAnswerInputSuccess, 5000);
-        });
-    }
-    else {
-        // answer submitted isn't valid
-        //
-        // we don't want to clear the input text in case 
-        // the user just wants to append to what they 
-        // already have
-        //
-        setAnswerInputError(answerText);
-    }
-}
-
-function submitQuestion() {
-    var questionText = getQuestionInputText();
-    if (isSubmittedInputValid(questionText)) {
-        clearQuestionInputError();
-        
-        // add the next candidate question
-        //
-        addQuestion(questionText, function (question) {
-            setQuestionInputSuccess();
-            setTimeout(clearQuestionInputSuccess, 5000);
-        });
-    }
-    else {
-        setQuestionInputError(questionText);
-    }
+        },
+        1000
+    );
 }
 
 $(function () {
