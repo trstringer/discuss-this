@@ -3,7 +3,7 @@
 // ********************************************************
 
 var config = {
-    questionDurationMinutes: 1,
+    questionDurationMinutes: 10,
     minInputLength: 30,
     maxDisplayCount: 3,
     refreshInterval: 10,
@@ -129,9 +129,7 @@ function setCountDownTimerText(secondsRemaining) {
     $('.countdown-timer').text(minutesText + ':' + secondsText);
 }
 function setCountDownTimerTextFromQuestion(question, totalQuestionDisplayTimeMinutes) {
-    var questionAskedDate = new Date(question.dateAsked);
-    var nowDate = new Date();
-    var currentSecondsRemaining = (totalQuestionDisplayTimeMinutes * 60) - ((nowDate - questionAskedDate) / 1000);
+    var currentSecondsRemaining = getRemainingSeconds(question, totalQuestionDisplayTimeMinutes);
     setCountDownTimerText(currentSecondsRemaining);
 }
 function countDownTimerIsEmpty() {
@@ -658,8 +656,11 @@ function initialLoadActions() {
     runIterator();
 }
 
-function getRemainingSeconds(questionDate) {
-    
+function getRemainingSeconds(question, totalQuestionDisplayTimeMinutes) {
+    var questionAskedDate = new Date(question.dateAsked);
+    var nowDate = new Date();
+    var currentSecondsRemaining = Math.floor((totalQuestionDisplayTimeMinutes * 60) - ((nowDate - questionAskedDate) / 1000));
+    return currentSecondsRemaining;
 }
 
 function runIterator() {
@@ -729,6 +730,9 @@ function runIterator() {
                                 setCountDownTimerTextFromQuestion(question, config.questionDurationMinutes);
                             }
                         });
+                    }
+                    else {
+                        setCountDownTimerText(currentCountdownTimerSeconds);
                     }
                 }
             }
