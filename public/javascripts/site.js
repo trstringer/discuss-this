@@ -735,6 +735,19 @@ function runIterator() {
                         setCountDownTimerText(currentCountdownTimerSeconds);
                     }
                 }
+                
+                // there is a question displayed, so we need to make sure that we 
+                // display answers and next question candidates
+                if (countDisplayedAnswers() < config.maxDisplayCount) {
+                    getCurrentQuestion(function (question) {
+                        // do another check here as we don't want to contribute to 
+                        // a race condition, and we also need to make sure that the 
+                        // question has answers
+                        if (countDisplayedAnswers() < config.maxDisplayCount && question.answers && question.answers.length > 0) {
+                            insertFirstOrderedUnreviewedAnswer(question.answers);
+                        }
+                    });
+                }
             }
         },
         1000
