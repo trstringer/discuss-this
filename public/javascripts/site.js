@@ -755,6 +755,15 @@ function runIterator() {
                     });
                 }
             }
+            
+            // no matter what, question or no question, we still need to check for next question candidates
+            if (countDisplayedNextQuestionCandidates() < config.maxDisplayCount) {
+                getNextQuestionCandidates(function (questions) {
+                    if (questions && countDisplayedNextQuestionCandidates() < config.maxDisplayCount) {
+                        insertFirstOrderedUnreviewedQuestionCandidate(questions);
+                    }
+                });
+            }
         },
         1000
     );
