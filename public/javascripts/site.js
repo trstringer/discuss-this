@@ -71,6 +71,9 @@ function insertFirstOrderedUnreviewedAnswer(answers) {
         return;
     }
     else {
+        answers.sort(function (a, b) {
+            return b.upVotes - a.upVotes;
+        });
         for (var i = 0; i < answers.length; i++) {
             if (!hasAnswerAlreadyBeenReviewed(answers[i])) {
                 insertAnswer(answers[i]);
@@ -90,6 +93,9 @@ function insertFirstOrderedUnreviewedQuestionCandidate(questions) {
         return;
     }
     else {
+        questions.sort(function (a, b) {
+            return b.upVotes - a.upVotes;
+        });
         for (var i = 0; i < questions.length; i++) {
             if (!hasQuestionCandidateAlreadyBeenReviewed(questions[i])) {
                 insertQuestion(questions[i]);
