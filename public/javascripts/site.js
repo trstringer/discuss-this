@@ -121,6 +121,16 @@ function isCurrentQuestionPending() {
     return getCurrentDisplayedQuestion() === config.pendingQuestionText;
 }
 
+function getCurrentQuestionId() {
+    return $('#question-id').text();
+}
+function setCurrentQuestionId(questionId) {
+    $('#question-id').text(questionId);
+}
+function clearCurrentQuestionId() {
+    setCurrentQuestionId('');
+}
+
 function getCountDownTimerText() {
     return $('.countdown-timer').text().trim();
 }

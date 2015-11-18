@@ -8,6 +8,10 @@ body {
   margin-top: 10px;
 }
 
+.no-display {
+  display: none;
+}
+
 a {
   color: #00B7FF;
 }
