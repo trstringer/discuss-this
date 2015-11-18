@@ -119,8 +119,7 @@ function setCurrentQuestionText(questionText) {
     $("#currentQuestionText").text(questionText);
 }
 function setPendingQuestionText() {
-    setCurrentQuestionText(config.pendingQuestionText);
-    clearCurrentQuestionId();
+    setCurrentQuestionText(config.pendingQuestionText);\
 }
 function isCurrentQuestionPending() {
     return getCurrentDisplayedQuestion() === config.pendingQuestionText;
@@ -739,6 +738,28 @@ function runIterator() {
                         // 
                         // also worth noting here is that if there is no next question 
                         // then we need to handle that condition accordingly
+                        var intervalId = setInterval(function () {
+                            getCurrentQuestion(function (question) {
+                                if (question) {
+                                    if (question._id === getCurrentQuestionId()) {
+                                        // this is the condition where the retrieved current 
+                                        // question isn't the new and updated question so 
+                                        // we should *not* set this question and keep checking
+                                    }
+                                    else {
+                                        currentQuestionExists();
+                                        clearCachedObjectIdElements();
+                                        setCurrentQuestion(question);
+                                        clearInterval(intervalId);
+                                    }
+                                }
+                                else {
+                                    // no current question exists
+                                    currentQuestionNonexistent();
+                                    clearCurrentQuestionId();
+                                }
+                            });
+                        }, 500);
                     }
                     else if (currentCountdownTimerSeconds % config.refreshInterval === 0) {
                         // otherwise we need to see if we should "refresh" our countdown
