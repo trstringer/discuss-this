@@ -111,11 +111,16 @@ function getCurrentDisplayedQuestion() {
 function currentDisplayedQuestionIsEmpty() {
     return getCurrentDisplayedQuestion() === "";
 }
-function setCurrentQuestion(questionText) {
+function setCurrentQuestion(question) {
+    setCurrentQuestionText(question.text);
+    setCurrentQuestionId(question._id);
+}
+function setCurrentQuestionText(questionText) {
     $("#currentQuestionText").text(questionText);
 }
 function setPendingQuestionText() {
-    setCurrentQuestion(config.pendingQuestionText);
+    setCurrentQuestionText(config.pendingQuestionText);
+    clearCurrentQuestionId();
 }
 function isCurrentQuestionPending() {
     return getCurrentDisplayedQuestion() === config.pendingQuestionText;
@@ -691,7 +696,7 @@ function runIterator() {
                 setPendingQuestionText();
                 getCurrentQuestion(function (question) {
                     if (question) {
-                        setCurrentQuestion(question.text);
+                        setCurrentQuestion(question);
                         setCountDownTimerTextFromQuestion(question, config.questionDurationMinutes);
                     }
                     else {
@@ -710,7 +715,7 @@ function runIterator() {
                     setPendingCountdownTimerText();
                     getCurrentQuestion(function (question) {
                         if (question) {
-                            setCurrentQuestion(question.text);
+                            setCurrentQuestion(question);
                             setCountDownTimerTextFromQuestion(question, config.questionDurationMinutes);
                         }
                     });
@@ -742,7 +747,7 @@ function runIterator() {
                         // and the actual remaining time of the question
                         getCurrentQuestion(function (question) {
                             if (question) {
-                                setCurrentQuestion(question.text);
+                                setCurrentQuestion(question);
                                 setCountDownTimerTextFromQuestion(question, config.questionDurationMinutes);
                             }
                         });
