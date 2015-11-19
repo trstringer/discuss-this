@@ -163,9 +163,11 @@ router.get('/noquestion/', function (req, res, next) {
     });
 });
 router.post('/noquestion/', function (req, res, next) {
-    content.setNoQuestionDate(function () {
-        res.status(200).send();
-    });
+    content.unsetCurrentQuestion(function () {
+        content.setNoQuestionDate(function () {
+            res.status(200).send();
+        });
+    })
 });
 
 module.exports = router;

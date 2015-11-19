@@ -7,7 +7,7 @@ var config = {
     minInputLength: 30,
     maxDisplayCount: 3,
     refreshInterval: 10,
-    pendingQuestionText: '...',
+    pendingQuestionText: '',
     pendingCountdownText: '...',
     noCurrentQuestionText: 'no current question, but ask one below!'
 };
@@ -734,7 +734,7 @@ function runIterator() {
                 }
                 
             }
-            else if (currentDisplayedQuestionIsEmpty() && !isCurrentQuestionPending()) {
+            else if (currentDisplayedQuestionIsEmpty() || isCurrentQuestionPending()) {
                 // we need to check here to see what the "no question condition" 
                 // looks like. if there is undefined returned during the no question 
                 // state then we need to use the else statement to populate the 
