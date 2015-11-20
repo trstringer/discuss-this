@@ -3,13 +3,12 @@
 // ********************************************************
 
 var config = {
-    questionDurationMinutes: 1,
+    itemDuration: 1,
     minInputLength: 30,
     maxDisplayCount: 3,
     refreshInterval: 10,
-    pendingQuestionText: '',
-    pendingCountdownText: '...',
-    noCurrentQuestionText: 'no current question, but ask one below!'
+    noCurrentQuestionText: 'no current question, but ask one below!',
+    nearingEndOfDurationBufferSeconds: 20
 };
 
 
@@ -114,32 +113,15 @@ function currentDisplayedQuestionIsEmpty() {
 }
 function setCurrentQuestion(question) {
     setCurrentQuestionText(question.text);
-    setCurrentIndicatorId(question._id);
 }
 function setCurrentQuestionText(questionText) {
     $("#currentQuestionText").text(questionText);
-}
-function setPendingQuestionText() {
-    setCurrentQuestionText(config.pendingQuestionText);
-}
-function isCurrentQuestionPending() {
-    return getCurrentDisplayedQuestion() === config.pendingQuestionText;
-}
-
-function getCurrentIndicatorId() {
-    return $('#current-indicator-id').text();
-}
-function setCurrentIndicatorId(questionId) {
-    $('#current-indicator-id').text(questionId);
-}
-function clearCurrentQuestionId() {
-    setCurrentIndicatorId('');
 }
 
 function getCountDownTimerText() {
     return $('.countdown-timer').text().trim();
 }
-function setCountDownTimerText(secondsRemaining) {
+function setCountDownTimerTextBySeconds(secondsRemaining) {
     var minutes = Math.floor(secondsRemaining / 60);
     var seconds = secondsRemaining % 60;
     
@@ -147,28 +129,40 @@ function setCountDownTimerText(secondsRemaining) {
     minutesText= minutesText.substring(minutesText.length - 2);
     var secondsText = '00' + seconds;
     secondsText = secondsText.substring(secondsText.length - 2);
+    
+    setCountDownTimerColor(secondsRemaining);
     $('.countdown-timer').text(minutesText + ':' + secondsText);
+}
+function setCountDownTimerColor(secondsRemaining) {
+    if (secondsRemaining <= config.nearingEndOfDurationBufferSeconds && secondsRemaining > 0) {
+        $('.countdown-timer').css('color', 'darkred');
+    }
+    else if (secondsRemaining === 0) {
+        $('.countdown-timer').css('color', 'gold');
+    }
+    else {
+        $('.countdown-timer').css('color', 'darkgray');
+    }
 }
 function setCountDownTimerTextFromQuestion(question, totalQuestionDisplayTimeMinutes) {
     var currentSecondsRemaining = getRemainingSeconds(question, totalQuestionDisplayTimeMinutes);
-    setCountDownTimerText(currentSecondsRemaining);
+    setCountDownTimerTextBySeconds(currentSecondsRemaining);
 }
-function countDownTimerIsEmpty() {
-    return getCountDownTimerText() === "";
+function isCountdownTimerEmpty() {
+    return $('.countdown-timer').text() === '';
 }
 function getCountDownTimerSeconds() {
-    var timerText = getCountDownTimerText();
-    var indexOfColon = timerText.indexOf(':');
-    var minutes = parseInt(timerText.substring(0, indexOfColon), 0);
-    var seconds = parseInt(timerText.substring(indexOfColon + 1), 0);
-    
-    return (minutes * 60) + seconds;
-}
-function setPendingCountdownTimerText() {
-    $('.countdown-timer').text(config.pendingCountdownText);
-}
-function isCountdownTimerPending() {
-    return getCountDownTimerText() === config.pendingCountdownText;
+    if (!isCountdownTimerEmpty()) {
+        var timerText = getCountDownTimerText();
+        var indexOfColon = timerText.indexOf(':');
+        var minutes = parseInt(timerText.substring(0, indexOfColon), 0);
+        var seconds = parseInt(timerText.substring(indexOfColon + 1), 0);
+        
+        return (minutes * 60) + seconds;
+    }
+    else {
+        return null;
+    }
 }
 
 function countDisplayedAnswers() {
@@ -457,13 +451,12 @@ function removeQuestion(questionObjectId) {
 function isNoCurrentQuestion() {
     return $('#currentQuestionText').text() === config.noCurrentQuestionText;
 }
-function currentQuestionNonexistent(noQuestionDate) {
-    setCurrentIndicatorId(noQuestionDate);
+function currentQuestionNonexistent() {
     $('#currentQuestionText').text(config.noCurrentQuestionText);
-    $('.new-answer').hide();
+    hideAnswerInput();
 }
 function currentQuestionExists() {
-    $('.new-answer').show();
+    showAnswerInput();
 }
 
 function clearInputs() {
@@ -471,6 +464,13 @@ function clearInputs() {
     clearAnswerInputText();
     clearQuestionInputError();
     clearQuestionInputText();
+}
+
+function hideAnswerInput() {
+    $('.new-answer').hide();
+}
+function showAnswerInput() {
+    $('.new-answer').show();
 }
 
 
@@ -653,14 +653,6 @@ function downVoteQuestion(questionObjectId, callback) {
 function getNoQuestionStartDate(callback) {
     $.get('/questions/noquestion/', callback);
 }
-function getSecondsRemainingWithNoQuestion(callback) {
-    getNoQuestionStartDate(function (noQuestionStartDate) {
-        var startDate = new Date(noQuestionStartDate);
-        var nowDate = new Date();
-        var secondsRemaining = (config.questionDurationMinutes * 60) - ((nowDate - startDate) / 1000);
-        callback(secondsRemaining);
-    });
-}
 
 
 // ********************************************************
@@ -681,183 +673,118 @@ function initialLoadActions() {
     runIterator();
 }
 
-function getRemainingSeconds(question, totalQuestionDisplayTimeMinutes) {
-    var questionAskedDate = new Date(question.dateAsked);
+function getRemainingSeconds(originDate, totalQuestionDisplayTimeMinutes) {
+    var originDateObj = new Date(originDate);
     var nowDate = new Date();
-    var currentSecondsRemaining = Math.floor((totalQuestionDisplayTimeMinutes * 60) - ((nowDate - questionAskedDate) / 1000));
+    var currentSecondsRemaining = Math.floor((totalQuestionDisplayTimeMinutes * 60) - ((nowDate - originDateObj) / 1000));
     return currentSecondsRemaining;
 }
 
 function runIterator() {
+    var isOperationOngoing = false;
+    var currentQuestionId;
+    var remainingSeconds;
+    
     setInterval(
         function () {
-            var currentCountdownTimerSeconds;
-            if (isNoCurrentQuestion()) {
-                // there is no current question displayed because there is not one 
-                // that is currently being asked
-                currentCountdownTimerSeconds = getCountDownTimerSeconds();
-                currentCountdownTimerSeconds--;
-                
-                // if at a certain interval then refresh counter
-                if (currentCountdownTimerSeconds % config.refreshInterval === 0) {
-                    getSecondsRemainingWithNoQuestion(function (remainingSeconds) {
-                        setCountDownTimerText(remainingSeconds);
-                    });
-                }
-                else if (currentCountdownTimerSeconds <= 0) {
-                    var getNoQuestionInterval = setInterval(function () {
-                        getCurrentQuestion(function (question) {
-                            if (question) {
-                                // NEED TO ADD LOGIC TO SET THE CURRENT QUESTION
-                                clearInterval(getNoQuestionInterval);
-                            }
-                            else {
-                                getNoQuestionStartDate(function (noQuestionStartDate) {
-                                    if (noQuestionStartDate !== getCurrentIndicatorId()) {
-                                        // in this case there is a new period of still no question 
-                                        // so handle appropriately
-                                        clearInterval(getNoQuestionInterval);
-                                        currentQuestionNonexistent(noQuestionStartDate);
-                                        getSecondsRemainingWithNoQuestion(function (secondsRemaining) {
-                                            setCountDownTimerText(secondsRemaining);
-                                        });
-                                    }
-                                });
-                            }
-                        });
-                    }, 500);
-                }
-                else {
-                    if (currentCountdownTimerSeconds) {
-                        setCountDownTimerText(currentCountdownTimerSeconds);
-                    }
-                }
-                
-            }
-            else if (currentDisplayedQuestionIsEmpty() || isCurrentQuestionPending()) {
-                // we need to check here to see what the "no question condition" 
-                // looks like. if there is undefined returned during the no question 
-                // state then we need to use the else statement to populate the 
-                // no-question-state information and behavio
-                //
-                setPendingQuestionText();
+            // if there is no operation that is happening then we can do work
+            if (!isOperationOngoing) {
+                isOperationOngoing = true;
                 getCurrentQuestion(function (question) {
                     if (question) {
-                        currentQuestionExists();
-                        setCurrentQuestion(question);
-                        setCountDownTimerTextFromQuestion(question, config.questionDurationMinutes);
-                    }
-                    else {
-                        // handle the possible situation where there is no current 
-                        // question
-                        getNoQuestionStartDate(function (noQuestionStartDate) {
-                            currentQuestionNonexistent(noQuestionStartDate);
-                        });
-                        getSecondsRemainingWithNoQuestion(function (secondsRemaining) {
-                            setCountDownTimerText(secondsRemaining);
-                        });
-                    }
-                });
-            }
-            else {
-                // there is already a currently displayed question, so we need 
-                // to make a check to see if the question is still current
-                if (countDownTimerIsEmpty() && !isCountdownTimerPending()) {
-                    // if there is no timer data then we need to get the remaining
-                    // time for the current question, as at this point it is already 
-                    // determined that there is a currently displayed question
-                    setPendingCountdownTimerText();
-                    getCurrentQuestion(function (question) {
-                        if (question) {
-                            setCurrentQuestion(question);
-                            setCountDownTimerTextFromQuestion(question, config.questionDurationMinutes);
-                        }
-                    });
-                }
-                else {
-                    currentCountdownTimerSeconds = getCountDownTimerSeconds();
-                    
-                    // decrement the seconds as this is the *new* time not the old
-                    currentCountdownTimerSeconds--;
-                    
-                    // if there is no more time remaining then we need to smartly 
-                    // retrieve the new question or no question info
-                    if (currentCountdownTimerSeconds <= 0) {
-                        setPendingQuestionText();
-                        setPendingCountdownTimerText();
-                        clearAllAnswers();
-                        clearAllNextQuestionCandidates();
-                        // here we need to somehow retrieve the CURRENT question id 
-                        // and then continuously retrieve the next question id and 
-                        // compare to make sure we aren't getting into a race condition 
-                        // where we pull the current question and the question has yet 
-                        // to cycle
-                        // 
-                        // also worth noting here is that if there is no next question 
-                        // then we need to handle that condition accordingly
-                        var intervalId = setInterval(function () {
-                            getCurrentQuestion(function (question) {
-                                if (question) {
-                                    if (question._id !== getCurrentIndicatorId()) {
-                                        // this is the condition where the retrieved current 
-                                        // question is the new and updated question so 
-                                        // we should set this question and clear interval
-                                        currentQuestionExists();
-                                        clearCachedObjectIdElements();
-                                        setCurrentQuestion(question);
-                                        clearInterval(intervalId);
-                                    }
-                                }
-                                else {
-                                    // no current question exists
-                                    getNoQuestionStartDate(function (noQuestionStartDate) {
-                                        currentQuestionNonexistent(noQuestionStartDate);
-                                    });
-                                    clearCurrentQuestionId();
-                                    clearInterval(intervalId);
-                                }
-                            });
-                        }, 500);
-                    }
-                    else if (currentCountdownTimerSeconds % config.refreshInterval === 0) {
-                        // otherwise we need to see if we should "refresh" our countdown
-                        // timer by pulling the current question and re-setting the timer 
-                        // as we don't want to much of a variance between browser timer 
-                        // and the actual remaining time of the question
-                        getCurrentQuestion(function (question) {
-                            if (question) {
+                        // a question exists, handle accordingly
+                        if (currentQuestionId) {
+                            // if there is a currently stored question id then 
+                            // we need to check to see if this question is a 
+                            // new question or not
+                            if (question._id !== currentQuestionId) {
+                                // this is a new question
+                                clearAllAnswers();
+                                clearAllNextQuestionCandidates();
                                 setCurrentQuestion(question);
-                                setCountDownTimerTextFromQuestion(question, config.questionDurationMinutes);
+                                currentQuestionId = question._id;
+                                currentQuestionExists();
                             }
-                        });
-                    }
-                    else {
-                        if (currentCountdownTimerSeconds) {
-                            setCountDownTimerText(currentCountdownTimerSeconds);
                         }
-                    }
-                }
-                
-                // there is a question displayed, so we need to make sure that we 
-                // display answers and next question candidates
-                if (countDisplayedAnswers() < config.maxDisplayCount && !isCurrentQuestionPending()) {
-                    getCurrentQuestion(function (question) {
-                        // do another check here as we don't want to contribute to 
-                        // a race condition, and we also need to make sure that the 
-                        // question has answers
-                        if (countDisplayedAnswers() < config.maxDisplayCount && question.answers && question.answers.length > 0) {
+                        else {
+                            // this is a new question when there was either a page 
+                            // load or coming off of a no question condition
+                            setCurrentQuestion(question);
+                            currentQuestionId = question._id;
+                            currentQuestionExists();
+                        }
+                        // no matter if this is a new question or not, we need 
+                        // to take the question dateAsked and calculate the 
+                        // remaining time
+                        remainingSeconds = getRemainingSeconds(question.dateAsked, config.itemDuration);
+                        if (remainingSeconds <= 0) {
+                            // the current question appears to have reached the 
+                            // end so we don't want to accept any new answers
+                            hideAnswerInput();
+                            setCountDownTimerTextBySeconds(0);
+                        }
+                        else {
+                            setCountDownTimerTextBySeconds(remainingSeconds);
+                        }
+                        
+                        // make sure we're adding displayed answers if the max view 
+                        // count isn't displayed and also if there are answers to display 
+                        // as well as if we haven't reached the end of the countdown timer
+                        if (displayedAnswerCount() < config.maxDisplayCount && question.answers && remainingSeconds > 0) {
                             insertFirstOrderedUnreviewedAnswer(question.answers);
                         }
-                    });
-                }
-            }
-            
-            // no matter what, question or no question, we still need to check for next question candidates
-            if (countDisplayedNextQuestionCandidates() < config.maxDisplayCount && !isCurrentQuestionPending()) {
-                getNextQuestionCandidates(function (questions) {
-                    if (questions && countDisplayedNextQuestionCandidates() < config.maxDisplayCount) {
-                        insertFirstOrderedUnreviewedQuestionCandidate(questions);
+                        
+                        // no matter whether there is a current question or not we 
+                        // need to continuously poll next question candidates so 
+                        // that we are filling this
+                        if (countDisplayedNextQuestionCandidates() < config.maxDisplayCount) {
+                            getNextQuestionCandidates(function (questions) {
+                                insertFirstOrderedUnreviewedQuestionCandidate(questions);
+                                // we have finished this operation so for this iteration 
+                                // there is nothing else to do
+                                isOperationOngoing = false;
+                            });
+                        }
+                        else {
+                            // we have filled all next question candidate slots so 
+                            // there is nothing else to do
+                            isOperationOngoing = false;
+                        }
                     }
+                    else {
+                        // there is no current question
+                        currentQuestionId = null;
+                        currentQuestionNonexistent();
+                        clearAllAnswers();
+                        
+                        getNoQuestionStartDate(function (noQuestionStartDate) {
+                            remainingSeconds = getRemainingSeconds(noQuestionStartDate, config.itemDuration);
+                            if (remainingSeconds <= 0) {
+                                clearAllNextQuestionCandidates();
+                                setCountDownTimerTextBySeconds(0);
+                            }
+                            else {
+                                setCountDownTimerTextBySeconds(remainingSeconds);
+                            }
+                            
+                            // no matter whether there is a current question or not we 
+                            // need to continuously poll next question candidates so 
+                            // that we are filling this
+                            if (countDisplayedNextQuestionCandidates() < config.maxDisplayCount) {
+                                getNextQuestionCandidates(function (questions) {
+                                    insertFirstOrderedUnreviewedQuestionCandidate(questions);
+                                    // we have finished this operation so for this iteration 
+                                    // there is nothing else to do
+                                    isOperationOngoing = false;
+                                });
+                            }
+                            else {
+                                // we have filled all next question candidate slots so 
+                                // there is nothing else to do
+                                isOperationOngoing = false;
+                            }
+                        });
+                    }                    
                 });
             }
         },
