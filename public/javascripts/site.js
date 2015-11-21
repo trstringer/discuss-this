@@ -24,10 +24,10 @@ function generateAnswerBox(answer) {
             "</div>" +
             "<div class='col-xs-10 col-md-11'>" +
                 "<div class='col-xs-12 col-md-11 votes'>" +
-                    "<div class='col-xs-3 col-md-3'>" +
+                    "<div class='col-xs-4 col-md-3'>" +
                         "<p class='up-votes'>" + answer.upVotes + "</p>" +
                     "</div>" +
-                    "<div class='col-xs-3 col-md-3'>" +
+                    "<div class='col-xs-4 col-md-3'>" +
                         "<p class='down-votes'>" + answer.downVotes + "</p>" +
                     "</div>" +
                     "<div class='col-xs-3 col-md-3 object-id'>" + answer._id + "</div>" +                    
@@ -46,10 +46,10 @@ function generateNextQuestionBox(question) {
             "</div>" +
             "<div class='col-xs-10 col-md-11'>" +
                 "<div class='col-xs-12 col-md-11 votes'>" +
-                    "<div class='col-xs-3 col-md-3'>" +
+                    "<div class='col-xs-4 col-md-3'>" +
                         "<p class='up-votes'>" + question.upVotes + "</p>" +
                     "</div>" +
-                    "<div class='col-xs-3 col-md-3'>" +
+                    "<div class='col-xs-4 col-md-3'>" +
                         "<p class='down-votes'>" + question.downVotes + "</p>" +
                     "</div>" +
                     "<div class='col-xs-3 col-md-3 object-id'>" + question._id + "</div>" + 
@@ -135,10 +135,10 @@ function setCountDownTimerTextBySeconds(secondsRemaining) {
 }
 function setCountDownTimerColor(secondsRemaining) {
     if (secondsRemaining <= config.nearingEndOfDurationBufferSeconds && secondsRemaining > 0) {
-        $('.countdown-timer').css('color', 'darkred');
+        $('.countdown-timer').css('color', 'coral');
     }
     else if (secondsRemaining === 0) {
-        $('.countdown-timer').css('color', 'gold');
+        $('.countdown-timer').css('color', 'lightgray');
     }
     else {
         $('.countdown-timer').css('color', 'darkgray');
@@ -683,6 +683,7 @@ function getRemainingSeconds(originDate, totalQuestionDisplayTimeMinutes) {
 function runIterator() {
     var isOperationOngoing = false;
     var currentQuestionId;
+    var currentNoQuestionStartDate;
     var remainingSeconds;
     
     setInterval(
@@ -693,6 +694,8 @@ function runIterator() {
                 getCurrentQuestion(function (question) {
                     if (question) {
                         // a question exists, handle accordingly
+                        currentNoQuestionStartDate = null;
+                        
                         if (currentQuestionId) {
                             // if there is a currently stored question id then 
                             // we need to check to see if this question is a 
@@ -709,6 +712,8 @@ function runIterator() {
                         else {
                             // this is a new question when there was either a page 
                             // load or coming off of a no question condition
+                            clearAllAnswers();
+                            clearAllNextQuestionCandidates();
                             setCurrentQuestion(question);
                             currentQuestionId = question._id;
                             currentQuestionExists();
@@ -753,12 +758,31 @@ function runIterator() {
                     }
                     else {
                         // there is no current question
-                        currentQuestionId = null;
+                        if (currentQuestionId) {
+                            currentQuestionId = null;
+                            clearAllNextQuestionCandidates();
+                        }
+                        
                         currentQuestionNonexistent();
                         clearAllAnswers();
                         
                         getNoQuestionStartDate(function (noQuestionStartDate) {
                             remainingSeconds = getRemainingSeconds(noQuestionStartDate, config.itemDuration);
+                            
+                            if (currentNoQuestionStartDate) {
+                                if (noQuestionStartDate !== currentNoQuestionStartDate) {
+                                    // if we are here then it must be a new iteration of a no 
+                                    // question condition
+                                    clearAllNextQuestionCandidates();
+                                    currentNoQuestionStartDate = noQuestionStartDate;
+                                }
+                            }
+                            else {
+                                // this is the start to the *first* no question start date
+                                clearAllNextQuestionCandidates();
+                                currentNoQuestionStartDate = noQuestionStartDate;
+                            }
+                            
                             if (remainingSeconds <= 0) {
                                 clearAllNextQuestionCandidates();
                                 setCountDownTimerTextBySeconds(0);

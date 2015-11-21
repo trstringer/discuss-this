@@ -11,28 +11,38 @@ else {
     content = require('../data/content');
 }
 
+function isJobKeyValid(jobKey) {
+    if (!jobKey || jobKey !== process.env.JOBKEY) {
+        return false;
+    }
+    else {
+        return true;
+    }
+}
+
 router.get('/', function (req, res, next) {
     content.getCurrentQuestion(function (currentQuestion) {
         res.status(200).json(currentQuestion);
     });
 });
-router.post('/gen/', function (req, res, next) {
-    // need to add here logic to authenticate who is 
-    // trying to cycle for a new question
-    //
-    // this will server to prevent just anybody from 
-    // cycling a new question
-    //
-    content.getTopNextQuestionCandidate(function (question) {
-        if (question === undefined || question === null) {
-            res.status(400).send('not possible next question');
-        }
-        else {
-            content.setCurrentQuestion(question, function (question) {
-                res.status(200).json(question);
-            });
-        }
-    });
+router.post('/gen/:jobkey', function (req, res, next) {
+    var jobKey = req.params.jobkey;
+    
+    if (isJobKeyValid(jobKey)) {
+        content.getTopNextQuestionCandidate(function (question) {
+            if (question === undefined || question === null) {
+                res.status(400).send('not possible next question');
+            }
+            else {
+                content.setCurrentQuestion(question, function (question) {
+                    res.status(200).json(question);
+                });
+            }
+        });
+    }
+    else {
+        res.status(401).send();
+    }
 });
 
 router.get('/next/', function (req, res, next) {
@@ -162,12 +172,18 @@ router.get('/noquestion/', function (req, res, next) {
         res.status(200).send(noQuestionStartDate);
     });
 });
-router.post('/noquestion/', function (req, res, next) {
-    content.unsetCurrentQuestion(function () {
-        content.setNoQuestionDate(function () {
-            res.status(200).send();
+router.post('/noquestion/:jobkey', function (req, res, next) {
+    var jobKey = req.params.jobkey;
+    if (isJobKeyValid(jobKey)) {
+        content.unsetCurrentQuestion(function () {
+            content.setNoQuestionDate(function () {
+                res.status(200).send();
+            });
         });
-    })
+    }
+    else {
+        res.status(401).send();
+    }
 });
 
 module.exports = router;
