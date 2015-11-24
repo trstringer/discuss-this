@@ -685,6 +685,7 @@ function runIterator() {
     var currentQuestionId;
     var currentNoQuestionStartDate;
     var remainingSeconds;
+    var isFirstPassNoQuestion = true;
     
     setInterval(
         function () {
@@ -695,6 +696,7 @@ function runIterator() {
                     if (question) {
                         // a question exists, handle accordingly
                         currentNoQuestionStartDate = null;
+                        isFirstPassNoQuestion = true;
                         
                         if (currentQuestionId) {
                             // if there is a currently stored question id then 
@@ -757,57 +759,66 @@ function runIterator() {
                         }
                     }
                     else {
-                        // there is no current question
-                        if (currentQuestionId) {
-                            currentQuestionId = null;
-                            clearAllNextQuestionCandidates();
+                        // use this first pass as a buffer to prevent the change of 
+                        // a new question instead of showing quickly no question when 
+                        // in fact there is an actual question
+                        if (isFirstPassNoQuestion) {
+                            isOperationOngoing = false;
+                            isFirstPassNoQuestion = false;
                         }
-                        
-                        currentQuestionNonexistent();
-                        clearAllAnswers();
-                        
-                        getNoQuestionStartDate(function (noQuestionStartDate) {
-                            remainingSeconds = getRemainingSeconds(noQuestionStartDate, config.itemDuration);
+                        else {
+                            // there is no current question
+                            if (currentQuestionId) {
+                                currentQuestionId = null;
+                                clearAllNextQuestionCandidates();
+                            }
                             
-                            if (currentNoQuestionStartDate) {
-                                if (noQuestionStartDate !== currentNoQuestionStartDate) {
-                                    // if we are here then it must be a new iteration of a no 
-                                    // question condition
+                            currentQuestionNonexistent();
+                            clearAllAnswers();
+                            
+                            getNoQuestionStartDate(function (noQuestionStartDate) {
+                                remainingSeconds = getRemainingSeconds(noQuestionStartDate, config.itemDuration);
+                                
+                                if (currentNoQuestionStartDate) {
+                                    if (noQuestionStartDate !== currentNoQuestionStartDate) {
+                                        // if we are here then it must be a new iteration of a no 
+                                        // question condition
+                                        clearAllNextQuestionCandidates();
+                                        currentNoQuestionStartDate = noQuestionStartDate;
+                                    }
+                                }
+                                else {
+                                    // this is the start to the *first* no question start date
                                     clearAllNextQuestionCandidates();
                                     currentNoQuestionStartDate = noQuestionStartDate;
                                 }
-                            }
-                            else {
-                                // this is the start to the *first* no question start date
-                                clearAllNextQuestionCandidates();
-                                currentNoQuestionStartDate = noQuestionStartDate;
-                            }
-                            
-                            if (remainingSeconds <= 0) {
-                                clearAllNextQuestionCandidates();
-                                setCountDownTimerTextBySeconds(0);
-                            }
-                            else {
-                                setCountDownTimerTextBySeconds(remainingSeconds);
-                            }
-                            
-                            // no matter whether there is a current question or not we 
-                            // need to continuously poll next question candidates so 
-                            // that we are filling this
-                            if (countDisplayedNextQuestionCandidates() < config.maxDisplayCount) {
-                                getNextQuestionCandidates(function (questions) {
-                                    insertFirstOrderedUnreviewedQuestionCandidate(questions);
-                                    // we have finished this operation so for this iteration 
+                                
+                                if (remainingSeconds <= 0) {
+                                    clearAllNextQuestionCandidates();
+                                    setCountDownTimerTextBySeconds(0);
+                                }
+                                else {
+                                    setCountDownTimerTextBySeconds(remainingSeconds);
+                                }
+                                
+                                // no matter whether there is a current question or not we 
+                                // need to continuously poll next question candidates so 
+                                // that we are filling this
+                                if (countDisplayedNextQuestionCandidates() < config.maxDisplayCount) {
+                                    getNextQuestionCandidates(function (questions) {
+                                        insertFirstOrderedUnreviewedQuestionCandidate(questions);
+                                        // we have finished this operation so for this iteration 
+                                        // there is nothing else to do
+                                        isOperationOngoing = false;
+                                    });
+                                }
+                                else {
+                                    // we have filled all next question candidate slots so 
                                     // there is nothing else to do
                                     isOperationOngoing = false;
-                                });
-                            }
-                            else {
-                                // we have filled all next question candidate slots so 
-                                // there is nothing else to do
-                                isOperationOngoing = false;
-                            }
-                        });
+                                }
+                            });
+                        }
                     }                    
                 });
             }
