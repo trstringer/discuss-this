@@ -4,6 +4,16 @@ body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
+.site-header-logo {
+  max-width: 40px;
+  margin-top: -10px;
+  margin-right: 15px;
+}
+
+.site-header-text {
+  display: inline-block;
+}
+
 .questions-and-answers {
   margin-top: 10px;
 }
