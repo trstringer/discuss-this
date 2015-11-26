@@ -28,6 +28,9 @@ DocContent.prototype.revertIdProperty = function (document) {
     if (document.dateAsked) {
         docCached.dateAsked = document.dateAsked;
     }
+    if (document.remainingTime) {
+        docCached.remainingTime = document.remainingTime;
+    }
     return docCached;
 }
 
@@ -42,6 +45,7 @@ DocContent.prototype.getCurrentQuestions = function (callback) {
             q.isNextPossibility, \
             q.dateCreated, \
             q.dateAsked, \
+            q.remainingTime, \
             q.answers \
         FROM questions q'; 
         
@@ -92,6 +96,7 @@ DocContent.prototype.getQuestionByObjectId = function (objectId, callback) {
                 q.isNextPossibility, \
                 q.dateCreated, \
                 q.dateAsked, \
+                q.remainingTime, \
                 q.answers \
             FROM questions q \
             WHERE q.id = @id',
@@ -126,6 +131,7 @@ DocContent.prototype.getCurrentQuestion = function (callback) {
             q.isNextPossibility, \
             q.dateCreated, \
             q.dateAsked, \
+            q.remainingTime, \
             q.answers \
         FROM questions q \
         WHERE q.isCurrent = true';
@@ -142,12 +148,20 @@ DocContent.prototype.getCurrentQuestion = function (callback) {
         });
 };
 
+function getRemainingTime(entityDate) {
+    var originDate = new Date(entityDate);
+    var nowDate = new Date();
+    var currentSecondsRemaining = Math.floor((process.env.QUESTION_DURATION_MINUTES * 60) - ((nowDate - originDate) / 1000));
+    return currentSecondsRemaining;
+}
+
 DocContent.prototype.updateQuestionAsCurrent = function (question, callback) {
     if (!question) {
         this.getTopNextQuestionCandidate(question => {
             if (question) {
                 question.isCurrent = true;
                 question.dateAsked = (new Date()).toISOString();
+                question.remainingTime = getRemainingTime(question.dateAsked);
                 this.updateDocument(question, callback);
             }
         });
@@ -155,6 +169,7 @@ DocContent.prototype.updateQuestionAsCurrent = function (question, callback) {
     else {
         question.isCurrent = true;
         question.dateAsked = (new Date()).toISOString();
+        question.remainingTime = getRemainingTime(question.dateAsked);
         this.updateDocument(question, callback);
     }
 }
@@ -169,6 +184,7 @@ DocContent.prototype.archiveUnselectedQuestions = function (callback) {
             q.isNextPossibility, \
             q.dateCreated, \
             q.dateAsked, \
+            q.remainingTime, \
             q.answers \
         FROM questions q \
         WHERE q.isNextPossibility = true';
@@ -247,6 +263,7 @@ DocContent.prototype.getNextQuestionCandidates = function (count, callback) {
             q.isNextPossibility, \
             q.dateCreated, \
             q.dateAsked, \
+            q.remainingTime, \
             q.answers \
         FROM questions q \
         WHERE q.isNextPossibility = true \
@@ -294,6 +311,7 @@ DocContent.prototype.getNextQuestionCandidateWithMostDownVotes = function (callb
             q.isNextPossibility, \
             q.dateCreated, \
             q.dateAsked, \
+            q.remainingTime, \
             q.answers \
         FROM questions q \
         WHERE q.isNextPossibility = true \
@@ -356,13 +374,14 @@ DocContent.prototype.setNoQuestionDate = function (callback) {
     this.queryNoQuestionDate(noQuestion => {
         if (noQuestion) {
             noQuestion.noQuestionStartDate = new Date();
+            noQuestion.remainingTime = getRemainingTime(noQuestion.noQuestionStartDate);
             this.updateNoQuestionDocument(noQuestion, callback);
         }
     });
 };
 DocContent.prototype.queryNoQuestionDate = function (callback) {
     var query = 
-        'SELECT n.id, n.noQuestionStartDate \
+        'SELECT n.id, n.noQuestionStartDate, n.remainingTime \
         FROM noQuestion n';
         
     this.client.queryDocuments(this.noQuestionCol, query)
@@ -465,6 +484,26 @@ DocContent.prototype.downVoteAnswer = function (answerId, callback) {
                     break;
                 }
             }
+        }
+    });
+};
+
+DocContent.prototype.decrementCurrentEntityRemainingTime = function (callback) {
+    this.getCurrentQuestion(function (question) {
+        if (question) {
+            // in this case, the current entity is a question 
+            // so we need to decrement the remainingTime
+            question.remainingTime = getRemainingTime(question.dateAsked);
+            this.updateDocument(question, callback);
+        }
+        else {
+            // there is no question, so it must be a no-question 
+            // condition, in which case we'll have to decrement 
+            // the no question remainingTime
+            this.queryNoQuestionDate(function (noQuestion) {
+                noQuestion.remainingTime = getRemainingTime(noQuestion.noQuestionStartDate);
+                this.updateNoQuestionDocument(noQuestion, callback);
+            });
         }
     });
 };
