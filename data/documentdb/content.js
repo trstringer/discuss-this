@@ -28,7 +28,7 @@ DocContent.prototype.revertIdProperty = function (document) {
     if (document.dateAsked) {
         docCached.dateAsked = document.dateAsked;
     }
-    if (document.remainingTime) {
+    if (document.remainingTime !== undefined) {
         docCached.remainingTime = document.remainingTime;
     }
     return docCached;
@@ -152,6 +152,9 @@ function getRemainingTime(entityDate) {
     var originDate = new Date(entityDate);
     var nowDate = new Date();
     var currentSecondsRemaining = Math.floor((process.env.QUESTION_DURATION_MINUTES * 60) - ((nowDate - originDate) / 1000));
+    if (currentSecondsRemaining < 0) {
+        currentSecondsRemaining = 0;
+    }
     return currentSecondsRemaining;
 }
 
@@ -489,7 +492,7 @@ DocContent.prototype.downVoteAnswer = function (answerId, callback) {
 };
 
 DocContent.prototype.decrementCurrentEntityRemainingTime = function (callback) {
-    this.getCurrentQuestion(function (question) {
+    this.getCurrentQuestion(question => {
         if (question) {
             // in this case, the current entity is a question 
             // so we need to decrement the remainingTime
@@ -500,7 +503,7 @@ DocContent.prototype.decrementCurrentEntityRemainingTime = function (callback) {
             // there is no question, so it must be a no-question 
             // condition, in which case we'll have to decrement 
             // the no question remainingTime
-            this.queryNoQuestionDate(function (noQuestion) {
+            this.queryNoQuestionDate(noQuestion => {
                 noQuestion.remainingTime = getRemainingTime(noQuestion.noQuestionStartDate);
                 this.updateNoQuestionDocument(noQuestion, callback);
             });

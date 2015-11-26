@@ -186,4 +186,16 @@ router.post('/noquestion/:jobkey', function (req, res, next) {
     }
 });
 
+router.post('/dectimeremaining/:jobkey', function (req, res, next) {
+    var jobKey = req.params.jobkey;
+    if (isJobKeyValid(jobKey)) {
+        content.decrementCurrentEntityRemainingTime(function () {
+            res.status(200).send();
+        });
+    }
+    else {
+        res.status(401).send();
+    }
+});
+
 module.exports = router;
