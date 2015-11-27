@@ -400,7 +400,7 @@ DocContent.prototype.queryNoQuestionDate = function (callback) {
 };
 DocContent.prototype.getNoQuestionDate = function (callback) {
     this.queryNoQuestionDate(function (noQuestion) {
-        callback(noQuestion.noQuestionStartDate);
+        callback(noQuestion);
     });
 };
 DocContent.prototype.addAnswer = function (question, answerText, callback) {

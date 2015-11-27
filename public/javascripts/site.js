@@ -720,24 +720,17 @@ function runIterator() {
                             currentQuestionId = question._id;
                             currentQuestionExists();
                         }
-                        // no matter if this is a new question or not, we need 
-                        // to take the question dateAsked and calculate the 
-                        // remaining time
-                        remainingSeconds = getRemainingSeconds(question.dateAsked, config.itemDuration);
-                        if (remainingSeconds <= 0) {
-                            // the current question appears to have reached the 
-                            // end so we don't want to accept any new answers
+                        
+                        // set the countdown timer text appropriately
+                        if (question.remainingTime === 0) {
                             hideAnswerInput();
-                            setCountDownTimerTextBySeconds(0);
                         }
-                        else {
-                            setCountDownTimerTextBySeconds(remainingSeconds);
-                        }
+                        setCountDownTimerTextBySeconds(question.remainingTime);
                         
                         // make sure we're adding displayed answers if the max view 
                         // count isn't displayed and also if there are answers to display 
                         // as well as if we haven't reached the end of the countdown timer
-                        if (displayedAnswerCount() < config.maxDisplayCount && question.answers && remainingSeconds > 0) {
+                        if (displayedAnswerCount() < config.maxDisplayCount && question.answers && question.remainingTime > 0) {
                             insertFirstOrderedUnreviewedAnswer(question.answers);
                         }
                         
@@ -776,30 +769,25 @@ function runIterator() {
                             currentQuestionNonexistent();
                             clearAllAnswers();
                             
-                            getNoQuestionStartDate(function (noQuestionStartDate) {
-                                remainingSeconds = getRemainingSeconds(noQuestionStartDate, config.itemDuration);
-                                
+                            getNoQuestionStartDate(function (noQuestion) {                                
                                 if (currentNoQuestionStartDate) {
-                                    if (noQuestionStartDate !== currentNoQuestionStartDate) {
+                                    if (noQuestion.noQuestionStartDate !== currentNoQuestionStartDate) {
                                         // if we are here then it must be a new iteration of a no 
                                         // question condition
                                         clearAllNextQuestionCandidates();
-                                        currentNoQuestionStartDate = noQuestionStartDate;
+                                        currentNoQuestionStartDate = noQuestion.noQuestionStartDate;
                                     }
                                 }
                                 else {
                                     // this is the start to the *first* no question start date
                                     clearAllNextQuestionCandidates();
-                                    currentNoQuestionStartDate = noQuestionStartDate;
+                                    currentNoQuestionStartDate = noQuestion.noQuestionStartDate;
                                 }
                                 
-                                if (remainingSeconds <= 0) {
+                                if (noQuestion.remainingTime === 0) {
                                     clearAllNextQuestionCandidates();
-                                    setCountDownTimerTextBySeconds(0);
                                 }
-                                else {
-                                    setCountDownTimerTextBySeconds(remainingSeconds);
-                                }
+                                setCountDownTimerTextBySeconds(noQuestion.remainingTime);
                                 
                                 // no matter whether there is a current question or not we 
                                 // need to continuously poll next question candidates so 

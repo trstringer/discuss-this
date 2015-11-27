@@ -168,8 +168,8 @@ router.post('/downvote/:questionId', function (req, res, next) {
 });
 
 router.get('/noquestion/', function (req, res, next) {
-    content.getNoQuestionDate(function (noQuestionStartDate) {
-        res.status(200).send(noQuestionStartDate);
+    content.getNoQuestionDate(function (noQuestion) {
+        res.status(200).send(noQuestion);
     });
 });
 router.post('/noquestion/:jobkey', function (req, res, next) {
