@@ -168,8 +168,8 @@ router.post('/downvote/:questionId', function (req, res, next) {
 });
 
 router.get('/noquestion/', function (req, res, next) {
-    content.getNoQuestionDate(function (noQuestionStartDate) {
-        res.status(200).send(noQuestionStartDate);
+    content.getNoQuestionDate(function (noQuestion) {
+        res.status(200).send(noQuestion);
     });
 });
 router.post('/noquestion/:jobkey', function (req, res, next) {
@@ -179,6 +179,18 @@ router.post('/noquestion/:jobkey', function (req, res, next) {
             content.setNoQuestionDate(function () {
                 res.status(200).send();
             });
+        });
+    }
+    else {
+        res.status(401).send();
+    }
+});
+
+router.post('/dectimeremaining/:jobkey', function (req, res, next) {
+    var jobKey = req.params.jobkey;
+    if (isJobKeyValid(jobKey)) {
+        content.decrementCurrentEntityRemainingTime(function (err, doc) {
+            res.status(200).send(doc);
         });
     }
     else {
