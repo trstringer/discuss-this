@@ -189,8 +189,8 @@ router.post('/noquestion/:jobkey', function (req, res, next) {
 router.post('/dectimeremaining/:jobkey', function (req, res, next) {
     var jobKey = req.params.jobkey;
     if (isJobKeyValid(jobKey)) {
-        content.decrementCurrentEntityRemainingTime(function () {
-            res.status(200).send();
+        content.decrementCurrentEntityRemainingTime(function (err, doc) {
+            res.status(200).send(doc);
         });
     }
     else {
