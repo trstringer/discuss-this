@@ -686,6 +686,7 @@ function runIterator() {
     var currentNoQuestionStartDate;
     var remainingSeconds;
     var isFirstPassNoQuestion = true;
+    var isNewQuestion = false;
     
     setInterval(
         function () {
@@ -704,16 +705,22 @@ function runIterator() {
                             // new question or not
                             if (question._id !== currentQuestionId) {
                                 // this is a new question
+                                isNewQuestion = true;
                                 clearAllAnswers();
                                 clearAllNextQuestionCandidates();
                                 setCurrentQuestion(question);
                                 currentQuestionId = question._id;
                                 currentQuestionExists();
                             }
+                            else {
+                                // this is the same question
+                                isNewQuestion = false;
+                            }
                         }
                         else {
                             // this is a new question when there was either a page 
                             // load or coming off of a no question condition
+                            isNewQuestion = true;
                             clearAllAnswers();
                             clearAllNextQuestionCandidates();
                             setCurrentQuestion(question);
@@ -737,7 +744,7 @@ function runIterator() {
                         // no matter whether there is a current question or not we 
                         // need to continuously poll next question candidates so 
                         // that we are filling this
-                        if (countDisplayedNextQuestionCandidates() < config.maxDisplayCount) {
+                        if (countDisplayedNextQuestionCandidates() < config.maxDisplayCount && !isNewQuestion) {
                             getNextQuestionCandidates(function (questions) {
                                 insertFirstOrderedUnreviewedQuestionCandidate(questions);
                                 // we have finished this operation so for this iteration 
@@ -756,8 +763,13 @@ function runIterator() {
                         // a new question instead of showing quickly no question when 
                         // in fact there is an actual question
                         if (isFirstPassNoQuestion) {
-                            isOperationOngoing = false;
-                            isFirstPassNoQuestion = false;
+                            // lets delay for 5 seconds so we don't get a false 
+                            // negative here
+                            setCurrentQuestionText('attempting to retrieve next question...');
+                            setTimeout(function() {
+                                isOperationOngoing = false;
+                                isFirstPassNoQuestion = false;
+                            }, 5000);
                         }
                         else {
                             // there is no current question
