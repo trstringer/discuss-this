@@ -691,7 +691,17 @@ function runIterator() {
     setInterval(
         function () {
             // if there is no operation that is happening then we can do work
-            if (!isOperationOngoing) {
+            if (isOperationOngoing) {
+                // if there is an operation ongoing then we want to make sure the UX 
+                // for the countdown doesn't appear "choppy" so let's assume a 
+                // continuous countdown
+                var onGoingSeconds = getCountDownTimerSeconds();
+                if (onGoingSeconds > 0) {
+                    onGoingSeconds--;
+                    setCountDownTimerTextBySeconds(onGoingSeconds);
+                }
+            }
+            else {
                 isOperationOngoing = true;
                 getCurrentQuestion(function (question) {
                     if (question) {
