@@ -691,17 +691,16 @@ function runIterator() {
     setInterval(
         function () {
             // if there is no operation that is happening then we can do work
-            if (isOperationOngoing) {
-                // if there is an operation ongoing then we want to make sure the UX 
-                // for the countdown doesn't appear "choppy" so let's assume a 
-                // continuous countdown
-                var onGoingSeconds = getCountDownTimerSeconds();
-                if (onGoingSeconds > 0) {
-                    onGoingSeconds--;
-                    setCountDownTimerTextBySeconds(onGoingSeconds);
-                }
+            
+            // for the countdown doesn't appear "choppy" so let's assume a 
+            // continuous countdown
+            var onGoingSeconds = getCountDownTimerSeconds();
+            if (onGoingSeconds > 0) {
+                onGoingSeconds--;
+                setCountDownTimerTextBySeconds(onGoingSeconds);
             }
-            else {
+            
+            if (!isOperationOngoing) {
                 isOperationOngoing = true;
                 getCurrentQuestion(function (question) {
                     if (question) {
@@ -742,7 +741,10 @@ function runIterator() {
                         if (question.remainingTime === 0) {
                             hideAnswerInput();
                         }
-                        setCountDownTimerTextBySeconds(question.remainingTime);
+                        
+                        if (Math.abs(getCountDownTimerSeconds() - question.remainingTime) > 1) {
+                            setCountDownTimerTextBySeconds(question.remainingTime);
+                        }
                         
                         // make sure we're adding displayed answers if the max view 
                         // count isn't displayed and also if there are answers to display 
@@ -809,7 +811,10 @@ function runIterator() {
                                 if (noQuestion.remainingTime === 0) {
                                     clearAllNextQuestionCandidates();
                                 }
-                                setCountDownTimerTextBySeconds(noQuestion.remainingTime);
+                                
+                                if (Math.abs(getCountDownTimerSeconds() - noQuestion.remainingTime) > 1) {
+                                    setCountDownTimerTextBySeconds(noQuestion.remainingTime);
+                                }
                                 
                                 // no matter whether there is a current question or not we 
                                 // need to continuously poll next question candidates so 
