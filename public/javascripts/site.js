@@ -883,5 +883,8 @@ function submitQuestion() {
 }
 
 $(function () {
+    // make sure we aren't caching any calls
+    $.ajaxSetup({cache: false});
+    
     initialLoadActions();
 });
