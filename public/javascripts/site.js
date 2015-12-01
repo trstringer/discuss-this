@@ -777,7 +777,9 @@ function runIterator() {
                         if (isFirstPassNoQuestion) {
                             // lets delay for 5 seconds so we don't get a false 
                             // negative here
-                            setCurrentQuestionText('attempting to retrieve next question...');
+                            setCurrentQuestionText('attempting to retrieve question...');
+                            clearAllAnswers();
+                            clearAllNextQuestionCandidates();
                             setTimeout(function() {
                                 isOperationOngoing = false;
                                 isFirstPassNoQuestion = false;
