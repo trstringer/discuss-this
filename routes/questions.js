@@ -25,6 +25,32 @@ router.get('/', function (req, res, next) {
         res.status(200).json(currentQuestion);
     });
 });
+router.get('/:questionid', function (req, res, next) {
+    var questionId = req.params.questionid;
+    
+    // we need to ensure that the questionid is 8 chars
+    if (questionId.length !== 8) {
+        res.status(400).send();
+    }
+    
+    if (questionId) {
+        // we need to first see if this requested question is
+        // the current question
+        content.getCurrentQuestion(function (currentQuestion) {
+            if (currentQuestion && currentQuestion._id.substring(0, 8) === questionId) {
+                // this is the current question, so we should just 
+                // display the current question as-is
+                res.render('index', { title: 'Worldly Discussions' });
+            }
+            else {
+                // the user wants to display the summary of 
+                // the question
+            }
+        });
+    }
+});
+
+
 router.post('/gen/:jobkey', function (req, res, next) {
     var jobKey = req.params.jobkey;
     
