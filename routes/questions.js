@@ -45,6 +45,22 @@ router.get('/:questionid', function (req, res, next) {
             else {
                 // the user wants to display the summary of 
                 // the question
+                content.getQuestionByPartialId(questionId, function (question) {
+                    if (question && question.answers && question.answers.length > 0) {
+                        question.answers.sort(function (a, b) {
+                            return b.upVotes - a.upVotes;
+                        });
+                        res.render('question', {
+                            questionText: question.text,
+                            dateAsked: question.dateAsked,
+                            answerText: question.answers[0].text,
+                            answerUpVotes: question.answers[0].upVotes
+                        });
+                    }
+                    else {
+                        res.status(400).send();
+                    }
+                });
             }
         });
     }

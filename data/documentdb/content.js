@@ -511,6 +511,43 @@ DocContent.prototype.decrementCurrentEntityRemainingTime = function (callback) {
     });
 };
 
+DocContent.prototype.getQuestionByPartialId = function (partialId, callback) {
+    var partialIdLength = partialId.length;
+    var query = {
+        query: 
+            'SELECT \
+                q.id as _id, \
+                q.text, \
+                q.upVotes, \
+                q.downVotes, \
+                q.isCurrent, \
+                q.isNextPossibility, \
+                q.dateCreated, \
+                q.dateAsked, \
+                q.remainingTime, \
+                q.answers \
+            FROM questions q \
+            WHERE LEFT(REPLACE(q.id, "-", ""), ' + partialIdLength + ') = @id',
+        parameters: [
+            {
+                name: '@id',
+                value: partialId
+            }
+        ]
+    };
+    
+    this.client.queryDocuments(this.questionsCol, query)
+        .toArray(function (err, results) {
+            assert.equal(err, null);
+            if (err || results.length === 0) {
+                callback(null);
+            }
+            else {
+                callback(results[0]);
+            }
+        });
+};
+
 module.exports = new DocContent(
     {
         hostUrl: process.env.DOCUMENTDB_HOST_URL,
