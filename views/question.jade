@@ -1,8 +1,10 @@
 extends layout
 
 block content
-  div(class='container')
-    h2= questionText
-    h4= dateAsked
-    h3= answerText
-    h4= answerUpVotes 
+  div(class='container archive')
+    div(class='col-md-6 col-md-offset-3')
+      p(class='question')= questionText
+      p(class='question-date')= dateAsked
+    div(class='col-md-6 col-md-offset-3')
+      p(class='answer')= answerText
+      p(class='answer-votes')= answerUpVotes

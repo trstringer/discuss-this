@@ -93,3 +93,19 @@ a {
 .new-question-add {
   margin-top: 20px;
 }
+
+.archive .question {
+  color: red;
+}
+
+.archive .question-date {
+  color: green;
+}
+
+.archive .answer {
+  color: blue;
+}
+
+.archive .answer-votes {
+  color: yellow;
+}
