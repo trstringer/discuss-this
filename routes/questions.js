@@ -40,7 +40,7 @@ router.get('/:questionid', function (req, res, next) {
             if (currentQuestion && currentQuestion._id.substring(0, 8) === questionId) {
                 // this is the current question, so we should just 
                 // display the current question as-is
-                res.render('index', { title: 'Worldly Discussions' });
+                res.redirect('/');
             }
             else {
                 // the user wants to display the summary of 
