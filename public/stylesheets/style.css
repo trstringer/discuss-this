@@ -94,18 +94,23 @@ a {
   margin-top: 20px;
 }
 
-.archive .question {
-  color: red;
+.archive .req-question {
+  color: #708090;
+  margin-top: 50px;
+  font-size: xx-large;
 }
 
-.archive .question-date {
+.archive .req-question .date {
+  font-size: small;
+}
+
+.archive .best-answer {
+  color: slategray;
+  font-size: large;
+  margin-top: 20px;
+}
+
+.archive .best-answer .archive-votes {
   color: green;
-}
-
-.archive .answer {
-  color: blue;
-}
-
-.archive .answer-votes {
-  color: yellow;
+  font-style: italic;
 }

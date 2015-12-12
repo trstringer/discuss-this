@@ -2,9 +2,9 @@ extends layout
 
 block content
   div(class='container archive')
-    div(class='col-md-6 col-md-offset-3')
-      p(class='question')= questionText
-      p(class='question-date')= dateAsked
-    div(class='col-md-6 col-md-offset-3')
-      p(class='answer')= answerText
-      p(class='answer-votes')= answerUpVotes
+    div(class='col-md-6 col-md-offset-3 req-question')
+      p= questionText
+      p(class='date')= dateAsked
+    div(class='col-md-6 col-md-offset-3 best-answer')
+      p= answerText
+      p(class='archive-votes')= answerUpVotes
