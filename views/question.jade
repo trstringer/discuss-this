@@ -2,11 +2,11 @@ extends layout
 
 block content
   div(class='container archive')
-    div(class='col-md-6 col-md-offset-3 req-question')
-      p= questionText
-      p(class='date')= dateAsked
-    div(class='col-md-6 col-md-offset-3 best-answer')
-      p= answerText
-      p(class='archive-votes')= answerUpVotes
+    div(class='col-xs-12 col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2 req-question')
+      span(class='col-xs-12')= questionText
+      span(class='col-xs-12 date') asked on #{dateAsked}
+    div(class='col-xs-12 col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2 best-answer')
+      span(class='col-xs-12')= answerText
+      span(class='col-xs-12 archive-votes') up voted #{answerUpVotes} times
       
   script(src='/javascripts/jquery-1.11.3.min.js')

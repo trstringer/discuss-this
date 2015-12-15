@@ -101,6 +101,7 @@ a {
 }
 
 .archive .req-question .date {
+  color: lightgray;
   font-size: small;
 }
 
@@ -111,6 +112,6 @@ a {
 }
 
 .archive .best-answer .archive-votes {
-  color: green;
-  font-style: italic;
+  color: lightgray;
+  font-size: small;
 }
