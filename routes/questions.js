@@ -11,6 +11,10 @@ else {
     content = require('../data/content');
 }
 
+var config = {
+    questionIdRefLength: 8
+};
+
 function isJobKeyValid(jobKey) {
     if (!jobKey || jobKey !== process.env.JOBKEY) {
         return false;
@@ -29,7 +33,7 @@ router.get('/:questionid', function (req, res, next) {
     var questionId = req.params.questionid;
     
     // we need to ensure that the questionid is 8 chars
-    if (questionId.length !== 8) {
+    if (questionId.length !== config.questionIdRefLength) {
         res.status(400).send();
     }
     
