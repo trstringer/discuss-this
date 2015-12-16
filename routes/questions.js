@@ -29,47 +29,6 @@ router.get('/', function (req, res, next) {
         res.status(200).json(currentQuestion);
     });
 });
-router.get('/:questionid', function (req, res, next) {
-    var questionId = req.params.questionid;
-    
-    // we need to ensure that the questionid is 8 chars
-    if (questionId.length !== config.questionIdRefLength) {
-        res.status(400).send();
-    }
-    
-    if (questionId) {
-        // we need to first see if this requested question is
-        // the current question
-        content.getCurrentQuestion(function (currentQuestion) {
-            if (currentQuestion && currentQuestion._id.substring(0, 8) === questionId) {
-                // this is the current question, so we should just 
-                // display the current question as-is
-                res.redirect('/');
-            }
-            else {
-                // the user wants to display the summary of 
-                // the question
-                content.getQuestionByPartialId(questionId, function (question) {
-                    if (question && question.answers && question.answers.length > 0) {
-                        question.answers.sort(function (a, b) {
-                            return b.upVotes - a.upVotes;
-                        });
-                        res.render('question', {
-                            questionText: question.text,
-                            dateAsked: question.dateAsked,
-                            answerText: question.answers[0].text,
-                            answerUpVotes: question.answers[0].upVotes
-                        });
-                    }
-                    else {
-                        res.status(400).send();
-                    }
-                });
-            }
-        });
-    }
-});
-
 
 router.post('/gen/:jobkey', function (req, res, next) {
     var jobKey = req.params.jobkey;
@@ -241,6 +200,47 @@ router.post('/dectimeremaining/:jobkey', function (req, res, next) {
     }
     else {
         res.status(401).send();
+    }
+});
+
+router.get('/:questionid', function (req, res, next) {
+    var questionId = req.params.questionid;
+    
+    // we need to ensure that the questionid is 8 chars
+    if (questionId.length !== config.questionIdRefLength) {
+        res.status(400).send();
+    }
+    
+    if (questionId) {
+        // we need to first see if this requested question is
+        // the current question
+        content.getCurrentQuestion(function (currentQuestion) {
+            if (currentQuestion && currentQuestion._id.substring(0, 8) === questionId) {
+                // this is the current question, so we should just 
+                // display the current question as-is
+                res.redirect('/');
+            }
+            else {
+                // the user wants to display the summary of 
+                // the question
+                content.getQuestionByPartialId(questionId, function (question) {
+                    if (question && question.answers && question.answers.length > 0) {
+                        question.answers.sort(function (a, b) {
+                            return b.upVotes - a.upVotes;
+                        });
+                        res.render('question', {
+                            questionText: question.text,
+                            dateAsked: question.dateAsked,
+                            answerText: question.answers[0].text,
+                            answerUpVotes: question.answers[0].upVotes
+                        });
+                    }
+                    else {
+                        res.status(400).send();
+                    }
+                });
+            }
+        });
     }
 });
 
