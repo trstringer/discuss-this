@@ -4,7 +4,8 @@
 
 var config = {
     itemDuration: 1,
-    minInputLength: 30,
+    minQuestionLength: 10,
+    minAnswerLength: 2,
     maxDisplayCount: 3,
     refreshInterval: 10,
     noCurrentQuestionText: 'no current question, but ask one below!',
@@ -216,8 +217,16 @@ function clearAnswerInputText() {
 // at the moment, the answers will need to be a minimum 
 // of minInputTextLength characters. This is subject to change
 //
-function isSubmittedInputValid(inputText) {
-    if (inputText.length < config.minInputLength) {
+function isSubmittedQuestionValid(inputText) {
+    if (inputText.length < config.minQuestionLength) {
+        return false;
+    }
+    else {
+        return true;
+    }
+}
+function isSubmittedAnswerValid(inputText) {
+    if (inputText.length < config.minAnswerLength) {
         return false;
     }
     else {
@@ -227,7 +236,7 @@ function isSubmittedInputValid(inputText) {
 function setAnswerInputError(answerText) {
     $('.new-answer').removeClass('has-success').addClass('has-error');
     $('.new-answer .error-block').text(
-        'minimum of ' + config.minInputLength + ' characters required (current length: ' + 
+        'minimum of ' + config.minAnswerLength + ' characters required (current length: ' + 
         answerText.length + 
         ')');
     $('.new-answer .error-block').show();
@@ -256,7 +265,7 @@ function clearQuestionInputText() {
 function setQuestionInputError(questionText) {
     $('.new-question-add').removeClass('has-success').addClass('has-error');
     $('.new-question-add .error-block').text(
-        'minimum of ' + config.minInputLength + ' characters required (current length: ' + 
+        'minimum of ' + config.minQuestionLength + ' characters required (current length: ' + 
         questionText.length + 
         ')');
     $('.new-question-add .error-block').show();
@@ -846,7 +855,7 @@ function runIterator() {
 
 function submitAnswer() {
     var answerText = getAnswerInputText();
-    if (isSubmittedInputValid(answerText)) {
+    if (isSubmittedAnswerValid(answerText)) {
         // clear any error if it has it just in case
         //
         clearAnswerInputError();
@@ -869,7 +878,7 @@ function submitAnswer() {
 
 function submitQuestion() {
     var questionText = getQuestionInputText();
-    if (isSubmittedInputValid(questionText)) {
+    if (isSubmittedQuestionValid(questionText)) {
         clearQuestionInputError();
         
         // add the next candidate question
