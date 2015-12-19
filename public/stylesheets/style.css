@@ -115,3 +115,20 @@ a {
   color: lightgray;
   font-size: small;
 }
+
+.recent {
+  border-color: lightgray;
+  border-style: solid;
+  border-width: 1px;
+  margin-top: 20px;
+  border-radius: 10px;
+  background-color: #e0e0e0;
+}
+
+.recent .recent-question {
+  color: slategray;
+}
+
+.recent .recent-answer {
+  color: darkgray;
+}
