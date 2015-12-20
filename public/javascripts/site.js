@@ -17,6 +17,28 @@ var config = {
 //                  UI helpers
 // ********************************************************
 
+function generateRecentQuestionBox(question) {
+    return "<div class='col-xs-12'>" +
+            "<h2 class='col-xs-12 col-md-10 recent-question'>" +
+                question.text +
+            "</h2>" +
+            "<h3 class='col-xs-12 col-md-10 recent-answer'>" +
+                question.answers[0].text +
+            "</h3>" + 
+        "</div>";
+}
+
+function addRecentQuestion(question, addToTop) {
+    if (question && question.answers && question.answers.length > 0) {
+        if (addToTop) {
+            $('.recent').prepend(generateRecentQuestionBox(question));
+        }
+        else {
+            $('.recent').append(generateRecentQuestionBox(question));
+        }
+    }
+}
+
 function generateAnswerBox(answer) {
     return "<div class='col-xs-12 col-md-12 answer voting-item'>" +
             "<div class='col-xs-2 col-md-1'>" +
