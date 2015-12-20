@@ -548,6 +548,15 @@ DocContent.prototype.getQuestionByPartialId = function (partialId, callback) {
         });
 };
 
+DocContent.prototype.getArchivedAnsweredQuestion = function (count) {
+    if (!count || count === 0) {
+        count = 1;
+    }
+    
+    // documentdb query:
+    // SELECT TOP 2 * FROM c WHERE ARRAY_LENGTH(c.answers) > 0 ORDER BY c._ts DESC
+}
+
 module.exports = new DocContent(
     {
         hostUrl: process.env.DOCUMENTDB_HOST_URL,
