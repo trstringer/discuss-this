@@ -548,7 +548,7 @@ DocContent.prototype.getQuestionByPartialId = function (partialId, callback) {
         });
 };
 
-DocContent.prototype.getArchivedAnsweredQuestion = function (count, callback) {
+DocContent.prototype.getArchivedAnsweredQuestions = function (count, callback) {
     if (!count || count === 0) {
         count = 1;
     }
