@@ -9,7 +9,8 @@ var config = {
     maxDisplayCount: 3,
     refreshInterval: 10,
     noCurrentQuestionText: 'no current question, but ask one below!',
-    nearingEndOfDurationBufferSeconds: 20
+    nearingEndOfDurationBufferSeconds: 20,
+    recentlyAnsweredQuestionsDisplayCount: 5
 };
 
 
@@ -570,6 +571,12 @@ function clearAllNextQuestionCandidates() {
 function getCurrentQuestion(callback) {
     $.getJSON('/questions/', function (question) {
         callback(question);
+    });
+}
+
+function getRecentlyAnsweredQuestions(count, callback) {
+    $.getJSON('/recent/' + count, function (questions) {
+        callback(questions);
     });
 }
 
