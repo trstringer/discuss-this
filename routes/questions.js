@@ -50,6 +50,19 @@ router.post('/gen/:jobkey', function (req, res, next) {
     }
 });
 
+router.get('/recent/:count', function (req, res, next) {
+    var recentCount = req.params.count;
+    
+    if (!/^\d+$/.test(recentCount)) {
+        res.status(400).send('not a valid number passed');
+    }
+    else {
+        content.getArchivedAnsweredQuestions(recentCount, function (questions) {
+            res.status(200).json(questions);
+        });
+    }
+});
+
 router.get('/next/', function (req, res, next) {
     content.getTopNextQuestionCandidate(function (question) {
         res.status(200).json(question);

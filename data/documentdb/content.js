@@ -553,19 +553,19 @@ DocContent.prototype.getArchivedAnsweredQuestions = function (count, callback) {
         count = 1;
     }
     
-    var query = `SELECT TOP ${count}
-            q.id as _id, 
-            q.text, 
-            q.upVotes, 
-            q.downVotes, 
-            q.isCurrent, 
-            q.isNextPossibility, 
-            q.dateCreated, 
-            q.dateAsked, 
-            q.remainingTime, 
-            q.answers 
-        FROM questions q 
-        WHERE ARRAY_LENGTH(c.answers) > 0 ORDER BY c._ts DESC`;
+    var query = `SELECT TOP ${count} \
+            q.id as _id, \
+            q.text, \
+            q.upVotes, \
+            q.downVotes, \
+            q.isCurrent, \
+            q.isNextPossibility, \
+            q.dateCreated, \
+            q.dateAsked, \
+            q.remainingTime, \
+            q.answers \
+        FROM questions q \
+        WHERE ARRAY_LENGTH(q.answers) > 0 ORDER BY q._ts DESC`;
     
     this.client.queryDocuments(this.questionsCol, query)
         .toArray(function (err, results) {
