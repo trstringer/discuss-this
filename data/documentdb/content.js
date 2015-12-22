@@ -515,19 +515,19 @@ DocContent.prototype.getQuestionByPartialId = function (partialId, callback) {
     var partialIdLength = partialId.length;
     var query = {
         query: 
-            'SELECT \
-                q.id as _id, \
-                q.text, \
-                q.upVotes, \
-                q.downVotes, \
-                q.isCurrent, \
-                q.isNextPossibility, \
-                q.dateCreated, \
-                q.dateAsked, \
-                q.remainingTime, \
-                q.answers \
-            FROM questions q \
-            WHERE LEFT(REPLACE(q.id, "-", ""), ' + partialIdLength + ') = @id',
+            `SELECT 
+                q.id as _id, 
+                q.text, 
+                q.upVotes, 
+                q.downVotes, 
+                q.isCurrent, 
+                q.isNextPossibility, 
+                q.dateCreated, 
+                q.dateAsked, 
+                q.remainingTime, 
+                q.answers 
+            FROM questions q 
+            WHERE LEFT(REPLACE(q.id, "-", ""), ' + partialIdLength + ') = @id`,
         parameters: [
             {
                 name: '@id',
@@ -548,13 +548,35 @@ DocContent.prototype.getQuestionByPartialId = function (partialId, callback) {
         });
 };
 
-DocContent.prototype.getArchivedAnsweredQuestion = function (count) {
+DocContent.prototype.getArchivedAnsweredQuestion = function (count, callback) {
     if (!count || count === 0) {
         count = 1;
     }
     
-    // documentdb query:
-    // SELECT TOP 2 * FROM c WHERE ARRAY_LENGTH(c.answers) > 0 ORDER BY c._ts DESC
+    var query = `SELECT TOP ${count}
+            q.id as _id, 
+            q.text, 
+            q.upVotes, 
+            q.downVotes, 
+            q.isCurrent, 
+            q.isNextPossibility, 
+            q.dateCreated, 
+            q.dateAsked, 
+            q.remainingTime, 
+            q.answers 
+        FROM questions q 
+        WHERE ARRAY_LENGTH(c.answers) > 0 ORDER BY c._ts DESC`;
+    
+    this.client.queryDocuments(this.questionsCol, query)
+        .toArray(function (err, results) {
+            assert.equal(err, null);
+            if (err || results.length === 0) {
+                callback(null);
+            }
+            else {
+                callback(results);
+            }
+        });
 }
 
 module.exports = new DocContent(
