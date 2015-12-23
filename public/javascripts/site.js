@@ -19,7 +19,7 @@ var config = {
 // ********************************************************
 
 function generateRecentQuestionBox(question) {
-    return "<div class='col-xs-12'>" +
+    return "<div class='col-xs-12 recent-container'>" +
             "<h2 class='col-xs-12 col-md-10 recent-question'>" +
                 question.text +
             "</h2>" +
@@ -38,6 +38,10 @@ function addRecentQuestion(question, addToTop) {
             $('.recent').append(generateRecentQuestionBox(question));
         }
     }
+}
+
+function countRecentDisplayedQuestions() {
+    return $('.recent-question').length;
 }
 
 function generateAnswerBox(answer) {
@@ -575,7 +579,7 @@ function getCurrentQuestion(callback) {
 }
 
 function getRecentlyAnsweredQuestions(count, callback) {
-    $.getJSON('/recent/' + count, function (questions) {
+    $.getJSON('/questions/recent/' + count, function (questions) {
         callback(questions);
     });
 }
@@ -708,7 +712,19 @@ function initialLoadActions() {
     clearAnswerInputError();
     clearQuestionInputError();
     
+    populateRecentlyAnsweredQuestions();
+    
     runIterator();
+}
+
+function populateRecentlyAnsweredQuestions() {
+    getRecentlyAnsweredQuestions(config.recentlyAnsweredQuestionsDisplayCount, function (questions) {
+        if (questions && questions.length > 0) {
+            for (var i = 0; i < questions.length; i++) {
+                addRecentQuestion(questions[i]);
+            }
+        }
+    });
 }
 
 function getRemainingSeconds(originDate, totalQuestionDisplayTimeMinutes) {

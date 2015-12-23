@@ -132,3 +132,12 @@ a {
 .recent .recent-answer {
   color: darkgray;
 }
+
+.recent h4 {
+  padding-bottom: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-bottom-color: #DDDDDD;
+  color: gray;
+  margin-top: 40px;
+}
