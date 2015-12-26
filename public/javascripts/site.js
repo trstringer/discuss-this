@@ -44,6 +44,10 @@ function countRecentDisplayedQuestions() {
     return $('.recent-question').length;
 }
 
+function removeOldestRecentQuestion() {
+    $('.recent .recent-question:last-child').remove();
+}
+
 function generateAnswerBox(answer) {
     return "<div class='col-xs-12 col-md-12 answer voting-item'>" +
             "<div class='col-xs-2 col-md-1'>" +
@@ -774,6 +778,7 @@ function runIterator() {
                                 setCurrentQuestion(question);
                                 currentQuestionId = question._id;
                                 currentQuestionExists();
+                                addLastQuestionToMostRecentQuestions();
                             }
                             else {
                                 // this is the same question
@@ -896,6 +901,14 @@ function runIterator() {
         },
         1000
     );
+}
+
+function addLastQuestionToMostRecentQuestions() {
+    getRecentlyAnsweredQuestions(1, function (questions) {
+        if (questions && questions.length > 0) {
+            addRecentQuestion(questions[0], true);
+        }
+    });
 }
 
 function submitAnswer() {
