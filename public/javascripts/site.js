@@ -710,6 +710,16 @@ function initialLoadActions() {
     $('#addQuestion').click(submitQuestion);
     $('.question').on('click', '.vote-button', answerVoted);
     $('.new-questions').on('click', '.vote-button', questionVoted);
+    $('#newAnswer').keypress(function (e) {
+        if (e.keyCode === 13) {
+            submitAnswer();
+        }
+    });
+    $('#newQuestion').keypress(function (e) {
+        if (e.keyCode === 13) {
+            submitQuestion();
+        }
+    });
     
     // do an initial hide on this error
     //
