@@ -24,6 +24,25 @@ function isJobKeyValid(jobKey) {
     }
 }
 
+function formatDate(dateToFormat) {
+    if (dateToFormat) {
+        var monthNames = [
+            "January", "February", "March",
+            "April", "May", "June", "July",
+            "August", "September", "October",
+            "November", "December"
+        ];
+        
+        dateToFormat = new Date(dateToFormat);
+        var day = dateToFormat.getDate();
+        var monthIdx = dateToFormat.getMonth();
+        var year = dateToFormat.getFullYear();
+        var time = dateToFormat.toLocaleTimeString();
+        
+        return `${monthNames[monthIdx]} ${day}, ${year} ${time}`;
+    }
+}
+
 router.get('/', function (req, res, next) {
     content.getCurrentQuestion(function (currentQuestion) {
         res.status(200).json(currentQuestion);
@@ -243,7 +262,7 @@ router.get('/:questionid', function (req, res, next) {
                         });
                         res.render('question', {
                             questionText: question.text,
-                            dateAsked: question.dateAsked,
+                            dateAsked: formatDate(question.dateAsked),
                             answerText: question.answers[0].text,
                             answerUpVotes: question.answers[0].upVotes
                         });
