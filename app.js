@@ -4,6 +4,7 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var azureLogger = require('azure-logger');
 
 var routes = require('./routes/index');
 var questions = require('./routes/questions');
@@ -29,6 +30,8 @@ app.use('/questions', questions);
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
   err.status = 404;
+  err.url = req.url;
+  err.originalUrl = req.originalUrl;
   next(err);
 });
 
@@ -43,8 +46,32 @@ if (app.get('env') === 'development') {
       message: err.message,
       error: err
     });
+    next(err);
   });
 }
+
+// log the errors to azure
+//
+// if the logging fails then the best thing 
+// to do here is to show that logging failed 
+// so that I can investigate this logging issue
+app.use(function (err, req, res, next) {
+    var options = {
+        table: 'wderrorlog',
+        entryType: 'error'
+    };
+    azureLogger.log(err, options, function (err, res) {
+        if (err) {
+            res.status(err.status || 500);
+            res.render('error', {
+                message: 'unable to log error',
+                error: err
+            });
+        }
+    });
+    
+    next(err);
+});
 
 // production error handler
 // no stacktraces leaked to user
