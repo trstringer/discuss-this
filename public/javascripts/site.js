@@ -736,6 +736,9 @@ function initialLoadActions() {
     $('.recent-message').click(scrollToRecent);
     $('.recent-remove').click(hideScrollToRecent);
     
+    // initially hide scroll to recent
+    hideScrollToRecent();
+    
     // do an initial hide on this error
     //
     clearAnswerInputError();
@@ -804,6 +807,10 @@ function runIterator() {
                                 currentQuestionId = question._id;
                                 currentQuestionExists();
                                 addLastQuestionToMostRecentQuestions();
+                                
+                                // if there is a new question then we should show 
+                                // the scroll to recent bar
+                                showScrollToRecent();
                             }
                             else {
                                 // this is the same question
