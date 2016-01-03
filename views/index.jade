@@ -2,6 +2,13 @@ extends layout
 
 block content
   div(class='container questions-and-answers')
+  
+    div(class='row' id='showRecentQuestions')
+      div(class='col-xs-12 col-md-6 col-md-offset-3 show-recent')
+        div(class='col-xs-10 col-md-6')
+          span(class='recent-message') show recent question
+        div(class='col-xs-1 col-md-offset-5')
+          span(class='recent-remove glyphicon glyphicon-remove' aria-hidden='true')
         
     div(class='row')
       div(class='col-xs-12 col-md-8 col-md-offset-2 question')

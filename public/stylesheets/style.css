@@ -141,3 +141,20 @@ a {
   color: gray;
   margin-top: 50px;
 }
+
+.show-recent {
+    padding: 5px;
+    background-color: #F8F8F8
+}
+
+.show-recent span {
+    cursor: pointer;
+}
+
+.show-recent .recent-message {
+    color: blue;
+}
+
+.show-recent .recent-remove {
+    color: red;
+}
