@@ -18,6 +18,12 @@ var config = {
 //                  UI helpers
 // ********************************************************
 
+function scrollToRecentQuestions() {
+    $('html, body').animate({
+        scrollTop: $('.recent').offset().top
+    }, 1000);
+}
+
 function generateRecentQuestionBox(question) {
     return "<div class='col-xs-12 recent-container'>" +
             "<h2 class='col-xs-12 col-md-10 recent-question'>" +
