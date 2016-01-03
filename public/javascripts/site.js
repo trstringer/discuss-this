@@ -18,10 +18,17 @@ var config = {
 //                  UI helpers
 // ********************************************************
 
-function scrollToRecentQuestions() {
+function scrollToRecent() {
     $('html, body').animate({
         scrollTop: $('.recent').offset().top
     }, 1000);
+}
+
+function hideScrollToRecent() {
+    $('#showRecentQuestions').hide();
+}
+function showScrollToRecent() {
+    $('#showRecentQuestions').show();
 }
 
 function generateRecentQuestionBox(question) {
@@ -726,6 +733,8 @@ function initialLoadActions() {
             submitQuestion();
         }
     });
+    $('.recent-message').click(scrollToRecent);
+    $('.recent-remove').click(hideScrollToRecent);
     
     // do an initial hide on this error
     //
