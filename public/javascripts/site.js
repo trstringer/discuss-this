@@ -45,7 +45,8 @@ function generateRecentQuestionBox(question) {
 function addRecentQuestion(question, addToTop) {
     if (question && question.answers && question.answers.length > 0) {
         if (addToTop) {
-            $('.recent').prepend(generateRecentQuestionBox(question));
+            // $('.recent').prepend(generateRecentQuestionBox(question));
+            $(generateRecentQuestionBox(question)).insertAfter($('.recent h4'));
         }
         else {
             $('.recent').append(generateRecentQuestionBox(question));
@@ -881,6 +882,9 @@ function runIterator() {
                             if (currentQuestionId) {
                                 currentQuestionId = null;
                                 clearAllNextQuestionCandidates();
+                                
+                                addLastQuestionToMostRecentQuestions();
+                                showScrollToRecent();
                             }
                             
                             currentQuestionNonexistent();
