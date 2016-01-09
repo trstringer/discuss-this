@@ -262,7 +262,8 @@ router.get('/:questionid', function (req, res, next) {
                         });
                         res.render('question', {
                             questionText: question.text,
-                            dateAsked: formatDate(question.dateAsked),
+                            dateAsked: question.dateAsked,
+                            formatDate: formatDate,
                             answerText: question.answers[0].text,
                             answerUpVotes: question.answers[0].upVotes
                         });
