@@ -737,6 +737,11 @@ function initialLoadActions() {
     $('.recent-message').click(scrollToRecent);
     $('.recent-remove').click(hideScrollToRecent);
     
+    // initially hide the answer input box until 
+    // we actually find out if there is an existing 
+    // question
+    hideAnswerInput();
+    
     // initially hide scroll to recent
     hideScrollToRecent();
     
@@ -870,6 +875,7 @@ function runIterator() {
                             // lets delay for 5 seconds so we don't get a false 
                             // negative here
                             setCurrentQuestionText('attempting to retrieve question...');
+                            hideAnswerInput();
                             clearAllAnswers();
                             clearAllNextQuestionCandidates();
                             setTimeout(function() {
