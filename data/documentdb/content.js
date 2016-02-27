@@ -565,7 +565,9 @@ DocContent.prototype.getArchivedAnsweredQuestions = function (count, callback) {
             q.remainingTime, \
             q.answers \
         FROM questions q \
-        WHERE ARRAY_LENGTH(q.answers) > 0 ORDER BY q._ts DESC`;
+        WHERE ARRAY_LENGTH(q.answers) > 0  \
+        AND q.isCurrent = false \
+        ORDER BY q._ts DESC`;
     
     this.client.queryDocuments(this.questionsCol, query)
         .toArray(function (err, results) {
