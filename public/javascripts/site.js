@@ -44,10 +44,15 @@ function generateRecentQuestionBox(question) {
 }
 
 function getAllRecentDisplayedQuestionsId() {
+  var allIds = [];
+  $('.recent-container .archived-object-id').each(function () {
+    allIds.push($(this).text());
+  });
   
+  return allIds;
 }
 function isRecentQuestionDisplayed(question) {
-  
+  return $.inArray(question._id, getAllRecentDisplayedQuestionsId()) >= 0;
 }
 
 function addRecentQuestion(question, addToTop) {
