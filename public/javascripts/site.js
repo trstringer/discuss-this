@@ -57,6 +57,7 @@ function isRecentQuestionDisplayed(question) {
 
 function addRecentQuestion(question, addToTop) {
     if (question && question.answers && question.answers.length > 0) {
+      if (!isRecentQuestionDisplayed(question)) {
         if (addToTop) {
             // $('.recent').prepend(generateRecentQuestionBox(question));
             $(generateRecentQuestionBox(question)).insertAfter($('.recent h4'));
@@ -64,6 +65,7 @@ function addRecentQuestion(question, addToTop) {
         else {
             $('.recent').append(generateRecentQuestionBox(question));
         }
+      }
     }
 }
 
