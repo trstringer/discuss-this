@@ -39,7 +39,15 @@ function generateRecentQuestionBox(question) {
             "<h3 class='col-xs-12 col-md-10 recent-answer'>" +
                 question.answers[0].text +
             "</h3>" + 
+            "<div class='col-xs-3 col-md-3 archived-object-id'>" + question._id + "</div>" +
         "</div>";
+}
+
+function getAllRecentDisplayedQuestionsId() {
+  
+}
+function isRecentQuestionDisplayed(question) {
+  
 }
 
 function addRecentQuestion(question, addToTop) {
