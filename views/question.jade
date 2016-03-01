@@ -12,4 +12,4 @@ block content
   script(src='/javascripts/jquery-1.11.3.min.js')
   
   script.
-    alert('hello!');
+    $('.date').text('answered on ' + new Date($('.date').text()).toLocaleString());
