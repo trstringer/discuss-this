@@ -3,7 +3,7 @@
 // ********************************************************
 
 var config = {
-    itemDuration: 1,
+    itemDuration: 7,
     minQuestionLength: 10,
     minAnswerLength: 2,
     maxDisplayCount: 3,
