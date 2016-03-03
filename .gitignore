@@ -36,3 +36,4 @@ public/bootstrap/
 typings/
 data/documentdb/import-error.csv
 deployment/
+data/documentdb/letsdiscuss-questions-purge.js

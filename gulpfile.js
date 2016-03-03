@@ -18,6 +18,14 @@ gulp.task('documentdb-dbg-seed-data', function (callback) {
     });
 });
 
+gulp.task('letsdiscuss-purge', function (callback) {
+  exec('node .\\data\\documentdb\\letsdiscuss-questions-purge.js', function (err, stdout, stderr) {
+    console.log(stdout);
+    console.log(stderr);
+    callback(err);
+  });
+});
+
 gulp.task('minify', function() {
     gulp.src('public/javascripts/site.js')
         .pipe(minify({}))
